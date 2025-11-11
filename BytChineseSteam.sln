@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BytChineseSteam.Models", "src\BytChineseSteam.Models\BytChineseSteam.Models.csproj", "{89CA81DB-013C-4F07-918D-02901781584D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BytChineseSteam.Tests", "src\BytChineseSteam.Tests\BytChineseSteam.Tests.csproj", "{C964D614-CCD4-4730-87DA-1EEB9F87CFAB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{89CA81DB-013C-4F07-918D-02901781584D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89CA81DB-013C-4F07-918D-02901781584D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89CA81DB-013C-4F07-918D-02901781584D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89CA81DB-013C-4F07-918D-02901781584D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C964D614-CCD4-4730-87DA-1EEB9F87CFAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C964D614-CCD4-4730-87DA-1EEB9F87CFAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C964D614-CCD4-4730-87DA-1EEB9F87CFAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C964D614-CCD4-4730-87DA-1EEB9F87CFAB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
