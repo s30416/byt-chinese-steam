@@ -20,4 +20,8 @@
         <Using Include="NUnit.Framework"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\BytChineseSteam.Models\BytChineseSteam.Models.csproj" />
+    </ItemGroup>
+
 </Project>
