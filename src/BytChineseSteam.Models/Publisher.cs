@@ -18,6 +18,8 @@ public class Publisher
         Description = description;
     }
 
+    public Publisher() { }
+
     public static IReadOnlyList<Publisher> ViewAllPublishers()
     {
         return _publishers.AsReadOnly();
