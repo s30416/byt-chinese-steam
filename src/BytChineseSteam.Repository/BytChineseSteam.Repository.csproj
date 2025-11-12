@@ -7,9 +7,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Exceptions\Employee\" />
-      <Folder Include="Exceptions\Limited\" />
-      <Folder Include="Exceptions\Publisher\" />
+      <ProjectReference Include="..\BytChineseSteam.Models\BytChineseSteam.Models.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Storage\" />
     </ItemGroup>
 
 </Project>
