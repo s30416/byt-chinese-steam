@@ -63,8 +63,8 @@ namespace BytChineseSteam.Repository.Utils
                 return PublishersPath;
             if (type == typeof(List<Limited>))
                 return LimitedKeysPath;
-            // if (type == typeof(List<User>))
-            //     return UsersPath;
+            if (type == typeof(List<User>))
+                return UsersPath;
 
             throw new ArgumentException($"No path mapping defined for type {type.Name}");
         }
