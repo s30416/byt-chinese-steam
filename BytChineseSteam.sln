@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BytChineseSteam.Models", "s
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BytChineseSteam.Tests", "src\BytChineseSteam.Tests\BytChineseSteam.Tests.csproj", "{C964D614-CCD4-4730-87DA-1EEB9F87CFAB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BytChineseSteam.Repository", "src\BytChineseSteam.Repository\BytChineseSteam.Repository.csproj", "{1BB5BA18-CB16-4396-836E-855F99189499}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{C964D614-CCD4-4730-87DA-1EEB9F87CFAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C964D614-CCD4-4730-87DA-1EEB9F87CFAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C964D614-CCD4-4730-87DA-1EEB9F87CFAB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BB5BA18-CB16-4396-836E-855F99189499}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BB5BA18-CB16-4396-836E-855F99189499}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BB5BA18-CB16-4396-836E-855F99189499}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BB5BA18-CB16-4396-836E-855F99189499}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
