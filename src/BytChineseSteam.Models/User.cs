@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using BytChineseSteam.Models.DataAnnotations;
 
 namespace BytChineseSteam.Models;
 
@@ -17,6 +18,8 @@ public abstract class User
     
     
     public string HashedPassword { get; set; } = null!;
+    
+    private static readonly List<User> _users = new List<User>();
 
 
     protected User(Name name, string email, string phoneNumber, string hashedPassword)
@@ -28,6 +31,58 @@ public abstract class User
     }
     
     public User() {}
+
+
+    
+    public static User CreateUser(User newUser)
+    {
+        if (_users.Any(u => u.Email.Equals(newUser.Email, StringComparison.OrdinalIgnoreCase)))
+        {
+            throw new ArgumentException("User already exists");
+        }
+        
+        _users.Add(newUser);
+        return newUser;
+    }
+
+    
+    public static IReadOnlyList<User> ViewAllUsers()
+    {
+        return _users.AsReadOnly();
+    }
+    
+    
+    public static User? GetUserByEmail(string email)
+    {
+        return _users.FirstOrDefault(u => u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
+    }
+    
+    public static User? UpdateUser(string email, Name newName, string newPhoneNumber)
+    {
+        
+        var userToUpdate = GetUserByEmail(email);
+        if (userToUpdate == null)
+        {
+            return null;
+        }
+        
+        userToUpdate.Name = newName;
+        userToUpdate.PhoneNumber = newPhoneNumber;
+        
+        return userToUpdate;
+    }
+
+
+    public static bool DeleteUser(string email)
+    {
+        var userToDelete = GetUserByEmail(email);
+        if (userToDelete != null)
+        {
+            _users.Remove(userToDelete);
+            return true;
+        }
+        return false;
+    }
     
 }
 

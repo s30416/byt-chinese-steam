@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Net.Mail;
 
-namespace BytChineseSteam.Models;
+namespace BytChineseSteam.Models.DataAnnotations;
 
 [AttributeUsage(AttributeTargets.Property)]
 public class ValidEmailAttribute : ValidationAttribute
