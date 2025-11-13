@@ -7,6 +7,8 @@ public class SuperAdmin : Employee
     protected SuperAdmin(Name name, string email, string phoneNumber, string hashedPassword) : base(name, email, phoneNumber, hashedPassword) { }
     
     protected SuperAdmin(Name name, string email, string phoneNumber, string hashedPassword, decimal salary) : base(name, email, phoneNumber, hashedPassword, salary) { }
+    
+    public SuperAdmin() { }
 
     public static void AddSuperAdmin(SuperAdmin superAdmin)
     {

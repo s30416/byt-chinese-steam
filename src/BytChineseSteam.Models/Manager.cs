@@ -10,6 +10,8 @@ public class Manager : Employee
     
     protected Manager(Name name, string email, string phoneNumber, string hashedPassword, decimal salary) : base(name, email, phoneNumber, hashedPassword, salary) { }
     
+    public Manager() { }
+    
     public static void AddManager(Manager manager)
     {
         _managers.Add(manager);

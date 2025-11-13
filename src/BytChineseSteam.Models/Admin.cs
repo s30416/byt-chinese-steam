@@ -10,6 +10,8 @@ public class Admin : Employee
     
     protected Admin(Name name, string email, string phoneNumber, string hashedPassword, decimal salary) : base(name, email, phoneNumber, hashedPassword, salary) { }
     
+    public Admin() { }
+    
     public static void AddAdmin(Admin admin)
     {
         _admins.Add(admin);
