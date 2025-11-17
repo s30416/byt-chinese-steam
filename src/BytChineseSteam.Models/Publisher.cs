@@ -1,7 +1,5 @@
 ﻿/* TODO:
  * possibly annotation that makes function only for admins
- * getPublisherGames() - should this even be in publisher? But I think we would be using viewViewAllGames for that and I somehow have to get the array of all games that we didn't implement yet? idk, elp pls if you're reading this
- * idk what else could be missing here
 */
 namespace BytChineseSteam.Models;
 

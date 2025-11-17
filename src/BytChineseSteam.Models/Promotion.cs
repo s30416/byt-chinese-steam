@@ -1,12 +1,6 @@
-﻿namespace BytChineseSteam.Models;
+﻿using BytChineseSteam.Models.Enums;
 
-public enum PromotionStatus
-{
-    Planned,
-    Completed,
-    Finished,
-    ToBeDeleted
-}
+namespace BytChineseSteam.Models;
 
 public class Promotion
 {

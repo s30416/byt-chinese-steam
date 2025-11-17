@@ -1,14 +1,9 @@
 ﻿using System.Runtime.CompilerServices;
+using BytChineseSteam.Models.Enums;
 
 namespace BytChineseSteam.Models;
 
-public enum OrderStatus
-{
-    Planned,
-    Active,
-    Finished,
-    ToBeDeleted
-}
+
 
 public class Order
 {
