@@ -43,9 +43,8 @@ namespace BytChineseSteam_Tests
 
         private static void ClearGameStaticList()
         {
-            var nested = typeof(Publisher).GetNestedType("Game", BindingFlags.Public | BindingFlags.NonPublic);
-            if (nested == null) throw new InvalidOperationException("Could not find nested type Game.");
-            var field = nested.GetField("_viewAllGames", BindingFlags.NonPublic | BindingFlags.Static);
+            var gameType = typeof(Game); 
+            var field = gameType.GetField("_viewAllGames", BindingFlags.NonPublic | BindingFlags.Static);
             if (field == null) throw new InvalidOperationException("Could not find field _viewAllGames via reflection.");
             var list = (IList)field.GetValue(null);
             list?.Clear();
@@ -106,8 +105,8 @@ namespace BytChineseSteam_Tests
         [Test]
         public void TestGetAllPublishersGames_ReturnsOnlyGamesWithThisPublisher()
         {
-            var g1 = new Publisher.Game("G1", pubA);
-            var g2 = new Publisher.Game("G2", pubB);
+            var g1 = new Game("G1", pubA);
+            var g2 = new Game("G2", pubB);
             
             var aGames = pubA.GetAllPublishersGames();
             var bGames = pubB.GetAllPublishersGames();
