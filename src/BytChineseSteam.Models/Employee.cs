@@ -1,91 +1,90 @@
-﻿using BytChineseSteam.Models.DataAnnotations;
+﻿using System.Collections.ObjectModel;
+using System.Text.Json.Serialization;
 
 namespace BytChineseSteam.Models;
 
-public abstract class Employee : User
+[JsonPolymorphic(TypeDiscriminatorPropertyName = "$type")]
+[JsonDerivedType(typeof(Admin), "Admin")]
+[JsonDerivedType(typeof(Manager), "Manager")]
+[JsonDerivedType(typeof(SuperAdmin), "SuperAdmin")]
+public abstract class Employee
 {
-    [NonNegative]
+    public Name? Name { get; set; }
+    
     public decimal? Salary { get; set; }
 
-    [NonNegative]
     public decimal CollectedBonuses { get; set; } = 0;
 
-    private static readonly List<Employee> _employees = new List<Employee>();
+    private static List<Employee> _employees = new();
     
-    protected Employee(Name name, string email, string phoneNumber, string hashedPassword, decimal? salary) : base(name, email, phoneNumber, hashedPassword)
+    protected Employee(Name name, decimal? salary)
     {
+        Name = name;
         Salary = salary;
+        
+        // add to collection
+        AddEmployee(this);
+    }
+
+    protected Employee(Name name)
+    {
+        Name = name;
+        
+        // add to collection
+        AddEmployee(this);
     }
     
-    protected Employee(Name name, string email, string phoneNumber, string hashedPassword) : base(name, email, phoneNumber, hashedPassword) { }
+    // required for deserialization
+    [JsonConstructor]
+    protected Employee()
+    {
+        // entent
+        AddEmployee(this);
+    }
+    
+    // extent methods
+    public static ReadOnlyCollection<Employee> GetEmployees()
+    {
+        return _employees.AsReadOnly();
+    }
 
-    public Employee() {}
-
+    // never use this outside of constructors. when you call new() the newly created object will be added to the
+    // collection right after creation. So now also, be VERY CAREFUL when you use new()
+    private static void AddEmployee(Employee employee)
+    {
+        if (employee == null)
+            throw new ArgumentException($"The given employee cannot be null");
+        
+        _employees.Add(employee);
+    }
+    
+    // class methods
     // will be required to change the isSuperAdmin bool to an actual check on the controller/service layer
-    public static T CreateEmployee<T>(string firstName, string lastName, string email, string phoneNumber,
-        string hashedPassword, decimal? salary, bool isSuperAdmin) where T : Employee, new()
+    // I will also have to figure out the use of generics here, but that's inheritance issues
+    public static Employee CreateEmployee<T>(string firstName, string lastName, decimal? salary, bool isSuperAdmin)
     {
         if (!isSuperAdmin)
             throw new UnauthorizedAccessException("Only super admins can create Employees");
 
         var name = new Name(firstName, lastName);
-        var newEmployee = new T
+        if (typeof(T) == typeof(Admin))
         {
-            Name = name,
-            Email = email,
-            PhoneNumber = phoneNumber,
-            HashedPassword = hashedPassword,
-            Salary = salary
-        };
-        
-        _employees.Add(newEmployee);
-        if (typeof(T) == typeof(SuperAdmin))
-        {
-            SuperAdmin.AddSuperAdmin(newEmployee as SuperAdmin);
+            if (salary == null) return new Admin(name);
+            else return new Admin(name, (decimal)salary);
         } 
         else if (typeof(T) == typeof(Manager))
         {
-            Manager.AddManager(newEmployee as Manager);
-        }
-        else if (typeof(T) == typeof(Admin))
+            if (salary == null) return new Manager(name);
+            else return new Manager(name, (decimal)salary);
+        } 
+        else if (typeof(T) == typeof(SuperAdmin))
         {
-            Admin.AddAdmin(newEmployee as Admin);
+            if (salary == null) return new SuperAdmin(name);
+            else return new SuperAdmin(name, (decimal)salary);
         }
-
-        return newEmployee;
-    }
-
-    
-    // I actually have no idea on how the update should work correctly
-    // like, should it take stuff like an email and look for a specific employee
-    // or should i just change the one employee I called this method with
-    // so many questions, so little sleep...
-    // im gonna leave it as it is right now and ask Abdulla today
-    public bool UpdateEmployee(string email, decimal salary, decimal collectedBonuses, bool isSuperAdmin)
-    {
-        if (!isSuperAdmin)
-            throw new UnauthorizedAccessException("Only super admins can create Employees");
-        
-        CollectedBonuses = collectedBonuses;
-        Salary = salary;
-        return true;
-    }
-    
-    public bool UpdateEmployee(decimal collectedBonuses, bool isSuperAdmin)
-    {
-        if (!isSuperAdmin)
-            throw new UnauthorizedAccessException("Only super admins can create Employees");
-        
-        CollectedBonuses = collectedBonuses;
-        return true;
-    }
-
-    public bool DeleteEmployee(bool isSuperAdmin)
-    {
-        if (!isSuperAdmin)
-            throw new UnauthorizedAccessException("Only super admins can create Employees");
-        
-        _employees.Remove(this);
-        return true;
+        else
+        {
+            throw  new ArgumentException($"The given employee type  {typeof(T)} is not supported.");
+        }
     }
 }
