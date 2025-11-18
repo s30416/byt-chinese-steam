@@ -7,6 +7,7 @@ namespace BytChineseSteam.Models;
 [JsonDerivedType(typeof(Admin), "Admin")]
 [JsonDerivedType(typeof(Manager), "Manager")]
 [JsonDerivedType(typeof(SuperAdmin), "SuperAdmin")]
+// todo: implement inheritance later
 public abstract class Employee
 {
     public Name? Name { get; set; }
