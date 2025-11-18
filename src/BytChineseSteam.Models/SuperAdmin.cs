@@ -27,7 +27,7 @@ public class SuperAdmin : Employee
     }
 
     // extent methods
-    public static ReadOnlyCollection<SuperAdmin> GetSuperAdmins()
+    public static ReadOnlyCollection<SuperAdmin> ViewAllSuperAdmins()
     {
         return _superAdmins.AsReadOnly();
     }

@@ -29,7 +29,7 @@ public class Admin : Employee
     }
 
     // extent methods
-    public static ReadOnlyCollection<Admin> GetAdmins()
+    public static ReadOnlyCollection<Admin> ViewAllAdmins()
     {
         return _admins.AsReadOnly();
     }

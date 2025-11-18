@@ -43,7 +43,7 @@ public abstract class Employee
     }
     
     // extent methods
-    public static ReadOnlyCollection<Employee> GetEmployees()
+    public static ReadOnlyCollection<Employee> ViewAllEmployees()
     {
         return _employees.AsReadOnly();
     }
