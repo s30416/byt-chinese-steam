@@ -7,11 +7,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\BytChineseSteam.Models\BytChineseSteam.Models.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Storage\" />
     </ItemGroup>
 
 </Project>
