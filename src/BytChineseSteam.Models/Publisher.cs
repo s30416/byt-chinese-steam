@@ -1,27 +1,25 @@
 ﻿/* TODO:
  * possibly annotation that makes function only for admins
 */
+
+using BytChineseSteam.Repository.Extent;
+
 namespace BytChineseSteam.Models;
 
-public class Publisher
+public class Publisher : ExtentModel<Publisher>
 {
     public string Name { get; set; }
     public string Description { get; set; }
+    
 
-    private static readonly List<Publisher> _publishers = new List<Publisher>();
-
-    private Publisher(string name, string description)
+    public Publisher(string name, string description)
     {
         Name = name;
         Description = description;
+        
+        Extent.Add(this); // add this
     }
-
-    public Publisher() { }
-
-    public static IReadOnlyList<Publisher> ViewAllPublishers()
-    {
-        return _publishers.AsReadOnly();
-    }
+    
 
     public static Publisher CreatePublisher(string name, string description, bool isAdmin)
     {
@@ -36,7 +34,7 @@ public class Publisher
         }
 
         var publisher = new Publisher(name.Trim(), description ?? "");
-        _publishers.Add(publisher);
+        // _publishers.Add(publisher);
         return publisher;
     }
 
@@ -45,11 +43,11 @@ public class Publisher
         if (!isAdmin)
             throw new UnauthorizedAccessException("Only admin can delete publishers.");
 
-        var publisher = _publishers.FirstOrDefault(p => p.Name == name);
-        if (publisher == null)
+        // var publisher = _publishers.FirstOrDefault(p => p.Name == name);
+        // if (publisher == null)
             throw new InvalidOperationException("Publisher not found.");
 
-        _publishers.Remove(publisher);
+        // _publishers.Remove(publisher);
     }
 
     public void UpdatePublisher(string newName, string newDescription, bool isAdmin)

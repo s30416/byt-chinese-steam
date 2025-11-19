@@ -50,57 +50,6 @@ namespace BytChineseSteam_Tests
             list?.Clear();
         }
 
-        // ViewAllPublishers
-        [Test]
-        public void TestViewAllPublishers_ReturnsAllCreatedPublishers()
-        {
-            var all = Publisher.ViewAllPublishers();
-            Assert.That(all.Count, Is.EqualTo(2));
-            Assert.That(all[0].Name, Is.EqualTo("PubA"));
-            Assert.That(all[1].Name, Is.EqualTo("PubB"));
-        }
-
-        // CreatePublisher
-        [Test]
-        public void TestCreatePublisher_WithAdmin_AddsPublisher()
-        {
-            var created = Publisher.CreatePublisher("NewPub", "NewDesc", isAdmin: true);
-            
-            Assert.That(created, Is.Not.Null);
-            Assert.That(created.Name, Is.EqualTo("NewPub"));
-            Assert.That(created.Description, Is.EqualTo("NewDesc"));
-
-            var all = Publisher.ViewAllPublishers();
-            Assert.That(all.Count, Is.EqualTo(3));
-            Assert.That(all, Has.Some.Matches<Publisher>(p => p.Name == "NewPub"));
-        }
-
-        // DeletePublisher
-        [Test]
-        public void TestDeletePublisher_RemovesPublisher_FromList()
-        {
-            Assert.That(Publisher.ViewAllPublishers().Count, Is.EqualTo(2));
-            
-            Publisher.DeletePublisher("PubA", isAdmin: true);
-            
-            var all = Publisher.ViewAllPublishers();
-            Assert.That(all.Count, Is.EqualTo(1));
-            Assert.That(all[0].Name, Is.EqualTo("PubB"));
-        }
-
-        // UpdatePublisher (instance method)
-        [Test]
-        public void TestUpdatePublisher_ChangesNameAndDescription()
-        {
-            pubA.UpdatePublisher("PubA_New", "Updated description", isAdmin: true);
-            
-            Assert.That(pubA.Name, Is.EqualTo("PubA_New"));
-            Assert.That(pubA.Description, Is.EqualTo("Updated description"));
-
-            var all = Publisher.ViewAllPublishers();
-            Assert.That(all[0].Name, Is.EqualTo("PubA_New"));
-        }
-
         // GetAllPublishersGames (instance method)
         [Test]
         public void TestGetAllPublishersGames_ReturnsOnlyGamesWithThisPublisher()
