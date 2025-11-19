@@ -13,8 +13,6 @@ public class Key : Limited
     [NonNegative]
     public required decimal OriginalPrice  { get; set; }
     
-    public decimal CurrentPrice => OriginalPrice + PriceIncrease;
-    
     [DateNotInFuture]
     [Required]
     public required DateTime CreatedAt { get; set; }
@@ -23,4 +21,9 @@ public class Key : Limited
     public required decimal PriceIncrease { get; set; }
     
     public required string[] Benefits { get; set; }
+
+    public decimal GetCurrentPrice()
+    {
+        return OriginalPrice + PriceIncrease;
+    }
 }
