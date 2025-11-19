@@ -5,11 +5,7 @@ namespace BytChineseSteam.Models;
 
 public class Key : Limited
 {
-    public static readonly Extent<Key> Extent;
-    static Key()
-    {
-        Extent = new Extent<Key>();
-    }
+    public static readonly Extent<Key> Extent = new ();
     
     [MinLength(1)]
     public required string AccessKey { get; set; }
