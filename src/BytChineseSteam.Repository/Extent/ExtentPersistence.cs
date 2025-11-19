@@ -58,9 +58,14 @@ public abstract class ExtentPersistence
 
     private static void PersistAll(JsonNode json)
     {
-        if (!File.Exists(Path)) File.AppendAllText(Path, json.ToJsonString());
-
-        File.WriteAllText(Path, json.ToJsonString());
+        if (!File.Exists(Path))
+        {
+            File.AppendAllText(Path, json.ToJsonString());
+        }
+        else
+        {
+            File.WriteAllText(Path, json.ToJsonString());
+        }
     }
 
     public static void LoadAll()

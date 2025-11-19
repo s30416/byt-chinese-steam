@@ -41,7 +41,7 @@ public class Extent<T> : IExtent
         catch (Exception e)
         {
             if (e is JsonException je || e is NotSupportedException ne)
-                throw new Exception($"Error loading items for {Name}. Invalid value in JSON");
+                throw new Exception($"Error loading items for {Name}. Invalid value in JSON. Message: {e.Message}");
         }
     }
 
