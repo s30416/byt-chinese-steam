@@ -12,4 +12,8 @@
       <Folder Include="Exceptions\Publisher\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\BytChineseSteam.Repository\BytChineseSteam.Repository.csproj" />
+    </ItemGroup>
+
 </Project>
