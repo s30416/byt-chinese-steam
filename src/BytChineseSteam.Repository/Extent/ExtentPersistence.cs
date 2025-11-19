@@ -13,7 +13,7 @@ public abstract class ExtentPersistence
         DiscoverExtents();
     }
 
-    private static void DiscoverExtents()
+    public static void DiscoverExtents()
     {
         var assembly = Assembly.GetExecutingAssembly();
         var potentialTypes = assembly.GetTypes()
@@ -36,6 +36,11 @@ public abstract class ExtentPersistence
 
     public static void Register(IExtent extent)
     {
+        if (Extents.Any(e => e.Name == extent.Name))
+        {
+            throw new ArgumentException($"Extent with name {extent.Name} already exists");
+        }
+        
         Extents.Add(extent);
     }
 
