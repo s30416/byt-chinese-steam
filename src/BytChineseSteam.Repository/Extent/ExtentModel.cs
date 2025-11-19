@@ -2,7 +2,7 @@ namespace BytChineseSteam.Repository.Extent;
 
 public class ExtentModel<T>
 {
-    public static readonly Extent<T> Extent = new ();
+    // public static readonly Extent<T> Extent = new ();
 
     // protected ExtentModel()
     // {

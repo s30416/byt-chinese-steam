@@ -1,3 +1,4 @@
+using System.Collections;
 using System.ComponentModel.DataAnnotations;
 
 namespace BytChineseSteam.Models.DataAnnotations;
@@ -6,36 +7,33 @@ namespace BytChineseSteam.Models.DataAnnotations;
 /// Checks if date in the field is not bigger than DateTime.Now
 /// </summary>
 [AttributeUsage(AttributeTargets.Property)]
-public class NonEmpty(bool isArray = false) : ValidationAttribute("{0} is not valid")
+public class NonEmpty(bool isEnumerable = false) : ValidationAttribute("{0} is not valid")
 {
     protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
     {
         if (value == null) return ValidationResult.Success;
 
-        if (isArray && !value.GetType().IsArray)
+        if (isEnumerable && value is not IEnumerable)
         {
-            return new ValidationResult("{0} is not an array");
+            Console.WriteLine($"{isEnumerable} {value.GetType().Name}");
+            return new ValidationResult($"{validationContext.DisplayName} is not enumerable",
+                [validationContext.DisplayName]);
         }
 
-        if (!isArray && value.GetType().IsArray)
+        if (!isEnumerable && value is IEnumerable)
         {
-            return new ValidationResult("{0} is array");
+            return new ValidationResult($"{validationContext.DisplayName} is enumerable",
+                [validationContext.DisplayName]);
         }
 
-        if (isArray)
+        if (isEnumerable)
         {
-            var elementType = value.GetType().GetElementType();
-
-            if (elementType != typeof(string))
+            foreach (var item in (value as IEnumerable)!)
             {
-                return new ValidationResult("{0} is not an array of strings");
-            }
-
-            foreach (var item in (value as IEnumerable<string>)!)
-            {
-                if (string.IsNullOrWhiteSpace(item))
+                if (string.IsNullOrWhiteSpace(item as string))
                 {
-                    return new ValidationResult("{0} contains empty strings");
+                    return new ValidationResult($"{validationContext.DisplayName} contains empty strings",
+                        [validationContext.DisplayName]);
                 }
             }
         }
@@ -43,7 +41,7 @@ public class NonEmpty(bool isArray = false) : ValidationAttribute("{0} is not va
         {
             if (string.IsNullOrWhiteSpace(value as string))
             {
-                return new ValidationResult("{0} contains empty strings");
+                return new ValidationResult($"{validationContext.DisplayName} contains empty strings");
             }
         }
 

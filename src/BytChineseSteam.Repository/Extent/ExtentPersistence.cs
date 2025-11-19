@@ -22,15 +22,21 @@ public abstract class ExtentPersistence
 
         foreach (var type in potentialTypes)
         {
-            foreach (var field in type.GetFields(flags).Where(p => typeof(IExtent).IsAssignableFrom(p.FieldType)))
+            
+            var typeName = type.Name;
+            Console.WriteLine(typeName);
+            foreach (var field in type.GetFields(flags))
             {
+                Console.WriteLine(field.Name);
                 field.GetValue(null);
             }
             
-            foreach (var property in type.GetProperties(flags).Where(p => typeof(IExtent).IsAssignableFrom(p.PropertyType)))
+            foreach (var property in type.GetProperties(flags))
             {
+                Console.WriteLine(property.Name);
                 property.GetValue(null);
             }
+            Console.WriteLine();
         }
     }
 
