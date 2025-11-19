@@ -6,5 +6,5 @@ public interface Limited
     
     public decimal PriceIncrease { get; set; }
     
-    public string[] Benefits { get; set; }
+    public List<string> Benefits { get; set; }
 }
