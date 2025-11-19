@@ -26,12 +26,8 @@ public class Key : Limited
     [NonNegative]
     public required decimal PriceIncrease { get; set; }
     
-
     public required List<string> Benefits { get; set; }
     
-    // extent collection
-    private static List<Key> _keys = new();
-
     // class methods from diagram
     // ...
     
