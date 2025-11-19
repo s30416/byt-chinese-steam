@@ -1,6 +1,4 @@
-using BytChineseSteam.Repository.Extent;
-
-namespace BytChineseSteam.Models.Abstract;
+namespace BytChineseSteam.Repository.Extent;
 
 public class ExtentModel<T>
 {

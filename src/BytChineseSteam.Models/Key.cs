@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using System.Net.Http.Headers;
-using BytChineseSteam.Models.Abstract;
 using BytChineseSteam.Models.DataAnnotations;
 using BytChineseSteam.Repository.Extent;
 
@@ -28,7 +27,7 @@ public class Key : ExtentModel<Key>, Limited
 
     [NonNegative] [Required] public decimal PriceIncrease { get; set; }
 
-    [Required] public List<string> Benefits { get; set; }
+    [NonEmpty(isArray: true)] [Required] public List<string> Benefits { get; set; }
 
     // class methods from diagram
     // ...
