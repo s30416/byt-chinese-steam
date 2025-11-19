@@ -40,14 +40,7 @@ public class ExtentTest
     [Test, Order(4)]
     public void Extent_ShouldHaveValues_AfterModelCreation()
     {
-        var key = new Key()
-        {
-            AccessKey = "asdf",
-            Benefits = [],
-            CreatedAt = DateTime.Now,
-            OriginalPrice = 10,
-            PriceIncrease = 0
-        };
+        var key = new Key("adsf", 0, DateTime.Now, 0, []);
         Assert.That(new List<Key> { key }, Is.EquivalentTo(Key.Extent.All()));
     }
 

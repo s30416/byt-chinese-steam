@@ -1,36 +1,38 @@
 using System.ComponentModel.DataAnnotations;
+using System.Net.Http.Headers;
+using BytChineseSteam.Models.Abstract;
 using BytChineseSteam.Models.DataAnnotations;
 using BytChineseSteam.Repository.Extent;
 
 namespace BytChineseSteam.Models;
 
-public class Key : Limited
+public class Key : ExtentModel<Key>, Limited
 {
-    public static readonly Extent<Key> Extent = new ();
-
-    public Key()
+    public Key(string accessKey, decimal originalPrice, DateTime createdAt, decimal priceIncrease,
+        List<string> benefits)
     {
+        AccessKey = accessKey;
+        OriginalPrice = originalPrice;
+        CreatedAt = createdAt;
+        PriceIncrease = priceIncrease;
+        Benefits = benefits;
+
         Extent.Add(this);
     }
-    
-    [MinLength(1)]
-    public required string AccessKey { get; set; }
-    
-    [NonNegative]
-    public required decimal OriginalPrice  { get; set; }
-    
-    [DateNotInFuture]
-    [Required]
-    public required DateTime CreatedAt { get; set; }
-    
-    [NonNegative]
-    public required decimal PriceIncrease { get; set; }
-    
-    public required List<string> Benefits { get; set; }
-    
+
+    [MinLength(1)] [Required] public string AccessKey { get; set; }
+
+    [NonNegative] [Required] public decimal OriginalPrice { get; set; }
+
+    [DateNotInFuture] [Required] public DateTime CreatedAt { get; set; }
+
+    [NonNegative] [Required] public decimal PriceIncrease { get; set; }
+
+    [Required] public List<string> Benefits { get; set; }
+
     // class methods from diagram
     // ...
-    
+
     public decimal GetCurrentPrice()
     {
         return OriginalPrice + PriceIncrease;

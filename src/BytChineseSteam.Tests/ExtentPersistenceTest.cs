@@ -20,15 +20,7 @@ public class ExtentPersistenceTest
     public void EntityPersistence_ShouldPersistExtents()
     {
         // storing key
-        var key = new Key()
-        {
-            AccessKey = "adsf",
-            OriginalPrice = 10,
-            CreatedAt = DateTime.Now,
-            PriceIncrease = 0,
-            Benefits = []
-        };
-
+        var key = new Key("asdf", 10, DateTime.Now, 0, []);
         ExtentPersistence.Persist(Key.Extent);
         
         // checking json

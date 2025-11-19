@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
@@ -14,15 +15,19 @@ public class Extent<T> : IExtent
         ExtentPersistence.Register(this);
     }
 
+    private static void Validate(T element)
+    {
+        if (element == null)
+        {
+            throw new ArgumentException($"Element cannot be null");
+        }
+        
+        var context = new ValidationContext(element);
+        Validator.ValidateObject(element, context, true);
+    }
     public void Add(T item)
     {
-        if (item == null)
-        {
-            throw new ArgumentException("Item cannot be null");
-        }
-
-        // can call validation here
-
+        Validate(item);
         _items.Add(item);
     }
 
