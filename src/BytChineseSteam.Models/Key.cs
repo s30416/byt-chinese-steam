@@ -1,12 +1,13 @@
 using System.ComponentModel.DataAnnotations;
-using System.Net.Http.Headers;
 using BytChineseSteam.Models.DataAnnotations;
 using BytChineseSteam.Repository.Extent;
 
 namespace BytChineseSteam.Models;
 
-public class Key : ExtentModel<Key>, Limited
+public class Key : Limited
 {
+    public static readonly Extent<Key> Extent = new ();
+    
     public Key(string accessKey, decimal originalPrice, DateTime createdAt, decimal priceIncrease,
         List<string> benefits)
     {
@@ -27,7 +28,7 @@ public class Key : ExtentModel<Key>, Limited
 
     [NonNegative] [Required] public decimal PriceIncrease { get; set; }
 
-    [NonEmpty(isArray: true)] [Required] public List<string> Benefits { get; set; }
+    [NonEmpty(isEnumerable: true)] [Required] public List<string> Benefits { get; set; }
 
     // class methods from diagram
     // ...

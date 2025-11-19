@@ -15,21 +15,38 @@ public abstract class ExtentPersistence
 
     public static void DiscoverExtents()
     {
-        var assembly = Assembly.GetExecutingAssembly();
-        var potentialTypes = assembly.GetTypes()
-            .Where(t => t.IsClass && !t.IsAbstract && t.IsPublic);
+        var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+        
         const BindingFlags flags = BindingFlags.Public | BindingFlags.Static;
 
-        foreach (var type in potentialTypes)
+        foreach (var assembly in assemblies)
         {
-            foreach (var field in type.GetFields(flags).Where(p => typeof(IExtent).IsAssignableFrom(p.FieldType)))
+            try
             {
-                field.GetValue(null);
+                var potentialTypes = assembly.GetTypes();
+
+                foreach (var type in potentialTypes)
+                {
+                    if (!type.IsClass || type.IsAbstract) continue;
+
+                    foreach (var field in type.GetFields(flags))
+                    {
+                        if (typeof(IExtent).IsAssignableFrom(field.FieldType))
+                        {
+                            field.GetValue(null); 
+                        }
+                    }
+                }
             }
-            
-            foreach (var property in type.GetProperties(flags).Where(p => typeof(IExtent).IsAssignableFrom(p.PropertyType)))
+            catch (ReflectionTypeLoadException ex)
             {
-                property.GetValue(null);
+                // Handle cases where an assembly might not load all types due to missing dependencies.
+                Console.WriteLine($"Warning: Failed to load all types from {assembly.FullName}");
+                // Process the loaded types: ex.Types.Where(t => t != null) 
+            }
+            catch (Exception)
+            {
+                // Ignore other assembly loading errors
             }
         }
     }

@@ -4,18 +4,13 @@ using BytChineseSteam.Repository.Extent;
 
 ExtentPersistence.LoadAll();
 
-var k = new Key
+Console.WriteLine(Key.Extent.All().Count);
+foreach (var k in Key.Extent.All())
 {
-    AccessKey = null,
-    OriginalPrice = 0,
-    CreatedAt = DateTime.Now,
-    PriceIncrease = 0,
-    Benefits = [],
-};
-Key.Extent.Add(k);
-// ExtentPersistence.Persist(Key.Extent);
-
-foreach (var key in Key.Extent.All())
-{
-    Console.WriteLine(JsonSerializer.Serialize(key));
+    Console.WriteLine(JsonSerializer.Serialize(k));
 }
+
+// var key = new Key("asdf", 1, DateTime.Now, 0, []);
+
+// ExtentPersistence.Persist(Key.Extent);
+// Key.Extent.Update();

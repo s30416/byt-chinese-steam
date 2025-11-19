@@ -31,6 +31,16 @@ public class Extent<T> : IExtent
         _items.Add(item);
     }
 
+    public void Remove(T item)
+    {
+        _items.Remove(item);
+    }
+
+    public void Update(T item)
+    {
+        
+    }
+
     public ReadOnlyCollection<T> All()
     {
         return _items.AsReadOnly();
