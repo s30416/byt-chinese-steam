@@ -15,28 +15,39 @@ public abstract class ExtentPersistence
 
     public static void DiscoverExtents()
     {
-        var assembly = Assembly.GetExecutingAssembly();
-        var potentialTypes = assembly.GetTypes()
-            .Where(t => t.IsClass && !t.IsAbstract && t.IsPublic);
+        var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+        
         const BindingFlags flags = BindingFlags.Public | BindingFlags.Static;
 
-        foreach (var type in potentialTypes)
+        foreach (var assembly in assemblies)
         {
-            
-            var typeName = type.Name;
-            Console.WriteLine(typeName);
-            foreach (var field in type.GetFields(flags))
+            try
             {
-                Console.WriteLine(field.Name);
-                field.GetValue(null);
+                var potentialTypes = assembly.GetTypes();
+
+                foreach (var type in potentialTypes)
+                {
+                    if (!type.IsClass || type.IsAbstract) continue;
+
+                    foreach (var field in type.GetFields(flags))
+                    {
+                        if (typeof(IExtent).IsAssignableFrom(field.FieldType))
+                        {
+                            field.GetValue(null); 
+                        }
+                    }
+                }
             }
-            
-            foreach (var property in type.GetProperties(flags))
+            catch (ReflectionTypeLoadException ex)
             {
-                Console.WriteLine(property.Name);
-                property.GetValue(null);
+                // Handle cases where an assembly might not load all types due to missing dependencies.
+                Console.WriteLine($"Warning: Failed to load all types from {assembly.FullName}");
+                // Process the loaded types: ex.Types.Where(t => t != null) 
             }
-            Console.WriteLine();
+            catch (Exception)
+            {
+                // Ignore other assembly loading errors
+            }
         }
     }
 
