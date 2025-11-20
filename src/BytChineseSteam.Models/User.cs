@@ -31,6 +31,9 @@ public abstract class User
         Email = email;
         PhoneNumber = phoneNumber;
         HashedPassword = hashedPassword;
+
+        Extent.Add(this);
+
     }
     
 
