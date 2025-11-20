@@ -1,48 +1,47 @@
 ﻿using System.Collections.ObjectModel;
-using System.Text.Json.Serialization;
+using System.ComponentModel.DataAnnotations;
+using BytChineseSteam.Models.DataAnnotations;
 using BytChineseSteam.Repository.Extent;
 
 namespace BytChineseSteam.Models;
 
-public abstract class Employee
+public class Employee
 {
     private static readonly Extent<Employee> Extent = new();
-    public Name? Name { get; set; }
-    public decimal? Salary { get; set; }
 
-    public decimal CollectedBonuses { get; set; } = 0;
+    [Required] public Name? Name { get; set; }
 
-    private static List<Employee> _employees = new();
-    
-    protected Employee(Name name, decimal? salary)
+    [Required] [ValidEmail] public string Email { get; set; }
+
+    [Required]
+    [RegularExpression(@"\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})")]
+    public string PhoneNumber { get; set; }
+
+    [Required] [MinLength(8)] public string HashedPassword { get; set; }
+
+    [NonNegative] public decimal? Salary { get; set; }
+
+    public decimal GetCollectedBonuses()
+    {
+        return 0;
+    }
+
+    public Employee(Name name, string email, string phoneNumber, string hashedPassword, decimal? salary)
     {
         Name = name;
+        Email = email;
+        PhoneNumber = phoneNumber;
+        HashedPassword = hashedPassword;
         Salary = salary;
-        
+
         // add to collection
-        AddEmployee(this);
+        Extent.Add(this);
     }
 
-    protected Employee(Name name)
-    {
-        Name = name;
-        
-        // add to collection
-        AddEmployee(this);
-    }
-    
-    // required for deserialization
-    [JsonConstructor]
-    protected Employee()
-    {
-        // entent
-        AddEmployee(this);
-    }
-    
     // extent methods
     public static ReadOnlyCollection<Employee> ViewAllEmployees()
     {
-        return _employees.AsReadOnly();
+        return Extent.All();
     }
 
     // never use this outside of constructors. when you call new() the newly created object will be added to the
@@ -51,14 +50,15 @@ public abstract class Employee
     {
         if (employee == null)
             throw new ArgumentException($"The given employee cannot be null");
-        
-        _employees.Add(employee);
+
+        Extent.Add(employee);
     }
-    
+
     // class methods
     // will be required to change the isSuperAdmin bool to an actual check on the controller/service layer
     // I will also have to figure out the use of generics here, but that's inheritance issues
-    public static Employee CreateEmployee<T>(string firstName, string lastName, decimal? salary, bool isSuperAdmin)
+    public static Employee CreateEmployee<T>(string firstName, string lastName, string email, string phoneNumber,
+        string password, decimal? salary, bool isSuperAdmin)
     {
         if (!isSuperAdmin)
             throw new UnauthorizedAccessException("Only super admins can create Employees");
@@ -66,22 +66,22 @@ public abstract class Employee
         var name = new Name(firstName, lastName);
         if (typeof(T) == typeof(Admin))
         {
-            if (salary == null) return new Admin(name);
-            else return new Admin(name, (decimal)salary);
-        } 
+            if (salary == null) return new Admin(name, email, phoneNumber, password, null);
+            else return new Admin(name, email, phoneNumber, password, (decimal)salary);
+        }
         else if (typeof(T) == typeof(Manager))
         {
-            if (salary == null) return new Manager(name);
-            else return new Manager(name, (decimal)salary);
-        } 
+            if (salary == null) return new Manager(name, email, phoneNumber, password, null);
+            else return new Manager(name, email, phoneNumber, password, (decimal)salary);
+        }
         else if (typeof(T) == typeof(SuperAdmin))
         {
-            if (salary == null) return new SuperAdmin(name);
-            else return new SuperAdmin(name, (decimal)salary);
+            if (salary == null) return new SuperAdmin(name, email, phoneNumber, password, null);
+            else return new SuperAdmin(name, email, phoneNumber, password, (decimal)salary);
         }
         else
         {
-            throw  new ArgumentException($"The given employee type  {typeof(T)} is not supported.");
+            throw new ArgumentException($"The given employee type  {typeof(T)} is not supported.");
         }
     }
 }

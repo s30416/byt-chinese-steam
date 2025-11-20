@@ -3,32 +3,15 @@ using System.Text.Json.Serialization;
 
 namespace BytChineseSteam.Models;
 
-public class Manager : Employee
+public class Manager(Name name, string email, string phoneNumber, string hashedPassword, decimal? salary)
+    : Employee(name, email, phoneNumber, hashedPassword, salary)
 {
     public static readonly decimal PromotionBonus = 100;
     
     private static List<Manager> _managers = new();
 
-    protected internal Manager(Name name) : base(name)
-    {
-        // extent
-        AddManager(this);
-    }
-
-    protected internal Manager(Name name, decimal salary) : base(name, salary)
-    {
-        // extent
-        AddManager(this);
-    }
-
-    [JsonConstructor]
-    private Manager()
-    {
-        // extent
-        AddManager(this);
-    }
-    
     // extent methods
+
     public static ReadOnlyCollection<Manager> ViewAllManagers()
     {
         return _managers.AsReadOnly();

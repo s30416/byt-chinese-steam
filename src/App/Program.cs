@@ -17,5 +17,4 @@ key.AccessKey = "134234";
 var values = Key.Extent.All();
 Console.WriteLine(JsonSerializer.Serialize(Key.Extent.All()));
 
-// ExtentPersistence.Persist(Key.Extent);
-// Key.Extent.Update();
+ExtentPersistence.Persist(Key.Extent);

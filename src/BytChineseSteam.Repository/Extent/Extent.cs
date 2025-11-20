@@ -35,7 +35,7 @@ public class Extent<T> : IExtent
     {
         _items.Remove(item);
     }
-
+    
     public ReadOnlyCollection<T> All()
     {
         return _items.AsReadOnly();

@@ -1,15 +1,116 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using BytChineseSteam.Models;
+using BytChineseSteam.Repository.Extent;
 
 namespace BytChineseSteam.Tests;
 
 public class EmployeeTests
 {
-    private static void ValidateModel(object model)
-    {
-        var context = new ValidationContext(model);
+    private static readonly string Path = "store.json";
 
-        Validator.ValidateObject(model, context, true);
+    [SetUp]
+    public void Setup()
+    {
+        File.WriteAllText(Path, "{}");
+        ExtentPersistence.LoadAll();
+    }
+
+    [Test]
+    public void ShouldThrowValidationException_WhenNameIsNull()
+    {
+        Assert.Throws<ValidationException>(() =>
+        {
+            var employee = new Employee(null!, "email@gmail.com", "1234567899", "12345678", 1);
+        });
+    }
+
+    [Test]
+    public void ShouldThrowValidationException_WhenEmailIsNull()
+    {
+        Assert.Throws<ValidationException>(() =>
+        {
+            var employee = new Employee(new Name { FirstName = "name", LastName = "surname" }, null!,
+                "1234567899", "12345678", 1);
+        });
+    }
+
+    [Test]
+    public void ShouldThrowValidationException_WhenEmailIsInvalid()
+    {
+        Assert.Throws<ValidationException>(() =>
+        {
+            var employee = new Employee(new Name { FirstName = "name", LastName = "surname" }, "hello",
+                "1234567899", "12345678", 1);
+        });
+    }
+
+    [Test]
+    public void ShouldThrowValidationException_WhenPhoneNumberIsNull()
+    {
+        Assert.Throws<ValidationException>(() =>
+        {
+            var employee = new Employee(new Name { FirstName = "name", LastName = "surname" }, "email@google.com",
+                null!, "12345678", 1);
+        });
+    }
+
+    [Test]
+    public void ShouldThrowValidationException_WhenPhoneNumberInvalid()
+    {
+        Assert.Throws<ValidationException>(() =>
+        {
+            var employee = new Employee(new Name { FirstName = "name", LastName = "surname" }, "email@gmail.com",
+                "0", "12345678", 1);
+        });
+    }
+
+    [Test]
+    public void ShouldThrowValidationException_WhenPasswordIsNull()
+    {
+        Assert.Throws<ValidationException>(() =>
+        {
+            var employee = new Employee(new Name { FirstName = "name", LastName = "surname" }, "email@gmail.com",
+                "1234567899", null!, 1);
+        });
+    }
+
+    [Test]
+    public void ShouldThrowValidationException_WhenPasswordIsInvalid()
+    {
+        Assert.Throws<ValidationException>(() =>
+        {
+            var employee = new Employee(new Name { FirstName = "name", LastName = "surname" }, "email@gmail.com",
+                "1234567899", "12333", 1);
+        });
+    }
+
+    [Test]
+    public void ShouldThrowValidationException_WhenSalaryNegative()
+    {
+        Assert.Throws<ValidationException>(() =>
+        {
+            var employee = new Employee(new Name { FirstName = "name", LastName = "surname" }, "email@gmail.com",
+                "1234567899", "12345678", -1);
+        });
+    }
+
+    [Test]
+    public void ShouldCreate_WhenPassesValidation()
+    {
+        Assert.DoesNotThrow(() =>
+        {
+            var employee = new Employee(new Name { FirstName = "name", LastName = "surname" }, "email@gmail.com",
+                "1234567899", "12345678", 1);
+        });
     }
     
-    // todo: write employee tests when the Employee -> User inheritance is done
+    [Test]
+    public void ShouldCreate_WhenPassesValidationAndSalaryNull()
+    {
+        Assert.DoesNotThrow(() =>
+        {
+            var employee = new Employee(new Name { FirstName = "name", LastName = "surname" }, "email@gmail.com",
+                "1234567899", "12345678", null);
+        });
+    }
 }
