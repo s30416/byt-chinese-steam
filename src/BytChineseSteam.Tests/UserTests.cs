@@ -14,7 +14,14 @@ namespace BytChineseSteam.Tests
             {
             }
 
-            public TestUser() : base() { }
+            public TestUser() : base(
+                new Name("just", "some"),
+                "rmdomas@sadasd.com",
+                "0000000000",
+                "asda_asdas"
+            )
+            { 
+            }
         }
 
         

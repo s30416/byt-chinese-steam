@@ -1,10 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using BytChineseSteam.Models.DataAnnotations;
+using BytChineseSteam.Repository.Extent;
 
 namespace BytChineseSteam.Models;
 
 public abstract class User
 {
+
+    private static readonly Extent<User> Extent = new();
  
     [Required]
     public Name Name { get; set; } = null!;
@@ -16,10 +19,10 @@ public abstract class User
     [RegularExpression(@"^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$")]
     public string PhoneNumber { get; set; } = null!;
     
-    
+    [Required]
+    [MinLength(8)]
     public string HashedPassword { get; set; } = null!;
     
-    private static readonly List<User> _users = new List<User>();
 
 
     protected User(Name name, string email, string phoneNumber, string hashedPassword)
@@ -30,31 +33,29 @@ public abstract class User
         HashedPassword = hashedPassword;
     }
     
-    public User() {}
-
 
     
     public static User CreateUser(User newUser)
     {
-        if (_users.Any(u => u.Email.Equals(newUser.Email, StringComparison.OrdinalIgnoreCase)))
+        if (Extent.All().Any(u => u.Email.Equals(newUser.Email, StringComparison.OrdinalIgnoreCase)))
         {
             throw new ArgumentException("User already exists");
         }
         
-        _users.Add(newUser);
+        Extent.Add(newUser);
         return newUser;
     }
 
     
     public static IReadOnlyList<User> ViewAllUsers()
     {
-        return _users.AsReadOnly();
+        return Extent.All();
     }
     
     
     public static User? GetUserByEmail(string email)
     {
-        return _users.FirstOrDefault(u => u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
+        return Extent.All().FirstOrDefault(u => u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
     }
     
     public static User? UpdateUser(string email, Name newName, string newPhoneNumber)
@@ -78,7 +79,7 @@ public abstract class User
         var userToDelete = GetUserByEmail(email);
         if (userToDelete != null)
         {
-            _users.Remove(userToDelete);
+            Extent.Remove(userToDelete);
             return true;
         }
         return false;
@@ -90,10 +91,11 @@ public abstract class User
 public class Name
 {
     [Required]
+    [MinLength(1)]
     public string FirstName { get; set; } = null!;
     
-    
     [Required]
+    [MinLength(1)]
     public string LastName { get; set; } = null!;
 
     public Name(string firstName, string lastName)
