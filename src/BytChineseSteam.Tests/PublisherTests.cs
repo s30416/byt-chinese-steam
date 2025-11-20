@@ -1,6 +1,4 @@
-﻿// File: PublisherTests.cs
-
-using System.Collections;
+﻿using System.Collections;
 using System.Reflection;
 using BytChineseSteam.Models;
 
