@@ -1,18 +1,17 @@
 ﻿// File: PublisherTests.cs
-using System;
-using System.Reflection;
-using NUnit.Framework;
-using BytChineseSteam.Models;
-using System.Collections;
 
-namespace BytChineseSteam_Tests
+using System.Collections;
+using System.Reflection;
+using BytChineseSteam.Models;
+
+namespace BytChineseSteam.Tests
 {
     [TestFixture]
     public class PublisherTests
     {
         // these are set up fresh in SetUp()
-        private Publisher pubA;
-        private Publisher pubB;
+        private Publisher _pubA;
+        private Publisher _pubB;
 
         [SetUp]
         public void SetUp()
@@ -21,8 +20,8 @@ namespace BytChineseSteam_Tests
             ClearGameStaticList();
 
             // create two publishers for tests that need them
-            pubA = Publisher.CreatePublisher("PubA", "Desc A", isAdmin: true);
-            pubB = Publisher.CreatePublisher("PubB", "Desc B", isAdmin: true);
+            _pubA = Publisher.CreatePublisher("PubA", "Desc A", isAdmin: true);
+            _pubB = Publisher.CreatePublisher("PubB", "Desc B", isAdmin: true);
         }
 
         [TearDown]
@@ -35,36 +34,107 @@ namespace BytChineseSteam_Tests
         private static void ClearPublisherStaticList()
         {
             var publisherType = typeof(Publisher);
-            var field = publisherType.GetField("_publishers", BindingFlags.NonPublic | BindingFlags.Static);
-            if (field == null) throw new InvalidOperationException("Could not find field _publishers via reflection.");
-            var list = (IList)field.GetValue(null);
+
+            // Get the static Extent field
+            var extentField = publisherType.GetField("Extent", BindingFlags.NonPublic | BindingFlags.Static);
+            if (extentField == null) throw new InvalidOperationException("Could not find field Extent via reflection.");
+
+            // Get the instance of Extent<Publisher>
+            var extentInstance = extentField.GetValue(null);
+            if (extentInstance == null) return;
+
+            // Get the private _items list inside that instance
+            var extentType = extentInstance.GetType();
+            var itemsField = extentType.GetField("_items", BindingFlags.NonPublic | BindingFlags.Instance);
+            if (itemsField == null)
+                throw new InvalidOperationException("Could not find field _items inside Extent via reflection.");
+
+            // Clear list.
+            var list = (IList)itemsField.GetValue(extentInstance)!;
             list?.Clear();
         }
 
         private static void ClearGameStaticList()
         {
-            var gameType = typeof(Game); 
+            var gameType = typeof(Game);
             var field = gameType.GetField("_viewAllGames", BindingFlags.NonPublic | BindingFlags.Static);
-            if (field == null) throw new InvalidOperationException("Could not find field _viewAllGames via reflection.");
-            var list = (IList)field.GetValue(null);
+            // Game implementation will change, keep this check loose 
+            if (field == null) return;
+            var list = (IList)field.GetValue(null)!;
             list?.Clear();
         }
 
-        // GetAllPublishersGames (instance method)
+        [Test]
+        public void TestCreatePublisher_AddsToExtent()
+        {
+            var countBefore = Publisher.GetAll().Count;
+            var newPub = Publisher.CreatePublisher("NewPub", "NewDesc", isAdmin: true);
+
+            Assert.That(Publisher.GetAll().Count, Is.EqualTo(countBefore + 1));
+            Assert.That(Publisher.GetAll().Contains(newPub), Is.True);
+        }
+
+        [Test]
+        public void TestCreatePublisher_NotAdmin_ThrowsException()
+        {
+            Assert.Throws<UnauthorizedAccessException>(() =>
+                Publisher.CreatePublisher("Barack Obama", "Let me be clear", isAdmin: false));
+        }
+
+        [Test]
+        public void TestReadPublisher_CanRetrieveByName()
+        {
+            // Assuming we use GetAll() to find it, as implemented in the class
+            var foundPub = Publisher.GetAll().FirstOrDefault(p => p.Name == "PubA");
+            Assert.That(foundPub, Is.Not.Null);
+            Assert.That(foundPub.Description, Is.EqualTo("Desc A"));
+        }
+
+        [Test]
+        public void TestUpdatePublisher_UpdatesProperties()
+        {
+            _pubA.UpdatePublisher("PubA_Updated", "Desc A_Updated", isAdmin: true);
+
+            Assert.That(_pubA.Name, Is.EqualTo("PubA_Updated"));
+            Assert.That(_pubA.Description, Is.EqualTo("Desc A_Updated"));
+
+            // Check if change is reflected in the global list
+            var storedPub = Publisher.GetAll().FirstOrDefault(p => p.Name == "PubA_Updated");
+            Assert.That(storedPub, Is.Not.Null);
+            Assert.That(storedPub.Description, Is.EqualTo("Desc A_Updated"));
+        }
+
+        [Test]
+        public void TestDeletePublisher_RemovesFromExtent()
+        {
+            Publisher.DeletePublisher("PubA", isAdmin: true);
+
+            var storedPub = Publisher.GetAll().FirstOrDefault(p => p.Name == "PubA");
+            Assert.That(storedPub, Is.Null);
+        }
+
+        [Test]
+        public void TestDeletePublisher_NotFound_ThrowsException()
+        {
+            Assert.Throws<InvalidOperationException>(() =>
+                Publisher.DeletePublisher("NonExistentPub", isAdmin: true));
+        }
+
         [Test]
         public void TestGetAllPublishersGames_ReturnsOnlyGamesWithThisPublisher()
         {
-            var g1 = new Game("G1", pubA);
-            var g2 = new Game("G2", pubB);
+            var g1 = new Game("G1", _pubA);
+            var g2 = new Game("G2", _pubB);
             
-            var aGames = pubA.GetAllPublishersGames();
-            var bGames = pubB.GetAllPublishersGames();
-            
-            Assert.That(aGames.Count, Is.EqualTo(1));
-            Assert.That(aGames[0].Title, Is.EqualTo("G1"));
-
-            Assert.That(bGames.Count, Is.EqualTo(1));
-            Assert.That(bGames[0].Title, Is.EqualTo("G2"));
+            var aGames = _pubA.GetAllPublishersGames();
+            var bGames = _pubB.GetAllPublishersGames();
+            Assert.Multiple(() =>
+            {
+                Assert.That(aGames, Has.Count.EqualTo(1));
+                Assert.That(aGames[0].Title, Is.EqualTo("G1"));
+                Assert.That(bGames, Has.Count.EqualTo(1));
+                Assert.That(bGames[0].Title, Is.EqualTo("G2"));
+            });
         }
     }
 }

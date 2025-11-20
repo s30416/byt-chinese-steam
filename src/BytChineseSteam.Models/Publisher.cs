@@ -2,6 +2,7 @@
  * possibly annotation that makes function only for admins
 */
 
+using System.Collections.ObjectModel;
 using BytChineseSteam.Repository.Extent;
 
 namespace BytChineseSteam.Models;
@@ -12,16 +13,14 @@ public class Publisher
     public string Name { get; set; }
     public string Description { get; set; }
     
-
     public Publisher(string name, string description)
     {
         Name = name;
         Description = description;
         
-        Extent.Add(this); // add this
+        Extent.Add(this);
     }
     
-
     public static Publisher CreatePublisher(string name, string description, bool isAdmin)
     {
         if (!isAdmin)
@@ -33,9 +32,14 @@ public class Publisher
         {
             throw new ArgumentException("Say. Its. Name... You're god damn right.");
         }
+        
+        // Check for duplicates
+        if (Extent.All().Any(p => p.Name == name.Trim()))
+        {
+            throw new InvalidOperationException("Publisher with this name already exists.");
+        }
 
         var publisher = new Publisher(name.Trim(), description ?? "");
-        // _publishers.Add(publisher);
         return publisher;
     }
 
@@ -44,11 +48,12 @@ public class Publisher
         if (!isAdmin)
             throw new UnauthorizedAccessException("Only admin can delete publishers.");
 
-        // var publisher = _publishers.FirstOrDefault(p => p.Name == name);
-        // if (publisher == null)
+        var publisher = Extent.All().FirstOrDefault(p => p.Name == name);
+        
+        if (publisher == null)
             throw new InvalidOperationException("Publisher not found.");
 
-        // _publishers.Remove(publisher);
+        Extent.Remove(publisher);
     }
 
     public void UpdatePublisher(string newName, string newDescription, bool isAdmin)
@@ -72,5 +77,10 @@ public class Publisher
                 list.Add(g);
         }
         return list.AsReadOnly();
+    }
+    
+    public static ReadOnlyCollection<Publisher> GetAll()
+    {
+        return Extent.All();
     }
 }
