@@ -54,4 +54,10 @@ public class KeyTest
     {
         Assert.Throws<ValidationException>(() => new Key("", 10, DateTime.Now, -1, []));
     }
+
+    [Test]
+    public void Validation_ShouldThrowValidationError_WhenBenefitsEmptyString()
+    {
+        Assert.Throws<ValidationException>(() => new Key("some key", 10, DateTime.Now, 0, [""]));
+    }
 }
