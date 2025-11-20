@@ -1,17 +1,13 @@
 ﻿using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
+using BytChineseSteam.Repository.Extent;
 
 namespace BytChineseSteam.Models;
 
-[JsonPolymorphic(TypeDiscriminatorPropertyName = "$type")]
-[JsonDerivedType(typeof(Admin), "Admin")]
-[JsonDerivedType(typeof(Manager), "Manager")]
-[JsonDerivedType(typeof(SuperAdmin), "SuperAdmin")]
-// todo: implement inheritance later
 public abstract class Employee
 {
+    private static readonly Extent<Employee> Extent = new();
     public Name? Name { get; set; }
-    
     public decimal? Salary { get; set; }
 
     public decimal CollectedBonuses { get; set; } = 0;

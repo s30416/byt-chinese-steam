@@ -36,11 +36,6 @@ public class Extent<T> : IExtent
         _items.Remove(item);
     }
 
-    public void Update(T item)
-    {
-        
-    }
-
     public ReadOnlyCollection<T> All()
     {
         return _items.AsReadOnly();
@@ -51,6 +46,14 @@ public class Extent<T> : IExtent
         try
         {
             var items = element.Deserialize<List<T>>();
+
+            if (items == null) return;
+            
+            foreach (var item in items)
+            {
+                Validate(item);
+            }
+
             _items = items ?? throw new ArgumentException($"Received null for {Name} items");
         }
         catch (Exception e)
@@ -62,6 +65,10 @@ public class Extent<T> : IExtent
 
     public JsonNode ToJson()
     {
+        foreach (var item in All())
+        {
+            Validate(item);
+        }
         return JsonSerializer.SerializeToNode(All())!;
     }
 }
