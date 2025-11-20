@@ -6,8 +6,9 @@ using BytChineseSteam.Repository.Extent;
 
 namespace BytChineseSteam.Models;
 
-public class Publisher : ExtentModel<Publisher>
+public class Publisher
 {
+    private static readonly Extent<Publisher> Extent = new();
     public string Name { get; set; }
     public string Description { get; set; }
     
