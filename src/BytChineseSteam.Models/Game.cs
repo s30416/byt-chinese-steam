@@ -1,19 +1,46 @@
-﻿namespace BytChineseSteam.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using BytChineseSteam.Models.Util;
+using BytChineseSteam.Repository.Extent;
+
+namespace BytChineseSteam.Models;
 
 public class Game
 {
-    private static readonly List<Game> _viewAllGames = new List<Game>();
-    public static IReadOnlyList<Game> ViewAllGames => _viewAllGames.AsReadOnly();
+    private static readonly Extent<Game> Extent = new();
+    
+    public static IReadOnlyList<Game> ViewAllGames => Extent.All();
 
-    public string Title { get; private set; }
-    public Publisher Publisher { get; private set; } // required, set in ctor
+    [MinLength(1)] [Required] public string Title { get; private set; }
+    
+    public string? Description { get; private set; }
+    
+    [MinLength(1)] [Required] public string GameSlug { get; private set; } // created using Slugifier class in Utils
+    
+    // reverse connections
+    public Category? Category { get; private set; } // nullabe because aggregation
+    
+    public Publisher Publisher { get; private set; }
 
-    public Game(string title, Publisher publisher)
+    public Game(string title, string? description, Category? category, Publisher publisher)
     {
-        Title = title ?? throw new ArgumentNullException(nameof(title));
-        Publisher = publisher ?? throw new ArgumentNullException(nameof(publisher));
-        _viewAllGames.Add(this);
+        Title = title;
+        Description = description;
+        GameSlug = Slugifier.ToGameSlug(title);
+        Category = category;
+        Publisher = publisher;
+
+        Extent.Add(this);
     }
+
+    public Game(string title, string? description, Publisher publisher)
+    {
+        Title = title;
+        Description = description;
+        GameSlug = Slugifier.ToGameSlug(title);
+        Publisher = publisher;
+    }
+
+    // methods
 
     public override string ToString() => $"Game(Title={Title}, Publisher={Publisher.Name})";
 }
