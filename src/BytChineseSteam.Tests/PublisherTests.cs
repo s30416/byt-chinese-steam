@@ -121,8 +121,8 @@ namespace BytChineseSteam.Tests
         [Test]
         public void TestGetAllPublishersGames_ReturnsOnlyGamesWithThisPublisher()
         {
-            var g1 = new Game("G1", _pubA);
-            var g2 = new Game("G2", _pubB);
+            var g1 = new Game("G1", "descr1", _pubA);
+            var g2 = new Game("G2", "descr", _pubB);
             
             var aGames = _pubA.GetAllPublishersGames();
             var bGames = _pubB.GetAllPublishersGames();
