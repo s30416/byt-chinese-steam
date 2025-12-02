@@ -9,13 +9,6 @@ public class ExtentTest
 {
     private const string Path = "store.json";
 
-    [SetUp]
-    public void ClearJsonFile()
-    {
-        File.WriteAllText(Path, "{}");
-        ExtentPersistence.LoadAll();
-    }
-
     [Test]
     public void ShouldBeEmpty_OnStart()
     {
