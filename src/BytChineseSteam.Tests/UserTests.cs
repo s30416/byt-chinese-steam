@@ -13,15 +13,7 @@ namespace BytChineseSteam.Tests
                 : base(name, email, phoneNumber, hashedPassword)
             {
             }
-
-            public TestUser() : base(
-                new Name("valid", "user"),
-                $"valid_{Guid.NewGuid()}@example.com",
-                "1234567890",
-                "password123"
-            )
-            {
-            }
+            
         }
 
         
@@ -94,46 +86,32 @@ namespace BytChineseSteam.Tests
         }
 
         [Test]
-        public void User_WhenEmailIsInvalid_ShouldBeInvalid()
+        public void User_WhenEmailIsInvalid_ShouldThrowException()
         {
-            var user = new TestUser
-            {
-                Name = new Name { FirstName = "Test", LastName = "User" },
-                Email = "not-a-valid-email"
-            };
-            
-            var errors = ValidateModel(user);
-
-            Assert.That(errors, Is.Not.Empty);
-            Assert.That(errors.Any(e => e.MemberNames.Contains("Email")), Is.True);
+            var ex = Assert.Throws<ValidationException>(() => new TestUser(
+                new Name("Test", "User"), 
+                "not-a-valid-email", 
+                "1234567890", 
+                "pass1234"
+            ));
         }
         
         [Test]
-        public void User_WhenPhoneNumberIsInvalid_ShouldBeInvalid()
+        public void User_WhenPhoneNumberIsInvalid_ShouldThrowException()
         {
-            var user = new TestUser
-            {
-                Name = new Name { FirstName = "Dgfhdfh", LastName = "DFdsfkjd" },
-                Email = "dfgdfg@example.com",
-                PhoneNumber = "12345"
-            };
-            
-            var errors = ValidateModel(user);
-
-            Assert.That(errors, Is.Not.Empty);
-            Assert.That(errors.Any(e => e.MemberNames.Contains("PhoneNumber")), Is.True);
+            Assert.Throws<ValidationException>(() => new TestUser(
+                new Name("Test", "User"), 
+                "valid@email.com", 
+                "invalid-phone", 
+                "pass1234"
+            ));
         }
 
         [Test]
         public void User_WhenAllPropertiesAreValid_ShouldBeValid()
         {
-            var user = new TestUser
-            {
-                Name = new Name { FirstName = "Dfkjdfbldf", LastName = "DFfbdkf" },
-                Email = "valid.email@example.com",
-                PhoneNumber = "+123-456-7890",
-                HashedPassword = "some_hash"
-            };
+            
+            var user = new TestUser( new Name { FirstName = "Dgfhdfh", LastName = "DFdsfkjd" }, "valid.email@example.com", "+123-456-7890", "some_hash"  );
             
             var errors = ValidateModel(user);
 
@@ -159,7 +137,6 @@ namespace BytChineseSteam.Tests
         public void CreateUser_WhenEmailExists_ShouldThrowArgumentException()
         {
             var user1 = new TestUser(new Name("Some", "One"), "Some@example1.com", "+1234567890", "hash1dfgdsf");
-            // User.CreateUser(user1);
             
             var user2 = new TestUser(new Name("Wone", "One"), "Some@example1.com", "+0987654321", "hash1dfgdsf");
 
@@ -170,7 +147,6 @@ namespace BytChineseSteam.Tests
         public void GetUserByEmail_WhenUserExists_ShouldReturnUser()
         {
             var user = new TestUser(new Name("Some", "One"), "Some@example1.com", "+1234567890", "hashasdasdwqe");
-            // User.CreateUser(user);
 
             var foundUser = User.GetUserByEmail("Some@example1.com");
 
@@ -189,7 +165,6 @@ namespace BytChineseSteam.Tests
         public void UpdateUser_WhenUserExists_ShouldUpdateDetails()
         {
             var user = new TestUser(new Name("Some", "One"), "Some@example.com", "+1234567890", "hashasdasdadw");
-            // User.CreateUser(user);
 
             var newName = new Name("Some", "One");
             var newPhone = "+1112223333";
@@ -215,7 +190,6 @@ namespace BytChineseSteam.Tests
         public void DeleteUser_WhenUserExists_ShouldReturnTrueAndRemoveUser()
         {
             var user = new TestUser(new Name("Some", "One"), "Some@example1.com", "+1234567890", "hash1dfgdsf");
-            // User.CreateUser(user);
             
             Assert.That(User.ViewAllUsers().Count, Is.EqualTo(1));
 
