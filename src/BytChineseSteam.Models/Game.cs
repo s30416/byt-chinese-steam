@@ -28,6 +28,8 @@ public class Game
         GameSlug = Slugifier.ToGameSlug(title);
         Category = category;
         Publisher = publisher;
+        
+        if (category != null) category.AddGame(this);
 
         Extent.Add(this);
     }
