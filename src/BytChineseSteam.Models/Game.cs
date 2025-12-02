@@ -15,6 +15,7 @@ public class Game
     
     [MinLength(1)] [Required] public string GameSlug { get; private set; } 
     
+    // reverse connections (if you're reading this comment: close this code right now and never come back)
     private readonly HashSet<Category> _categories = new();
     
     public Publisher Publisher { get; private set; }
@@ -84,6 +85,8 @@ public class Game
         Extent.Remove(this);
     }
 
+    // the game can be removed from the category only using the category method
+    // subject for later change (if you need me to change this - please say so, it will take 15mins)
     internal void AddCategory(Category category)
     {
         _categories.Add(category);
@@ -94,6 +97,7 @@ public class Game
         _categories.Remove(category);
     }
 
+    // methods
     public IReadOnlyList<Category> GetAllCategoriesForGame() => _categories.ToList().AsReadOnly();
     
     public static IReadOnlyList<Game> ViewAllGames => Extent.All();
