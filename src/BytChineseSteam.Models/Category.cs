@@ -19,59 +19,45 @@ public class Category
     
     // dictionary methods
     
-    // adds the game to the dictionary if it is not already there and resets the game's category
-    // if the game is already in the category, then we ensure it has the correct category set
     public void AddGame(Game game)
     {
         if (!_games.ContainsKey(game.GameSlug))
         {
             _games.Add(game.GameSlug, game);
-            game.Category = this;   
-        }
-        else
-        {
-            game.Category = this;
+            game.AddCategory(this);
         }
     }
 
-    // adds all the games from the list that are not already added and resets its category
-    // if the game is already in the category, then we ensure it has the correct category set
     public void AddGames(IEnumerable<Game> games)
     {
         foreach (var game in games)
         {
-            if (!_games.ContainsKey(game.GameSlug))
-            {
-                _games.Add(game.GameSlug, game);
-                game.Category = this;   
-            }
-            else
-            {
-                game.Category = this;
-            }
+            AddGame(game);
         }
     }
 
     // removing games and removing their categories
     public void RemoveGame(Game game)
     {
-        var removedGame = _games[game.GameSlug];
-        _games.Remove(game.GameSlug);
-        removedGame.Category = null;
+        if (_games.Remove(game.GameSlug))
+        {
+            game.RemoveCategory(this);
+        }
     }
     
     public void RemoveGame(string gameSlug)
     {
-        var removedGame = _games[gameSlug];
-        _games.Remove(gameSlug);
-        removedGame.Category = null;
+        if (_games.TryGetValue(gameSlug, out var game))
+        {
+            _games.Remove(gameSlug);
+            game.RemoveCategory(this);
+        }
     }
-    
     
     // class methods
     
     // get the list of games in category
-    public ReadOnlyCollection<Game> GetALlGamesInCategory => _games.Values.ToList().AsReadOnly();
+    public ReadOnlyCollection<Game> GetAllGamesInCategory => _games.Values.ToList().AsReadOnly();
     
     
 }

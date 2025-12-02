@@ -7,8 +7,6 @@ namespace BytChineseSteam.Models;
 public class Game
 {
     private static readonly Extent<Game> Extent = new();
-    
-    public static IReadOnlyList<Game> ViewAllGames => Extent.All();
 
     [MinLength(1)] [Required] public string Title { get; private set; }
     
@@ -17,7 +15,7 @@ public class Game
     [MinLength(1)] [Required] public string GameSlug { get; private set; } // created using Slugifier class in Utils
     
     // reverse connections
-    public Category? Category { get; set; } // nullabe because aggregation (should the setter be private??)
+    private readonly HashSet<Category> _categories = new();
     
     public Publisher Publisher { get; private set; }
 
@@ -26,10 +24,13 @@ public class Game
         Title = title;
         Description = description;
         GameSlug = Slugifier.ToGameSlug(title);
-        Category = category;
         Publisher = publisher;
-        
-        if (category != null) category.AddGame(this);
+
+        if (category != null)
+        {
+            category.AddGame(this);
+            _categories.Add(category);
+        }
 
         Extent.Add(this);
     }
@@ -43,8 +44,23 @@ public class Game
         
         Extent.Add(this);
     }
+    
+    // the game can be removed from the category only using the category method
+    // subject for later change (if you need me to change this - please say so, it will take 15mins)
+    internal void AddCategory(Category category)
+    {
+        _categories.Add(category);
+    }
+
+    internal void RemoveCategory(Category category)
+    {
+        _categories.Remove(category);
+    }
 
     // methods
+    public IReadOnlyList<Category> GetAllCategoriesForGame() => _categories.ToList().AsReadOnly();
+    
+    public static IReadOnlyList<Game> ViewAllGames => Extent.All();
 
     public override string ToString() => $"Game(Title={Title}, Publisher={Publisher.Name})";
 }
