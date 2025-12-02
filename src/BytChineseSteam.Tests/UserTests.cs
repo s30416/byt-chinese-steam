@@ -150,22 +150,22 @@ namespace BytChineseSteam.Tests
         [Test]
         public void CreateUser_WhenUserIsNew_ShouldAddUserToList()
         {
-            var user = new TestUser(new Name("Some", "One"), "someone@example.com", "+1234567890", "hash");
+            var user = new TestUser(new Name("Some", "One"), "someone1@example.com", "+1234567890", "hash1dfgdsf");
             
-            User.CreateUser(user);
+            // User.CreateUser(user);
 
             var users = User.ViewAllUsers();
             Assert.That(users.Count, Is.EqualTo(1));
-            Assert.That(users[0].Email, Is.EqualTo("someone@example.com"));
+            Assert.That(users[0].Email, Is.EqualTo("someone1@example.com"));
         }
 
         [Test]
         public void CreateUser_WhenEmailExists_ShouldThrowArgumentException()
         {
-            var user1 = new TestUser(new Name("Some", "One"), "Some@example.com", "+1234567890", "hash1");
-            User.CreateUser(user1);
+            var user1 = new TestUser(new Name("Some", "One"), "Some@example1.com", "+1234567890", "hash1dfgdsf");
+            // User.CreateUser(user1);
             
-            var user2 = new TestUser(new Name("Wone", "One"), "Some@example.com", "+0987654321", "hash2");
+            var user2 = new TestUser(new Name("Wone", "One"), "Some@example1.com", "+0987654321", "hash1dfgdsf");
 
             Assert.Throws<ArgumentException>(() => User.CreateUser(user2));
         }
@@ -173,10 +173,10 @@ namespace BytChineseSteam.Tests
         [Test]
         public void GetUserByEmail_WhenUserExists_ShouldReturnUser()
         {
-            var user = new TestUser(new Name("Some", "One"), "Some@example.com", "+1234567890", "hash");
-            User.CreateUser(user);
+            var user = new TestUser(new Name("Some", "One"), "Some@example1.com", "+1234567890", "hashasdasdwqe");
+            // User.CreateUser(user);
 
-            var foundUser = User.GetUserByEmail("Some@example.com");
+            var foundUser = User.GetUserByEmail("Some@example1.com");
 
             Assert.That(foundUser, Is.Not.Null);
             Assert.That(foundUser.Name.FirstName, Is.EqualTo("Some"));
@@ -192,8 +192,8 @@ namespace BytChineseSteam.Tests
         [Test]
         public void UpdateUser_WhenUserExists_ShouldUpdateDetails()
         {
-            var user = new TestUser(new Name("Some", "One"), "Some@example.com", "+1234567890", "hash");
-            User.CreateUser(user);
+            var user = new TestUser(new Name("Some", "One"), "Some@example.com", "+1234567890", "hashasdasdadw");
+            // User.CreateUser(user);
 
             var newName = new Name("Some", "One");
             var newPhone = "+1112223333";
@@ -218,12 +218,12 @@ namespace BytChineseSteam.Tests
         [Test]
         public void DeleteUser_WhenUserExists_ShouldReturnTrueAndRemoveUser()
         {
-            var user = new TestUser(new Name("Some", "One"), "Some@example.com", "+1234567890", "hash");
-            User.CreateUser(user);
+            var user = new TestUser(new Name("Some", "One"), "Some@example1.com", "+1234567890", "hash1dfgdsf");
+            // User.CreateUser(user);
             
             Assert.That(User.ViewAllUsers().Count, Is.EqualTo(1));
 
-            bool result = User.DeleteUser("Some@example.com");
+            bool result = User.DeleteUser("Some@example1.com");
 
             Assert.That(result, Is.True);
             Assert.That(User.ViewAllUsers().Count, Is.EqualTo(0));

@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using BytChineseSteam.Models.DataAnnotations;
 using BytChineseSteam.Repository.Extent;
+using System.Text.Json.Serialization;
 
 namespace BytChineseSteam.Models;
 
@@ -8,16 +9,37 @@ public class Key : Limited
 {
     public static readonly Extent<Key> Extent = new ();
     
-    public Key(string accessKey, decimal originalPrice, DateTime createdAt, decimal priceIncrease,
+    [Required] 
+    [JsonInclude]
+    public Game Game { get; private set; }
+    private Key() { }
+
+    public Key(Game game, string accessKey, decimal originalPrice, DateTime createdAt, decimal priceIncrease,
         List<string> benefits)
     {
+        if (game == null)
+        {
+            throw new ArgumentNullException(nameof(game), "Key cannot exist without a Game.");
+        }
+
+        Game = game;
+        
         AccessKey = accessKey;
         OriginalPrice = originalPrice;
         CreatedAt = createdAt;
         PriceIncrease = priceIncrease;
         Benefits = benefits;
 
+        Game.AddKey(this);
+
         Extent.Add(this);
+    }
+
+    public void DeleteKey()
+    {
+        Extent.Remove(this);
+        
+        Game.RemoveKey(this);
     }
 
     [MinLength(1)] [Required] public string AccessKey { get; set; }
@@ -30,8 +52,6 @@ public class Key : Limited
 
     [NonEmpty(isEnumerable: true)] [Required] public List<string> Benefits { get; set; }
 
-    // class methods from diagram
-    // ...
 
     public decimal GetCurrentPrice()
     {

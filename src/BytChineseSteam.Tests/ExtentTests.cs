@@ -22,10 +22,22 @@ public class ExtentTest
         Assert.That(Key.Extent.All(), Is.Empty);
     }
 
+    // I CHANGE THIS TEST WITH ONE BELOW CAUSE OF COMPOSITION
+    
+    // [Test]
+    // public void ShouldHaveEntity_AfterConstruction()
+    // {
+    //     var key = new Key("asdf", 10, DateTime.Now, 0, []);
+    //     Assert.That(Key.Extent.All(), Is.EquivalentTo(new [] { key }));
+    // }
+    
     [Test]
     public void ShouldHaveEntity_AfterConstruction()
     {
-        var key = new Key("asdf", 10, DateTime.Now, 0, []);
+        var publisher = new Publisher("Test Publisher", "Test Description");
+        var game = new Game("Test Game", "Test Description", publisher);
+
+        var key = new Key(game, "asdf", 10, DateTime.Now, 0, []);
         Assert.That(Key.Extent.All(), Is.EquivalentTo(new [] { key }));
     }
 }
