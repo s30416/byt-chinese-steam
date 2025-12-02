@@ -1,19 +1,22 @@
-using System.Collections;
 using BytChineseSteam.Models;
 using BytChineseSteam.Models.Enums;
 
 namespace BytChineseSteam.Tests;
 
-public class OrderKey_AssociationWithAttributeTest
+public class OrderKeyAssociationWithAttributeTest
 {
+    private Game _game;
     private Order _order;
     private Key _key;
+    private Publisher _publisher;
     private OrderKey _sampleOrderKey;
     
     [SetUp]
     public void Setup()
     {
-        _key = new("asdf", 10, DateTime.Now, 0, []);
+        _publisher = new Publisher("name", "desc");
+        _game = new Game("title", "desc", null, _publisher);
+        _key = new(_game, "asdf", 10, DateTime.Now, 0, []);
         _order = new Order(DateTime.Now, OrderStatus.Active, DateTime.Now, 0, new HashSet<Key>() {_key});
         _sampleOrderKey = new OrderKey(_order, _key);
     }

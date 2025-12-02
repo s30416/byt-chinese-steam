@@ -14,20 +14,42 @@ public class ExtentPersistenceTest
     {
         File.WriteAllText(Path, "{}");
         ExtentPersistence.LoadAll();
+        
     }
+    
+    // I CHANGE THIS TEST WITH ONE BELOW CAUSE OF COMPOSITION
+    
+    // [Test]
+    // public void EntityPersistence_ShouldPersistExtents()
+    // {
+    //     // storing key
+    //     var key = new Key("asdf", 10, DateTime.Now, 0, []);
+    //     ExtentPersistence.Persist(Key.Extent);
+    //     
+    //     // checking json
+    //     var text = File.ReadAllText(Path);
+    //     var extentJson = JsonSerializer.SerializeToNode(Key.Extent.All());
+    //     var json = JsonNode.Parse(text)![Key.Extent.Name]!;
+    //     
+    //     Assert.That(JsonNode.DeepEquals(json, extentJson), Is.True);
+    // }
     
     [Test]
     public void EntityPersistence_ShouldPersistExtents()
     {
+        // Creating dependencies
+        var publisher = new Publisher("Persistence Pub", "Test Description");
+        var game = new Game("Persistence Game", "Test Description", publisher);
+
         // storing key
-        var key = new Key("asdf", 10, DateTime.Now, 0, []);
+        var key = new Key(game, "asdf", 10, DateTime.Now, 0, []);
         ExtentPersistence.Persist(Key.Extent);
-        
+    
         // checking json
-        var text = File.ReadAllText(Path);
+        var text = File.ReadAllText("store.json"); 
         var extentJson = JsonSerializer.SerializeToNode(Key.Extent.All());
         var json = JsonNode.Parse(text)![Key.Extent.Name]!;
-        
+    
         Assert.That(JsonNode.DeepEquals(json, extentJson), Is.True);
     }
 
@@ -35,7 +57,7 @@ public class ExtentPersistenceTest
     public void ShouldDiscoverExtentsAndLoadModels_WhenDiscoverExtentsAndLoadAllIsCalled()
     {
         // writing to file
-        var root = JsonNode.Parse("{}")!;
+     var root = JsonNode.Parse("{}")!;
         var keyNodeArray = JsonSerializer.SerializeToNode<List<object>>([
             new
             {
@@ -46,7 +68,7 @@ public class ExtentPersistenceTest
                 Benefits = new string[]{},
             }
         ]);
-
+    
         root[Key.Extent.Name] = keyNodeArray;
         File.WriteAllText(Path, root.ToJsonString());
         
@@ -57,7 +79,7 @@ public class ExtentPersistenceTest
         
         Assert.That(JsonNode.DeepEquals(retrievedNode, keyNodeArray), Is.True);
     }
-
+    
     [Test]
     public void ShouldThrowException_WhenRegisteringTheSameExtent()
     {
@@ -86,10 +108,23 @@ public class ExtentPersistenceTest
         Assert.That(new List<Key>(), Is.EquivalentTo(Key.Extent.All()));
     }
 
+    // I CHANGE THIS TEST WITH ONE BELOW CAUSE OF COMPOSITION
+    
+    // [Test, Order(4)]
+    // public void Extent_ShouldHaveValues_AfterModelCreation()
+    // {
+    //     var key = new Key("adsf", 0, DateTime.Now, 0, []);
+    //     Assert.That(new List<Key> { key }, Is.EquivalentTo(Key.Extent.All()));
+    // }
+    
     [Test, Order(4)]
     public void Extent_ShouldHaveValues_AfterModelCreation()
     {
-        var key = new Key("adsf", 0, DateTime.Now, 0, []);
+        // Creating dependencies
+        var publisher = new Publisher("Test Publisher", "Test Description");
+        var game = new Game("Test Game", "Test Description", publisher);
+
+        var key = new Key(game, "adsf", 0, DateTime.Now, 0, []);
         Assert.That(new List<Key> { key }, Is.EquivalentTo(Key.Extent.All()));
     }
 
@@ -124,17 +159,17 @@ public class ExtentPersistenceTest
             ]
         );
         var json = $"{{\"Key\":{jsonArrNode!.ToJsonString()}}}";
-
+    
         File.WriteAllText(Path, json);
-
+    
         // loading values
         ExtentPersistence.LoadAll();
-
+    
         var retrievedJsonNode = JsonSerializer.SerializeToNode(Key.Extent.All()) as JsonArray;
-
+    
         Console.WriteLine(jsonArrNode);
         Console.WriteLine(retrievedJsonNode);
-
+    
         Assert.That(JsonNode.DeepEquals(retrievedJsonNode, jsonArrNode), Is.True);
     }
 }
