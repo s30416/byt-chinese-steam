@@ -15,12 +15,12 @@ namespace BytChineseSteam.Tests
             }
 
             public TestUser() : base(
-                new Name("just", "some"),
-                "rmdomas@sadasd.com",
-                "0000000000",
-                "asda_asdas"
+                new Name("valid", "user"),
+                $"valid_{Guid.NewGuid()}@example.com",
+                "1234567890",
+                "password123"
             )
-            { 
+            {
             }
         }
 
@@ -85,16 +85,12 @@ namespace BytChineseSteam.Tests
         [Test]
         public void User_WhenEmailIsNull_ShouldBeInvalid()
         {
-            var user = new TestUser
-            {
-                Name = new Name { FirstName = "Test", LastName = "User" },
-                Email = null
-            };
-            
-            var errors = ValidateModel(user);
-
-            Assert.That(errors, Is.Not.Empty);
-            Assert.That(errors.Any(e => e.MemberNames.Contains("Email")), Is.True);
+            Assert.Throws<ValidationException>(() => new TestUser(
+                new Name("Test", "User"), 
+                null!,
+                "1234567890", 
+                "asdasdafg"
+            ));
         }
 
         [Test]
