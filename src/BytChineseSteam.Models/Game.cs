@@ -17,7 +17,7 @@ public class Game
     [MinLength(1)] [Required] public string GameSlug { get; private set; } // created using Slugifier class in Utils
     
     // reverse connections
-    public Category? Category { get; private set; } // nullabe because aggregation
+    public Category? Category { get; set; } // nullabe because aggregation (should the setter be private??)
     
     public Publisher Publisher { get; private set; }
 
@@ -38,6 +38,8 @@ public class Game
         Description = description;
         GameSlug = Slugifier.ToGameSlug(title);
         Publisher = publisher;
+        
+        Extent.Add(this);
     }
 
     // methods
