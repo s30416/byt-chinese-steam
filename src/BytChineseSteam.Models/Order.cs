@@ -20,8 +20,12 @@ public class Order
         Status = status;
         CompletedAt = completedAt;
         TotalSum = totalSum;
-        _keys = keys.Select(k => new OrderKey(this, k)).ToHashSet();
 
+        foreach (var key in keys)
+        {
+            AddKey(key);
+        }
+        
         if (_keys.Count == 0)
         {
             throw new OrderCannotBeEmpty();
@@ -30,11 +34,13 @@ public class Order
     
     // associations
 
-    private readonly HashSet<OrderKey> _keys;
+    private readonly HashSet<OrderKey> _keys = [];
     public ImmutableHashSet<OrderKey> Keys => _keys.ToImmutableHashSet();
 
     public void AddKey(Key key)
     {
+        ArgumentNullException.ThrowIfNull(key, nameof(key));
+        
         var orderKey = new OrderKey(this, key);
         
         if (!_keys.Add(orderKey))
@@ -50,6 +56,8 @@ public class Order
 
     public void RemoveKey(Key key)
     {
+        ArgumentNullException.ThrowIfNull(key, nameof(key));
+        
         var orderKey = new OrderKey(this, key);
         
         if (!_keys.Contains(orderKey))

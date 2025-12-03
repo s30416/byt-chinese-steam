@@ -24,7 +24,6 @@ public class Key : Limited
     [Required] 
     [JsonInclude]
     public Game Game { get; private set; }
-    private Key() { }
 
     public Key(Game game, string accessKey, decimal originalPrice, DateTime createdAt, decimal priceIncrease,
         List<string> benefits)
@@ -55,6 +54,11 @@ public class Key : Limited
         Extent.Remove(this);
         
         Game.RemoveKey(this);
+
+        foreach (var ok in _orders)
+        {
+            RemoveFromOrder(ok.Order);
+        }
     }
 
 
@@ -69,6 +73,8 @@ public class Key : Limited
     public ImmutableHashSet<OrderKey> Orders => _orders.ToImmutableHashSet();
     public void AddToOrder(Order order)
     {
+        ArgumentNullException.ThrowIfNull(order, nameof(order));
+        
         var orderKey = new OrderKey(order, this);
         
         if (!_orders.Add(orderKey))
@@ -84,6 +90,8 @@ public class Key : Limited
 
     public void RemoveFromOrder(Order order)
     {
+        ArgumentNullException.ThrowIfNull(order, nameof(order));
+
         var orderKey = new OrderKey(order, this);
         
         if (!_orders.Remove(orderKey))
