@@ -3,6 +3,7 @@
 */
 
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using BytChineseSteam.Repository.Extent;
 
@@ -11,7 +12,7 @@ namespace BytChineseSteam.Models;
 public class Publisher
 {
     private static readonly Extent<Publisher> Extent = new();
-    public string Name { get; set; }
+    [MinLength(1)] [Required] public string Name { get; set; }
     public string Description { get; set; }
     
     public Publisher(string name, string description)

@@ -10,6 +10,13 @@ namespace BytChineseSteam.Models;
 public class Key : Limited
 {
     public static readonly Extent<Key> Extent = new ();
+    
+    // for association to Promotion.cs
+    [JsonIgnore]
+    private readonly HashSet<Promotion> _promotions = new();
+
+    [JsonIgnore]
+    public ImmutableHashSet<Promotion> Promotions => _promotions.ToImmutableHashSet();
 
     [MinLength(1)] [Required] public string AccessKey { get; set; }
 
@@ -58,9 +65,13 @@ public class Key : Limited
         {
             RemoveFromOrder(ok.Order);
         }
+        
+        foreach (var promo in _promotions.ToList())
+        {
+            promo.RemoveKey(this);
+        }
     }
-
-
+    
     public decimal GetCurrentPrice()
     {
         return OriginalPrice + PriceIncrease;
@@ -125,6 +136,48 @@ public class Key : Limited
         catch (Exception e)
         {
             _orders.Add(orderKey);
+            throw;
+        }
+    }
+    
+    // promotion association
+    public void AddPromotion(Promotion promotion)
+    {
+        if (promotion == null) throw new ArgumentNullException(nameof(promotion));
+
+        // prevent duplicate addition and infinite recursion
+        if (_promotions.Contains(promotion)) return;
+
+        _promotions.Add(promotion);
+
+        try
+        {
+            promotion.AddKey(this);
+        }
+        catch (Exception)
+        {
+            _promotions.Remove(promotion);
+            throw;
+        }
+    }
+
+    public void RemovePromotion(Promotion promotion)
+    {
+        if (promotion == null) throw new ArgumentNullException(nameof(promotion));
+
+        if (!_promotions.Contains(promotion)) return;
+
+        // local remove
+        _promotions.Remove(promotion);
+
+        try
+        {
+            // will throw InvalidOperationException if it violates Promotion's 1..* constraint
+            promotion.RemoveKey(this);
+        }
+        catch (Exception)
+        {
+            _promotions.Add(promotion);
             throw;
         }
     }
