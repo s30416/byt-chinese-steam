@@ -17,4 +17,9 @@ public class OrderKey(Order order, Key key)
     {
         return HashCode.Combine(Key, Order);
     }
+
+    public override string ToString()
+    {
+        return $"Key({Key.GetHashCode()}) - Order({Order.GetHashCode()})";
+    }
 }

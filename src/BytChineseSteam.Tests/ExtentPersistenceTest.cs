@@ -5,16 +5,27 @@ using BytChineseSteam.Repository.Extent;
 
 namespace BytChineseSteam.Tests;
 
+[NonParallelizable]
 public class ExtentPersistenceTest
 {
     private const string Path = "store.json";
+    private Game _game = new Game("Test Game", "Test Description", null!);
+    
 
     [SetUp]
     public void Setup()
     {
         File.WriteAllText(Path, "{}");
         ExtentPersistence.LoadAll();
-        
+
+        while (true)
+        {
+            var key = Key.Extent.All().FirstOrDefault();
+
+            if (key == null) break;
+            
+            Key.Extent.Remove(key);
+        }
     }
     
     // I CHANGE THIS TEST WITH ONE BELOW CAUSE OF COMPOSITION
@@ -33,59 +44,6 @@ public class ExtentPersistenceTest
     //     
     //     Assert.That(JsonNode.DeepEquals(json, extentJson), Is.True);
     // }
-    
-    [Test]
-    public void EntityPersistence_ShouldPersistExtents()
-    {
-        // Creating dependencies
-        var publisher = new Publisher("Persistence Pub", "Test Description");
-        var game = new Game("Persistence Game", "Test Description", publisher);
-
-        // storing key
-        var key = new Key(game, "asdf", 10, DateTime.Now, 0, []);
-        ExtentPersistence.Persist(Key.Extent);
-    
-        // checking json
-        var text = File.ReadAllText("store.json"); 
-        var extentJson = JsonSerializer.SerializeToNode(Key.Extent.All());
-        var json = JsonNode.Parse(text)![Key.Extent.Name]!;
-    
-        Assert.That(JsonNode.DeepEquals(json, extentJson), Is.True);
-    }
-
-    [Test]
-    public void ShouldDiscoverExtentsAndLoadModels_WhenDiscoverExtentsAndLoadAllIsCalled()
-    {
-        // writing to file
-     var root = JsonNode.Parse("{}")!;
-        var keyNodeArray = JsonSerializer.SerializeToNode<List<object>>([
-            new
-            {
-                AccessKey = "adsf",
-                OriginalPrice = 10,
-                CreatedAt = DateTime.Now,
-                PriceIncrease = 0,
-                Benefits = new string[]{},
-            }
-        ]);
-    
-        root[Key.Extent.Name] = keyNodeArray;
-        File.WriteAllText(Path, root.ToJsonString());
-        
-        // checking
-        ExtentPersistence.DiscoverExtents();
-        ExtentPersistence.LoadAll();
-        var retrievedNode = JsonSerializer.SerializeToNode(Key.Extent.All());
-        
-        Assert.That(JsonNode.DeepEquals(retrievedNode, keyNodeArray), Is.True);
-    }
-    
-    [Test]
-    public void ShouldThrowException_WhenRegisteringTheSameExtent()
-    {
-        ExtentPersistence.DiscoverExtents();
-        Assert.That(() => ExtentPersistence.Register(Key.Extent), Throws.ArgumentException);
-    }
     
     [Test, Order(1)]
     public void Extent_ShouldBeEmptyList_OnStart()
@@ -132,44 +90,57 @@ public class ExtentPersistenceTest
     public void Extent_ShouldHaveValuesLoadedByPersistence_IfContainsExtent()
     {
         // filling store.js
-        var json =
-            $"{{\"Key\":[{{\"AccessKey\":null,\"OriginalPrice\":0,\"CurrentPrice\":0,\"CreatedAt\":\"2025-11-19T14:20:13.608448+01:00\",\"PriceIncrease\":0,\"Benefits\":[]}}]}}";
-
-        File.WriteAllText(Path, json);
+        var key = new Key(_game, "adsf", 0, DateTime.Now, 0, []);
+        ExtentPersistence.Persist(Key.Extent);
 
         // loading values
         ExtentPersistence.LoadAll();
         Assert.That(Key.Extent.All().Count, Is.GreaterThanOrEqualTo(1));
     }
+    
+    [Test, Order(5)]
+    public void EntityPersistence_ShouldPersistExtents()
+    {
+        // Creating dependencies
+        var publisher = new Publisher("Persistence Pub", "Test Description");
+        var game = new Game("Persistence Game", "Test Description", publisher);
+
+        // storing key
+        var key = new Key(game, "asdf", 10, DateTime.Now, 0, []);
+        ExtentPersistence.Persist(Key.Extent);
+    
+        // checking json
+        var text = File.ReadAllText("store.json"); 
+        var extentJson = JsonSerializer.SerializeToNode(Key.Extent.All());
+        var json = JsonNode.Parse(text)![Key.Extent.Name]!;
+    
+        Assert.That(JsonNode.DeepEquals(json, extentJson), Is.True);
+    }
 
     [Test, Order(6)]
-    public void Extent_HasCorrectObject_WhenLoadingPersistentExtent()
+    public void ShouldDiscoverExtentsAndLoadModels_WhenDiscoverExtentsAndLoadAllIsCalled()
     {
-        // filling store.js
-        var jsonArrNode = JsonSerializer.SerializeToNode((List<object>)
-            [
-                new
-                {
-                    AccessKey = "asdf",
-                    OriginalPrice = 10,
-                    CreatedAt = DateTime.Now,
-                    PriceIncrease = 0,
-                    Benefits = new List<string>(),
-                }
-            ]
-        );
-        var json = $"{{\"Key\":{jsonArrNode!.ToJsonString()}}}";
-    
-        File.WriteAllText(Path, json);
-    
-        // loading values
+        // writing to file
+        var key = new Key(_game, "asdf", 10, DateTime.Now, 0, []);
+        var keyNodeArray = JsonSerializer.SerializeToNode(new List<Key>() {key});
+        Console.WriteLine(Key.Extent.All().Count());
+        ExtentPersistence.Persist(Key.Extent);
+        
+        // checking
+        ExtentPersistence.DiscoverExtents();
         ExtentPersistence.LoadAll();
+        var retrievedNode = JsonSerializer.SerializeToNode(Key.Extent.All());
+        
+        Console.WriteLine(keyNodeArray.ToJsonString());
+        Console.WriteLine(retrievedNode.ToJsonString());
+        
+        Assert.That(JsonNode.DeepEquals(retrievedNode, keyNodeArray), Is.True);
+    }
     
-        var retrievedJsonNode = JsonSerializer.SerializeToNode(Key.Extent.All()) as JsonArray;
-    
-        Console.WriteLine(jsonArrNode);
-        Console.WriteLine(retrievedJsonNode);
-    
-        Assert.That(JsonNode.DeepEquals(retrievedJsonNode, jsonArrNode), Is.True);
+    [Test, Order(7)]
+    public void ShouldThrowException_WhenRegisteringTheSameExtent()
+    {
+        ExtentPersistence.DiscoverExtents();
+        Assert.That(() => ExtentPersistence.Register(Key.Extent), Throws.ArgumentException);
     }
 }

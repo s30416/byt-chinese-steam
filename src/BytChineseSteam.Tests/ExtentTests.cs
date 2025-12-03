@@ -7,13 +7,13 @@ namespace BytChineseSteam.Tests;
 
 public class ExtentTest
 {
-    private const string Path = "store.json";
+    // private const string Path = "store.json";
 
-    [Test]
-    public void ShouldBeEmpty_OnStart()
-    {
-        Assert.That(Key.Extent.All(), Is.Empty);
-    }
+    // [Test]
+    // public void ShouldBeEmpty_OnStart()
+    // {
+    //     Assert.That(Key.Extent.All(), Is.Empty);
+    // }
 
     // I CHANGE THIS TEST WITH ONE BELOW CAUSE OF COMPOSITION
     

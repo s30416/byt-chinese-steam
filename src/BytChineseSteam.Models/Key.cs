@@ -21,8 +21,7 @@ public class Key : Limited
 
     [NonEmpty(isEnumerable: true)] [Required] public List<string> Benefits { get; set; }
     
-    [Required] 
-    [JsonInclude]
+    [Required]
     public Game Game { get; private set; }
 
     public Key(Game game, string accessKey, decimal originalPrice, DateTime createdAt, decimal priceIncrease,
@@ -45,7 +44,7 @@ public class Key : Limited
 
         Extent.Add(this);
     }
-    
+
     // class methods from diagram
     // ...
 
@@ -68,23 +67,37 @@ public class Key : Limited
     }
     
     // associations
+    [JsonIgnore]
     private readonly HashSet<OrderKey> _orders = [];
 
+    [JsonIgnore]
     public ImmutableHashSet<OrderKey> Orders => _orders.ToImmutableHashSet();
+    
     public void AddToOrder(Order order)
     {
         ArgumentNullException.ThrowIfNull(order, nameof(order));
         
         var orderKey = new OrderKey(order, this);
         
-        if (!_orders.Add(orderKey))
+        if (_orders.Contains(orderKey))
         {
             throw new KeyExistsInOrderException();
         }
 
-        if (!order.Keys.Contains(orderKey))
+        // adding
+        _orders.Add(orderKey);
+
+        try
         {
-            order.AddKey(this);
+            if (!order.Keys.Contains(orderKey))
+            {
+                order.AddKey(this);
+            }
+        }
+        catch (Exception e)
+        {
+            _orders.Remove(orderKey);
+            throw;
         }
     }
 
@@ -92,16 +105,27 @@ public class Key : Limited
     {
         ArgumentNullException.ThrowIfNull(order, nameof(order));
 
-        var orderKey = new OrderKey(order, this);
+        var orderKey = _orders.FirstOrDefault(o => o.Order == order);
         
-        if (!_orders.Remove(orderKey))
+        if (orderKey == null)
         {
             throw new KeyDoesNotExistInOrderException();
         }
 
-        if (order.Keys.Contains(orderKey))
+        // removing
+        _orders.Remove(orderKey);
+
+        try
         {
-            order.RemoveKey(this);
+            if (order.Keys.Contains(orderKey))
+            {
+                order.RemoveKey(this);
+            }
+        }
+        catch (Exception e)
+        {
+            _orders.Add(orderKey);
+            throw;
         }
     }
 }

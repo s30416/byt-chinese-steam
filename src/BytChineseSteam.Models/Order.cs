@@ -1,7 +1,9 @@
 ﻿using System.Collections.Immutable;
 using System.Runtime.CompilerServices;
+using BytChineseSteam.Models.DataAnnotations;
 using BytChineseSteam.Models.Enums;
 using BytChineseSteam.Models.Exceptions.OrderKey;
+using BytChineseSteam.Repository.Extent;
 
 namespace BytChineseSteam.Models;
 
@@ -9,12 +11,14 @@ namespace BytChineseSteam.Models;
 
 public class Order
 {
+    public static readonly Extent<Order> Extent = new();
+    
     public DateTime CreatedAt { get; set; }
     public OrderStatus Status { get; set; }
     public DateTime? CompletedAt { get; set; }
     public double TotalSum { get; set; }
 
-    public Order(DateTime createdAt, OrderStatus status, DateTime completedAt, double totalSum, ISet<Key> keys)
+    public Order(DateTime createdAt, OrderStatus status, DateTime completedAt, double totalSum, ICollection<Key> keys)
     {
         CreatedAt = createdAt;
         Status = status;
@@ -35,6 +39,8 @@ public class Order
     // associations
 
     private readonly HashSet<OrderKey> _keys = [];
+    
+    [MinItemsCount(1)]
     public ImmutableHashSet<OrderKey> Keys => _keys.ToImmutableHashSet();
 
     public void AddKey(Key key)
@@ -43,14 +49,24 @@ public class Order
         
         var orderKey = new OrderKey(this, key);
         
-        if (!_keys.Add(orderKey))
+        if (_keys.Contains(orderKey))
         {
             throw new KeyExistsInOrderException();
         }
 
-        if (!key.Orders.Contains(orderKey))
+        _keys.Add(orderKey);
+
+        try
         {
-            key.AddToOrder(this);
+            if (!key.Orders.Contains(orderKey))
+            {
+                key.AddToOrder(this);
+            }
+        }
+        catch (Exception e)
+        {
+            _keys.Remove(orderKey);
+            throw;
         }
     }
 
@@ -58,9 +74,9 @@ public class Order
     {
         ArgumentNullException.ThrowIfNull(key, nameof(key));
         
-        var orderKey = new OrderKey(this, key);
+        var orderKey = _keys.FirstOrDefault(k => k.Key == key);
         
-        if (!_keys.Contains(orderKey))
+        if (orderKey == null)
         {
             throw new KeyDoesNotExistInOrderException();
         }
@@ -74,9 +90,17 @@ public class Order
         // removing
         _keys.Remove(orderKey);
 
-        if (key.Orders.Contains(orderKey))
+        try
         {
-            key.RemoveFromOrder(this);
+            if (key.Orders.Contains(orderKey))
+            {
+                key.RemoveFromOrder(this);
+            }
+        }
+        catch (Exception e)
+        {
+            _keys.Add(orderKey);
+            throw;
         }
     }
 }

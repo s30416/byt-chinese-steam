@@ -28,6 +28,7 @@ public class Game
 
     private Game() { }
     
+    [JsonConstructor]
     public Game(string title, string? description, Category? category, Publisher publisher)
     {
         Title = title;

@@ -23,7 +23,7 @@ public class QualifiedAggregationTests
     {
         var game = new Game("Lonely Game", "No Category", new Publisher("PubX", "descr"));
 
-        // game exists even if not in any category
+        // _game exists even if not in any category
         Assert.That(game.GetAllCategoriesForGame().Count, Is.EqualTo(0));
         Assert.That(game, Is.Not.Null);
     }
@@ -33,7 +33,7 @@ public class QualifiedAggregationTests
     {
         _categoryA.AddGame(_game1);
 
-        // normal behaviour check (both category dictionary and game set are updated)
+        // normal behaviour check (both category dictionary and _game set are updated)
         Assert.That(_categoryA.GetAllGamesInCategory, Does.Contain(_game1));
         Assert.That(_game1.GetAllCategoriesForGame, Does.Contain(_categoryA));
     }
@@ -44,7 +44,7 @@ public class QualifiedAggregationTests
         _categoryA.AddGame(_game1);
         _categoryA.RemoveGame(_game1);
 
-        // game exists after removing it from the category (aggregation)
+        // _game exists after removing it from the category (aggregation)
         Assert.That(_game1, Is.Not.Null);
 
         // reference checks
@@ -79,7 +79,7 @@ public class QualifiedAggregationTests
         Assert.That(_game1.GetAllCategoriesForGame, Does.Contain(_categoryB));
         Assert.That(_game1.GetAllCategoriesForGame, Does.Not.Contain(_categoryA));
 
-        // game still exists
+        // _game still exists
         Assert.That(_game1, Is.Not.Null);
     }
 
