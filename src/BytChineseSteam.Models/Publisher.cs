@@ -15,17 +15,21 @@ public class Publisher
     [MinLength(1)] [Required] public string Name { get; set; }
     public string Description { get; set; }
     
-    public Publisher(string name, string description)
+    // admin association
+    private readonly Admin _admin;
+    
+    public Publisher(string name, string description, Admin admin)
     {
         Name = name;
         Description = description;
+        _admin = admin;
         
         Extent.Add(this);
     }
     
-    public static Publisher CreatePublisher(string name, string description, bool isAdmin)
+    public static Publisher CreatePublisher(string name, string description, Employee actor)
     {
-        if (!isAdmin)
+        if (actor is not Admin admin)
         {
             throw new UnauthorizedAccessException("Only admin can create publisher");
         }
@@ -41,13 +45,13 @@ public class Publisher
             throw new InvalidOperationException("Publisher with this name already exists.");
         }
 
-        var publisher = new Publisher(name.Trim(), description ?? "");
+        var publisher = new Publisher(name.Trim(), description ?? "", admin);
         return publisher;
     }
 
-    public static void DeletePublisher(string name, bool isAdmin)
+    public static void DeletePublisher(string name, Employee actor)
     {
-        if (!isAdmin)
+        if (actor is not Admin)
             throw new UnauthorizedAccessException("Only admin can delete publishers.");
 
         var publisher = Extent.All().FirstOrDefault(p => p.Name == name);
@@ -58,9 +62,9 @@ public class Publisher
         Extent.Remove(publisher);
     }
 
-    public void UpdatePublisher(string newName, string newDescription, bool isAdmin)
+    public void UpdatePublisher(string newName, string newDescription, Employee actor)
     {
-        if (!isAdmin)
+        if (actor is not Admin)
             throw new UnauthorizedAccessException("Only admin can update publishers.");
 
         if (string.IsNullOrWhiteSpace(newName))

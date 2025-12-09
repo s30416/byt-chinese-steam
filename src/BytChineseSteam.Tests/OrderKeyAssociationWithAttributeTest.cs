@@ -18,7 +18,8 @@ public class OrderKeyAssociationWithAttributeTest
     [SetUp]
     public void Setup()
     {
-        _publisher = new Publisher("name", "desc");
+        var admin = new Admin(new Name("first", "last"), "admin@gmail.com", "+48123456789", "pass", null);
+        _publisher = new Publisher("name", "desc", admin);
         _game = new Game("title", "desc", null, _publisher, new Admin(new Name("Big", "Tommy"), 
             "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork", null));
         _key = new(_game, "asdf", 10, DateTime.Now, 0, []);

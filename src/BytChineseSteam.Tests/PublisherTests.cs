@@ -11,16 +11,18 @@ namespace BytChineseSteam.Tests
         private Publisher _pubA;
         private Publisher _pubB;
         private Admin _admin;
+        private Manager _manager;
 
         [SetUp]
         public void SetUp()
         {
             ClearPublisherStaticList();
             ClearGameStaticList();
-
+            _manager = new Manager(new Name("first", "last"), "manager@gmail.com", "+48123456789", "asdf", null);
+            
             // create two publishers for tests that need them
-            _pubA = Publisher.CreatePublisher("PubA", "Desc A", isAdmin: true);
-            _pubB = Publisher.CreatePublisher("PubB", "Desc B", isAdmin: true);
+            _pubA = Publisher.CreatePublisher("PubA", "Desc A", _admin);
+            _pubB = Publisher.CreatePublisher("PubB", "Desc B", _admin);
         }
 
         [TearDown]
@@ -67,7 +69,7 @@ namespace BytChineseSteam.Tests
         public void TestCreatePublisher_AddsToExtent()
         {
             var countBefore = Publisher.GetAll().Count;
-            var newPub = Publisher.CreatePublisher("NewPub", "NewDesc", isAdmin: true);
+            var newPub = Publisher.CreatePublisher("NewPub", "NewDesc", _admin);
 
             Assert.That(Publisher.GetAll().Count, Is.EqualTo(countBefore + 1));
             Assert.That(Publisher.GetAll().Contains(newPub), Is.True);
@@ -77,7 +79,7 @@ namespace BytChineseSteam.Tests
         public void TestCreatePublisher_NotAdmin_ThrowsException()
         {
             Assert.Throws<UnauthorizedAccessException>(() =>
-                Publisher.CreatePublisher("Barack Obama", "Let me be clear", isAdmin: false));
+                Publisher.CreatePublisher("Barack Obama", "Let me be clear", _manager));
         }
 
         [Test]
@@ -92,7 +94,7 @@ namespace BytChineseSteam.Tests
         [Test]
         public void TestUpdatePublisher_UpdatesProperties()
         {
-            _pubA.UpdatePublisher("PubA_Updated", "Desc A_Updated", isAdmin: true);
+            _pubA.UpdatePublisher("PubA_Updated", "Desc A_Updated", _admin);
 
             Assert.That(_pubA.Name, Is.EqualTo("PubA_Updated"));
             Assert.That(_pubA.Description, Is.EqualTo("Desc A_Updated"));
@@ -106,7 +108,7 @@ namespace BytChineseSteam.Tests
         [Test]
         public void TestDeletePublisher_RemovesFromExtent()
         {
-            Publisher.DeletePublisher("PubA", isAdmin: true);
+            Publisher.DeletePublisher("PubA", _admin);
 
             var storedPub = Publisher.GetAll().FirstOrDefault(p => p.Name == "PubA");
             Assert.That(storedPub, Is.Null);
@@ -116,7 +118,7 @@ namespace BytChineseSteam.Tests
         public void TestDeletePublisher_NotFound_ThrowsException()
         {
             Assert.Throws<InvalidOperationException>(() =>
-                Publisher.DeletePublisher("NonExistentPub", isAdmin: true));
+                Publisher.DeletePublisher("NonExistentPub", _admin));
         }
 
         [Test]

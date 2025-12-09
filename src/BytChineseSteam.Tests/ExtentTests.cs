@@ -28,7 +28,7 @@ public class ExtentTest
     public void ShouldHaveEntity_AfterConstruction()
     {
         var admin = new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork", null);
-        var publisher = new Publisher("Test Publisher", "Test Description");
+        var publisher = new Publisher("Test Publisher", "Test Description", admin);
         var game = new Game("Test Game", "Test Description", publisher, admin);
 
         var key = new Key(game, "asdf", 10, DateTime.Now, 0, []);
