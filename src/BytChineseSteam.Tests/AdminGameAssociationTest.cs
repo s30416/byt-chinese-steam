@@ -19,12 +19,10 @@ public class AdminGameAssociationTest
         
         _admin1 = new Admin(name1, "admin1@byt.com", "+48123456789", "hashed_pass", 5000);
         _admin2 = new Admin(name2, "admin2@byt.com", "+48123456789", "hashed_pass", 5500);
-
-        // Initial state: Game is created with Admin1
+        
         _game = new Game("Super Game", "Description", null, _publisher, _admin1);
     }
-
-    // Helper to verify the game is correctly linked to Admin1 only
+    
     private void CheckLinkedToAdmin1()
     {
         Assert.That(_game.Admin, Is.EqualTo(_admin1));
@@ -44,7 +42,6 @@ public class AdminGameAssociationTest
     [Test]
     public void ShouldThrowArgumentNullException_WhenAdminIsNull_OnConstructor()
     {
-        // Enforce Mandatory 1 side constraint at creation
         Assert.Throws<ArgumentNullException>(() => 
             new Game("Invalid Game", "Desc", null, _publisher, null!)
         );
