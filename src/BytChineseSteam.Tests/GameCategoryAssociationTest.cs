@@ -2,7 +2,7 @@
 
 namespace BytChineseSteam.Tests;
 
-public class QualifiedAggregationTests
+public class GameCategoryAssociationTest
 {
     private Category _categoryA;
     private Category _categoryB;
@@ -14,19 +14,36 @@ public class QualifiedAggregationTests
     {
         _categoryA = new Category("Action");
         _categoryB = new Category("Adventure");
-        _game1 = new Game("Game One", "Desc1", new Publisher("Pub1", "descr"), 
-            new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork", null));
-        _game2 = new Game("Game Two", "Desc2", new Publisher("Pub2", "descr"), 
-            new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork", null));
+
+        // note: no validation for Game.cs or Category.cs is checked here, so these constructors are fine
+        _game1 = new Game(
+            "Game One", 
+            "Desc1", 
+            new Publisher("Pub1", "descr"),
+            new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789",
+                "howdoesourhashedpasswork", null)
+        );
+
+        _game2 = new Game(
+            "Game Two", 
+            "Desc2", 
+            new Publisher("Pub2", "descr"),
+            new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789",
+                "howdoesourhashedpasswork", null)
+        );
     }
 
     [Test]
     public void GameCanExistWithoutCategory()
     {
-        var game = new Game("Lonely Game", "No Category", new Publisher("PubX", "descr"), 
-            new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork", null));
+        var game = new Game(
+            "Lonely Game",
+            "No Category",
+            new Publisher("PubX", "descr"),
+            new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789",
+                "howdoesourhashedpasswork", null)
+        );
 
-        // _game exists even if not in any category
         Assert.That(game.GetAllCategoriesForGame().Count, Is.EqualTo(0));
         Assert.That(game, Is.Not.Null);
     }
@@ -36,7 +53,15 @@ public class QualifiedAggregationTests
     {
         _categoryA.AddGame(_game1);
 
-        // normal behaviour check (both category dictionary and _game set are updated)
+        Assert.That(_categoryA.GetAllGamesInCategory, Does.Contain(_game1));
+        Assert.That(_game1.GetAllCategoriesForGame, Does.Contain(_categoryA));
+    }
+
+    [Test]
+    public void AddCategory_FromGameSide_ShouldUpdateBothSides()
+    {
+        _game1.AddCategory(_categoryA);
+
         Assert.That(_categoryA.GetAllGamesInCategory, Does.Contain(_game1));
         Assert.That(_game1.GetAllCategoriesForGame, Does.Contain(_categoryA));
     }
@@ -47,12 +72,20 @@ public class QualifiedAggregationTests
         _categoryA.AddGame(_game1);
         _categoryA.RemoveGame(_game1);
 
-        // _game exists after removing it from the category (aggregation)
         Assert.That(_game1, Is.Not.Null);
-
-        // reference checks
         Assert.That(_game1.GetAllCategoriesForGame, Does.Not.Contain(_categoryA));
         Assert.That(_categoryA.GetAllGamesInCategory, Does.Not.Contain(_game1));
+    }
+
+    [Test]
+    public void RemoveCategory_FromGameSide_ShouldUpdateBothSides()
+    {
+        _categoryA.AddGame(_game1);
+
+        _game1.RemoveCategory(_categoryA);
+
+        Assert.That(_categoryA.GetAllGamesInCategory, Does.Not.Contain(_game1));
+        Assert.That(_game1.GetAllCategoriesForGame, Does.Not.Contain(_categoryA));
     }
 
     [Test]
@@ -60,10 +93,10 @@ public class QualifiedAggregationTests
     {
         _categoryA.AddGame(_game1);
         _categoryB.AddGame(_game1);
-        
-        // reference checks for multiple categories
+
         Assert.That(_game1.GetAllCategoriesForGame, Does.Contain(_categoryA));
         Assert.That(_game1.GetAllCategoriesForGame, Does.Contain(_categoryB));
+
         Assert.That(_categoryA.GetAllGamesInCategory, Does.Contain(_game1));
         Assert.That(_categoryB.GetAllGamesInCategory, Does.Contain(_game1));
     }
@@ -76,13 +109,12 @@ public class QualifiedAggregationTests
 
         _categoryA.RemoveGame(_game1);
 
-        // reference checks: not influencing the other categories
         Assert.That(_categoryA.GetAllGamesInCategory, Does.Not.Contain(_game1));
         Assert.That(_categoryB.GetAllGamesInCategory, Does.Contain(_game1));
+
         Assert.That(_game1.GetAllCategoriesForGame, Does.Contain(_categoryB));
         Assert.That(_game1.GetAllCategoriesForGame, Does.Not.Contain(_categoryA));
 
-        // _game still exists
         Assert.That(_game1, Is.Not.Null);
     }
 
@@ -92,8 +124,7 @@ public class QualifiedAggregationTests
         _categoryA.AddGame(_game1);
         _categoryA.AddGame(_game2);
 
-        // simulate removing the whole Category
-        foreach (var game in _categoryA.GetAllGamesInCategory)
+        foreach (var game in _categoryA.GetAllGamesInCategory.ToList())
         {
             _categoryA.RemoveGame(game);
         }
@@ -102,8 +133,27 @@ public class QualifiedAggregationTests
         Assert.That(_game1.GetAllCategoriesForGame, Does.Not.Contain(_categoryA));
         Assert.That(_game2.GetAllCategoriesForGame, Does.Not.Contain(_categoryA));
 
-        // games still exist
         Assert.That(_game1, Is.Not.Null);
         Assert.That(_game2, Is.Not.Null);
+    }
+
+    [Test]
+    public void AddingSameGameTwice_DoesNotDuplicate()
+    {
+        _categoryA.AddGame(_game1);
+        _categoryA.AddGame(_game1);
+
+        Assert.That(_categoryA.GetAllGamesInCategory.Count, Is.EqualTo(1));
+        Assert.That(_game1.GetAllCategoriesForGame().Count, Is.EqualTo(1));
+    }
+
+    [Test]
+    public void AddingSameCategoryTwice_FromGameSide_IsIdempotent()
+    {
+        _game1.AddCategory(_categoryA);
+        _game1.AddCategory(_categoryA);
+
+        Assert.That(_categoryA.GetAllGamesInCategory.Count, Is.EqualTo(1));
+        Assert.That(_game1.GetAllCategoriesForGame().Count, Is.EqualTo(1));
     }
 }
