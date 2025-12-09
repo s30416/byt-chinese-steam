@@ -13,7 +13,7 @@ public class QualifiedAggregationTests
     [SetUp]
     public void Setup()
     {
-        _admin = new Admin(new Name("first", "last"), "admil@mail.com",  "+48123456789", "pass", null);
+        _admin = new Admin(new Name("first", "last"), "admil@mail.com",  "+48123456789", "passasdf", null);
         _categoryA = new Category("Action");
         _categoryB = new Category("Adventure");
         _game1 = new Game("Game One", "Desc1", new Publisher("Pub1", "descr", _admin), 

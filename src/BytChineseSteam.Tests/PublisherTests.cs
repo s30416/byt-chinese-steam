@@ -18,7 +18,8 @@ namespace BytChineseSteam.Tests
         {
             ClearPublisherStaticList();
             ClearGameStaticList();
-            _manager = new Manager(new Name("first", "last"), "manager@gmail.com", "+48123456789", "asdf", null);
+            _manager = new Manager(new Name("first", "last"), "manager@gmail.com", "+48123456789", "asdfasdfasdf", null);
+            _admin = new Admin(new Name("first", "last"), "manager@gmail.com", "+48123456789", "asdfasdfasdf", null);
             
             // create two publishers for tests that need them
             _pubA = Publisher.CreatePublisher("PubA", "Desc A", _admin);

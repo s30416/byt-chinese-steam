@@ -91,12 +91,6 @@ public class Order
             throw new KeyDoesNotExistInOrderException();
         }
         
-        // order multiplicity logic
-        if (_keys.Count == 1)
-        {
-            throw new OrderCannotBeEmpty();
-        }
-        
         // removing
         _keys.Remove(orderKey);
 
@@ -112,5 +106,16 @@ public class Order
             _keys.Add(orderKey);
             throw;
         }
+
+        if (Keys.Count == 0)
+        {
+            DeleteOrder();
+        }
+    }
+
+    public void DeleteOrder()
+    {
+        if (Keys.Count != 0) throw new OrderIsNotEmpty();
+        // do smth
     }
 }
