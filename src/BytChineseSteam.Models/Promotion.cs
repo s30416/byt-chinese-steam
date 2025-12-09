@@ -84,12 +84,18 @@ public class Promotion
     
     public void DeletePromotion()
     {
-        Manager.RemovePromotion(this);
-        foreach(var key in _keys.ToList())
-        {
-            RemoveKey(key);
+        if (Status == PromotionStatus.ToBeDeleted){
+            Manager.RemovePromotion(this);
+            foreach (var key in _keys.ToList())
+            {
+                RemoveKey(key);
+            }
+
+            Extent.Remove(this);
         }
-        
-        Extent.Remove(this);
+        else
+        {
+            throw new InvalidOperationException("Cannot remove the promotion. Incorrect status");
+        }
     }
 }
