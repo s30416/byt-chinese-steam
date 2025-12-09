@@ -9,6 +9,7 @@ public class Category
 
     // the qualifier (key) is a game slug
     private readonly Dictionary<string, Game> _games = new();
+    internal bool ContainsGame(Game game) => _games.ContainsKey(game.GameSlug);
     
     public string Name { get; private set; }
 
@@ -17,39 +18,28 @@ public class Category
         Name = name;
     }
     
-    // dictionary methods
-    
     public void AddGame(Game game)
     {
-        if (!_games.ContainsKey(game.GameSlug))
+        if (game == null) throw new ArgumentNullException(nameof(game));
+        if (_games.ContainsKey(game.GameSlug)) return;
+
+        _games.Add(game.GameSlug, game);
+
+        // reverse connection
+        if (!game.GetAllCategoriesForGame().Contains(this))
         {
-            _games.Add(game.GameSlug, game);
             game.AddCategory(this);
         }
     }
 
-    public void AddGames(IEnumerable<Game> games)
-    {
-        foreach (var game in games)
-        {
-            AddGame(game);
-        }
-    }
-
-    // removing games and removing their categories
     public void RemoveGame(Game game)
     {
-        if (_games.Remove(game.GameSlug))
+        if (game == null) throw new ArgumentNullException(nameof(game));
+        if (!_games.Remove(game.GameSlug)) return;
+
+        // reverse connection
+        if (game.GetAllCategoriesForGame().Contains(this))
         {
-            game.RemoveCategory(this);
-        }
-    }
-    
-    public void RemoveGame(string gameSlug)
-    {
-        if (_games.TryGetValue(gameSlug, out var game))
-        {
-            _games.Remove(gameSlug);
             game.RemoveCategory(this);
         }
     }

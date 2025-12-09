@@ -1,5 +1,4 @@
-﻿using System.Collections.Immutable;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using BytChineseSteam.Models.Util;
 using BytChineseSteam.Repository.Extent;
 using System.Text.Json.Serialization;
@@ -21,7 +20,6 @@ public class Game
     private readonly HashSet<Category> _categories = new();
     
     public Publisher Publisher { get; private set; }
-
     
     private readonly HashSet<Key> _keys = new();
 
@@ -102,16 +100,32 @@ public class Game
         Extent.Remove(this);
     }
 
-    // the game can be removed from the category only using the category method
-    // subject for later change (if you need me to change this - please say so, it will take 15mins)
-    internal void AddCategory(Category category)
+    public void AddCategory(Category category)
     {
+        if (category == null) throw new ArgumentNullException(nameof(category));
+        if (_categories.Contains(category)) return;
+
         _categories.Add(category);
+
+        // reverse connection
+        if (!category.ContainsGame(this))
+        {
+            category.AddGame(this);
+        }
     }
 
-    internal void RemoveCategory(Category category)
+    public void RemoveCategory(Category category)
     {
+        if (category == null) throw new ArgumentNullException(nameof(category));
+        if (!_categories.Contains(category)) return;
+
         _categories.Remove(category);
+
+        // reverse connection
+        if (category.ContainsGame(this))
+        {
+            category.RemoveGame(this);
+        }
     }
 
     // methods
