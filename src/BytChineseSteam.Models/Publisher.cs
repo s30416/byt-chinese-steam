@@ -16,13 +16,15 @@ public class Publisher
     public string Description { get; set; }
     
     // admin association
-    private readonly Admin _admin;
+    public Admin Admin {get;} 
     
     public Publisher(string name, string description, Admin admin)
     {
         Name = name;
         Description = description;
-        _admin = admin;
+        Admin = admin;
+        
+        Admin.AddPublisher(this);
         
         Extent.Add(this);
     }
@@ -51,7 +53,7 @@ public class Publisher
 
     public static void DeletePublisher(string name, Employee actor)
     {
-        if (actor is not Admin)
+        if (actor is not Models.Admin)
             throw new UnauthorizedAccessException("Only admin can delete publishers.");
 
         var publisher = Extent.All().FirstOrDefault(p => p.Name == name);
@@ -60,11 +62,12 @@ public class Publisher
             throw new InvalidOperationException("Publisher not found.");
 
         Extent.Remove(publisher);
+        publisher.Admin.RemovePublisher(publisher);
     }
 
     public void UpdatePublisher(string newName, string newDescription, Employee actor)
     {
-        if (actor is not Admin)
+        if (actor is not Models.Admin)
             throw new UnauthorizedAccessException("Only admin can update publishers.");
 
         if (string.IsNullOrWhiteSpace(newName))
