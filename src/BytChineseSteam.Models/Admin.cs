@@ -1,25 +1,29 @@
 ﻿using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
+using BytChineseSteam.Repository.Extent;
 
 namespace BytChineseSteam.Models;
 
-public class Admin(Name name, string email, string phoneNumber, string hashedPassword, decimal? salary)
-    : Employee(name, email, phoneNumber, hashedPassword, salary)
+public class Admin : Employee
 {
+    public static Extent<Admin> Extent = new();
+    
     public static readonly decimal GameBonus = 500;
 
-    private static List<Admin> _admins = new();
-    
-    private readonly HashSet<Game> _games = new();
     
     [JsonIgnore] 
     public IReadOnlyCollection<Game> Games => _games.ToList().AsReadOnly();
+    
+    public Admin(Name name, string email, string phoneNumber, string hashedPassword, decimal? salary) : base(name, email, phoneNumber, hashedPassword, salary)
+    {
+        AddAdmin(this);
+    }
 
     // extent methods
 
     public static ReadOnlyCollection<Admin> ViewAllAdmins()
     {
-        return _admins.AsReadOnly();
+        return Extent.All();
     }
 
     private static void AddAdmin(Admin admin)
@@ -27,12 +31,14 @@ public class Admin(Name name, string email, string phoneNumber, string hashedPas
         if (admin == null)
             throw new ArgumentException($"The given employee cannot be null");
 
-        _admins.Add(admin);
+        Extent.Add(admin);
     }
 
     // class methods
     
     // game association
+    private readonly HashSet<Game> _games = new();
+    
     internal void AddGame(Game game)
     {
         if (game == null) throw new ArgumentNullException(nameof(game));
