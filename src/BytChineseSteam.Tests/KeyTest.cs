@@ -15,8 +15,8 @@ public class KeyTest
 {
     private Game CreateValidGame()
     {
-        var publisher = new Publisher("Test Publisher", "Description");
         var admin = new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork", null);
+        var publisher = new Publisher("Test Publisher", "Description", admin);
         return new Game("Test Game", "Description", publisher, admin);
     }
 

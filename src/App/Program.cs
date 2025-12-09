@@ -11,8 +11,8 @@ foreach (var k in Key.Extent.All())
     Console.WriteLine(JsonSerializer.Serialize(k));
 }
 
-var game = new Game("asdf", "asdf", null, new Publisher("adsf", "adsf"));
-var key = new Key(game, "asdf", 1, DateTime.Now, 0, []);
+// var game = new Game("asdf", "asdf", null, new Publisher("adsf", "adsf"));
+// var key = new Key(game, "asdf", 1, DateTime.Now, 0, []);
 
 // var key = Key.Extent.All().First();
 // key.AccessKey = "134234";

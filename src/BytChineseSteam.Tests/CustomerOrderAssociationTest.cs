@@ -16,8 +16,8 @@ public class CustomerOrderAssociationTest
     [SetUp]
     public void Setup()
     {
-        _publisher = new Publisher("OrderPub", "Desc");
         _admin = new Admin(new Name("Admin", "User"), "a@b.com", "+48000000000", "passwasfsdd", 1000);
+        _publisher = new Publisher("OrderPub", "Desc", _admin);
         _game = new Game("Order Game", "Desc", null, _publisher, _admin);
         _key = new Key(_game, "KEY-ORDER-TEST", 100, DateTime.Now, 0, new List<string> { "Benefit" });
         

@@ -17,8 +17,8 @@ public class ManagerPromotionAssociationTest
     [SetUp]
     public void Setup()
     {
-        _publisher = new Publisher("PromoPublisher", "Desc");
         _admin = new Admin(new Name("Admin", "User"), "admin@byt.com", "48123456789", "passdddddd", 1000);
+        _publisher = new Publisher("PromoPublisher", "Desc", _admin);
         _game = new Game("Promo Game", "Desc", null, _publisher, _admin);
         _key = new Key(_game, "KEY-123", 50, DateTime.Now, 0, new List<string> { "Base Game" });
         

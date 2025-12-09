@@ -8,10 +8,12 @@ public class GameCategoryAssociationTest
     private Category _categoryB;
     private Game _game1;
     private Game _game2;
+    private Admin _admin;
 
     [SetUp]
     public void Setup()
     {
+        _admin = new Admin(new Name("first", "last"), "admil@mail.com",  "+48123456789", "passasdf", null);
         _categoryA = new Category("Action");
         _categoryB = new Category("Adventure");
 
@@ -19,7 +21,7 @@ public class GameCategoryAssociationTest
         _game1 = new Game(
             "Game One", 
             "Desc1", 
-            new Publisher("Pub1", "descr"),
+            new Publisher("Pub1", "descr", _admin),
             new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789",
                 "howdoesourhashedpasswork", null)
         );
@@ -27,7 +29,7 @@ public class GameCategoryAssociationTest
         _game2 = new Game(
             "Game Two", 
             "Desc2", 
-            new Publisher("Pub2", "descr"),
+            new Publisher("Pub2", "descr", _admin),
             new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789",
                 "howdoesourhashedpasswork", null)
         );
@@ -39,11 +41,12 @@ public class GameCategoryAssociationTest
         var game = new Game(
             "Lonely Game",
             "No Category",
-            new Publisher("PubX", "descr"),
+            new Publisher("PubX", "descr", _admin),
             new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789",
                 "howdoesourhashedpasswork", null)
         );
 
+        // _game exists even if not in any category
         Assert.That(game.GetAllCategoriesForGame().Count, Is.EqualTo(0));
         Assert.That(game, Is.Not.Null);
     }
@@ -115,6 +118,7 @@ public class GameCategoryAssociationTest
         Assert.That(_game1.GetAllCategoriesForGame, Does.Contain(_categoryB));
         Assert.That(_game1.GetAllCategoriesForGame, Does.Not.Contain(_categoryA));
 
+        // _game still exists
         Assert.That(_game1, Is.Not.Null);
     }
 
@@ -133,6 +137,7 @@ public class GameCategoryAssociationTest
         Assert.That(_game1.GetAllCategoriesForGame, Does.Not.Contain(_categoryA));
         Assert.That(_game2.GetAllCategoriesForGame, Does.Not.Contain(_categoryA));
 
+        // games still exist
         Assert.That(_game1, Is.Not.Null);
         Assert.That(_game2, Is.Not.Null);
     }

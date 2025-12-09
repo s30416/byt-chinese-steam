@@ -15,10 +15,10 @@ public class AdminGameAssociationTest
         var name1 = new Name("John", "Doe"); 
         var name2 = new Name("Jane", "Smith");
 
-        _publisher = new Publisher("BytPublisher", "Best publisher");
-        
         _admin1 = new Admin(name1, "admin1@byt.com", "+48123456789", "hashed_pass", 5000);
         _admin2 = new Admin(name2, "admin2@byt.com", "+48123456789", "hashed_pass", 5500);
+        
+        _publisher = new Publisher("BytPublisher", "Best publisher", _admin1);
         
         _game = new Game("Super Game", "Description", null, _publisher, _admin1);
     }

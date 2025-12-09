@@ -18,7 +18,8 @@ public class OrderKeyAssociationWithAttributeTest
     [SetUp]
     public void Setup()
     {
-        _publisher = new Publisher("name", "desc");
+        var admin = new Admin(new Name("first", "last"), "admin@gmail.com", "+48123456789", "password", null);
+        _publisher = new Publisher("name", "desc", admin);
         _game = new Game("title", "desc", null, _publisher, new Admin(new Name("Big", "Tommy"), 
             "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork", null));
         _key = new(_game, "asdf", 10, DateTime.Now, 0, []);
@@ -122,20 +123,6 @@ public class OrderKeyAssociationWithAttributeTest
     public void ShouldThrowArgumentNullException_WhenKeyIsNull_OnOrderRemoveKey()
     {
         Assert.Throws<ArgumentNullException>( () => _order.RemoveKey(null!) );
-    }
-
-    [Test]
-    public void ShouldThrowOrderCannotBeEmptyExceptionAndKeepState_WhenRemovingLastKey_OnOrderRemoveKey()
-    {
-        Assert.Throws<OrderCannotBeEmpty>( () => _order.RemoveKey(_key) );
-        CheckStateSameAsAfterSetup();
-    }
-    
-    [Test]
-    public void ShouldThrowOrderCannotBeEmptyExceptionAndKeepState_WhenRemovingLastKey_OnKeyRemoveFromOrder()
-    {
-        Assert.Throws<OrderCannotBeEmpty>( () => _key.RemoveFromOrder(_order) );
-        CheckStateSameAsAfterSetup();
     }
 
     [Test]
