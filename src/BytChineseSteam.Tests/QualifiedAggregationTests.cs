@@ -14,14 +14,17 @@ public class QualifiedAggregationTests
     {
         _categoryA = new Category("Action");
         _categoryB = new Category("Adventure");
-        _game1 = new Game("Game One", "Desc1", new Publisher("Pub1", "descr"));
-        _game2 = new Game("Game Two", "Desc2", new Publisher("Pub2", "descr"));
+        _game1 = new Game("Game One", "Desc1", new Publisher("Pub1", "descr"), 
+            new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork", null));
+        _game2 = new Game("Game Two", "Desc2", new Publisher("Pub2", "descr"), 
+            new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork", null));
     }
 
     [Test]
     public void GameCanExistWithoutCategory()
     {
-        var game = new Game("Lonely Game", "No Category", new Publisher("PubX", "descr"));
+        var game = new Game("Lonely Game", "No Category", new Publisher("PubX", "descr"), 
+            new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork", null));
 
         // _game exists even if not in any category
         Assert.That(game.GetAllCategoriesForGame().Count, Is.EqualTo(0));

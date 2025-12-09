@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Immutable;
+using System.ComponentModel.DataAnnotations;
 using BytChineseSteam.Models.Util;
 using BytChineseSteam.Repository.Extent;
 using System.Text.Json.Serialization;
@@ -14,6 +15,7 @@ public class Game
     public string? Description { get; private set; }
     
     [MinLength(1)] [Required] public string GameSlug { get; private set; } 
+    [JsonIgnore] public Admin Admin { get; private set; }
     
     // reverse connections (if you're reading this comment: close this code right now and never come back)
     private readonly HashSet<Category> _categories = new();
@@ -29,12 +31,16 @@ public class Game
     private Game() { }
     
     [JsonConstructor]
-    public Game(string title, string? description, Category? category, Publisher publisher)
+    public Game(string title, string? description, Category? category, Publisher publisher, Admin admin)
     {
         Title = title;
         Description = description;
         GameSlug = Slugifier.ToGameSlug(title);
         Publisher = publisher;
+        
+        if (admin == null) throw new ArgumentNullException(nameof(admin), "Game must have an Admin.");
+        Admin = admin;
+        Admin.AddGame(this);
 
         if (category != null)
         {
@@ -45,12 +51,17 @@ public class Game
         Extent.Add(this);
     }
 
-    public Game(string title, string? description, Publisher publisher)
+    public Game(string title, string? description, Publisher publisher, Admin admin)
     {
         Title = title;
         Description = description;
         GameSlug = Slugifier.ToGameSlug(title);
         Publisher = publisher;
+        
+        if (admin == null) throw new ArgumentNullException(nameof(admin), "Game must have an Admin.");
+
+        Admin = admin;
+        Admin.AddGame(this);
         
         Extent.Add(this);
     }
@@ -83,6 +94,11 @@ public class Game
             key.DeleteKey(); 
         }
         
+        if (Admin != null)
+        {
+            Admin.RemoveGame(this);
+        }
+        
         Extent.Remove(this);
     }
 
@@ -104,4 +120,20 @@ public class Game
     public static IReadOnlyList<Game> ViewAllGames => Extent.All();
 
     public override string ToString() => $"Game(Title={Title}, Publisher={Publisher.Name})";
+    
+    // admin association
+    
+    // since game MUST have an admin, we only give option to change it - not remove
+    public void ChangeAdmin(Admin newAdmin)
+    {
+        if (newAdmin == null) throw new ArgumentNullException(nameof(newAdmin), "New Admin cannot be null.");
+        
+        if (Admin == newAdmin) return; // No change needed
+        // remove game from old admin
+        Admin.RemoveGame(this);
+        // change to new admin
+        Admin = newAdmin;
+        // add to new admin
+        Admin.AddGame(this);
+    }
 }

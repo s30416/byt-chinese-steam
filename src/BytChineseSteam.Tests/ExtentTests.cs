@@ -27,8 +27,9 @@ public class ExtentTest
     [Test]
     public void ShouldHaveEntity_AfterConstruction()
     {
+        var admin = new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork", null);
         var publisher = new Publisher("Test Publisher", "Test Description");
-        var game = new Game("Test Game", "Test Description", publisher);
+        var game = new Game("Test Game", "Test Description", publisher, admin);
 
         var key = new Key(game, "asdf", 10, DateTime.Now, 0, []);
         Assert.That(Key.Extent.All(), Is.EquivalentTo(new [] { key }));

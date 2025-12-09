@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
 using BytChineseSteam.Models.DataAnnotations;
 using BytChineseSteam.Models.Enums;
 using BytChineseSteam.Models.Exceptions.OrderKey;
@@ -17,9 +18,15 @@ public class Order
     public OrderStatus Status { get; set; }
     public DateTime? CompletedAt { get; set; }
     public double TotalSum { get; set; }
+    
+    [JsonIgnore]
+    public Customer Customer { get; private set; }
 
-    public Order(DateTime createdAt, OrderStatus status, DateTime completedAt, double totalSum, ICollection<Key> keys)
+    public Order(DateTime createdAt, OrderStatus status, DateTime? completedAt, double totalSum, ICollection<Key> keys, Customer customer)
     {
+        if (customer == null)
+            throw new ArgumentNullException(nameof(customer), "Order must have a Customer.");
+        
         CreatedAt = createdAt;
         Status = status;
         CompletedAt = completedAt;
@@ -34,6 +41,9 @@ public class Order
         {
             throw new OrderCannotBeEmpty();
         }
+        
+        Customer = customer;
+        Customer.AddOrder(this);
     }
     
     // associations

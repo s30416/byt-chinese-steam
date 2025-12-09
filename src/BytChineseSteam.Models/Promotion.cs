@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using System.Text.Json.Serialization;
 using BytChineseSteam.Models.Enums;
 using BytChineseSteam.Repository.Extent;
 
@@ -18,7 +19,11 @@ public class Promotion
     
     public ImmutableHashSet<Key> Keys => _keys.ToImmutableHashSet();
     
-    public Promotion(string name, double discountPercent, DateTime startDate, DateTime endDate, PromotionStatus status, Key initialKey)
+    [JsonIgnore]
+    public Manager Manager { get; private set; }
+    
+    public Promotion(string name, double discountPercent, DateTime startDate, 
+        DateTime endDate, PromotionStatus status, Key initialKey, Manager manager)
     {
         Name = name;
         DiscountPercent = discountPercent;
@@ -26,12 +31,27 @@ public class Promotion
         EndDate = endDate;
         Status = status;
         
+        if (manager == null)
+            throw new ArgumentNullException(nameof(manager), "A promotion must have a Manager.");
+        Manager = manager;
+        Manager.AddPromotion(this);
+        
         if (initialKey == null)
             throw new ArgumentNullException(
                 nameof(initialKey), "A promotion must be associated with at least one Key.");
-
         AddKey(initialKey);
+        
         Extent.Add(this);
+    }
+    
+    public void ChangeManager(Manager newManager)
+    {
+        if (newManager == null) throw new ArgumentNullException(nameof(newManager));
+        
+        if (Manager == newManager) return;
+        Manager.RemovePromotion(this);
+        Manager = newManager;
+        Manager.AddPromotion(this);
     }
     
     // key association
@@ -60,5 +80,16 @@ public class Promotion
         _keys.Remove(key);
         
         key.RemovePromotion(this);
+    }
+    
+    public void DeletePromotion()
+    {
+        Manager.RemovePromotion(this);
+        foreach(var key in _keys.ToList())
+        {
+            RemoveKey(key);
+        }
+        
+        Extent.Remove(this);
     }
 }

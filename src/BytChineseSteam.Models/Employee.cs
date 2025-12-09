@@ -14,7 +14,7 @@ public class Employee
     [Required] [ValidEmail] public string Email { get; set; }
 
     [Required]
-    [RegularExpression(@"\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})")]
+    [RegularExpression(@"^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$")]
     public string PhoneNumber { get; set; }
 
     [Required] [MinLength(8)] public string HashedPassword { get; set; }

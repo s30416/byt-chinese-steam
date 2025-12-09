@@ -17,8 +17,9 @@ namespace BytChineseSteam.Tests
         [Test]
         public void CreateKey_ShouldAutomaticallyAddToGame()
         {
+            var admin = new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork", null);
             var publisher = new Publisher("Ubisoft", "Global Publisher");
-            var game = new Game("Far Cry 6", "Shooter", publisher);
+            var game = new Game("Far Cry 6", "Shooter", publisher, admin);
 
             var key = new Key(game, "123-ABC", 59.99m, DateTime.Now, 0, new List<string> { "Base Game" });
 
@@ -39,8 +40,9 @@ namespace BytChineseSteam.Tests
         [Test]
         public void DeleteGame_ShouldCascadeDeleteKeys()
         {
+            var admin = new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork", null);
             var publisher = new Publisher("EA", "Sports Publisher");
-            var game = new Game("FIFA 24", "Sports", publisher);
+            var game = new Game("FIFA 24", "Sports", publisher, admin);
             var key1 = new Key(game, "KEY-1", 10, DateTime.Now, 0, new List<string>{"A"});
             var key2 = new Key(game, "KEY-2", 20, DateTime.Now, 0, new List<string>{"B"});
 
@@ -58,8 +60,9 @@ namespace BytChineseSteam.Tests
         [Test]
         public void DeleteKey_ShouldRemoveFromGame()
         {
+            var admin = new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork", null);
             var publisher = new Publisher("Valve", "PC Platform");
-            var game = new Game("Portal 2", "Puzzle", publisher);
+            var game = new Game("Portal 2", "Puzzle", publisher, admin);
             var key = new Key(game, "P2-KEY", 10, DateTime.Now, 0, new List<string>{"A"});
 
             key.DeleteKey();

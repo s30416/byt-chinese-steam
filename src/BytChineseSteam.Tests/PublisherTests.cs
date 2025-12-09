@@ -10,6 +10,7 @@ namespace BytChineseSteam.Tests
         // these are set up fresh in SetUp()
         private Publisher _pubA;
         private Publisher _pubB;
+        private Admin _admin;
 
         [SetUp]
         public void SetUp()
@@ -121,8 +122,10 @@ namespace BytChineseSteam.Tests
         [Test]
         public void TestGetAllPublishersGames_ReturnsOnlyGamesWithThisPublisher()
         {
-            var g1 = new Game("G1", "descr1", _pubA);
-            var g2 = new Game("G2", "descr", _pubB);
+            var admin = new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789",
+                "howdoesourhashedpasswork", null);
+            var g1 = new Game("G1", "descr1", _pubA, admin);
+            var g2 = new Game("G2", "descr", _pubB, admin);
             
             var aGames = _pubA.GetAllPublishersGames();
             var bGames = _pubB.GetAllPublishersGames();

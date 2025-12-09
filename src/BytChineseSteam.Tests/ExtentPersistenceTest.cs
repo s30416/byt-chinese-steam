@@ -9,7 +9,8 @@ namespace BytChineseSteam.Tests;
 public class ExtentPersistenceTest
 {
     private const string Path = "store.json";
-    private Game _game = new Game("Test Game", "Test Description", null!);
+    private Game _game = new Game("Test Game", "Test Description", null!, new Admin(new Name("Big", "Tommy"), 
+        "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork", null));
     
 
     [SetUp]
@@ -79,8 +80,9 @@ public class ExtentPersistenceTest
     public void Extent_ShouldHaveValues_AfterModelCreation()
     {
         // Creating dependencies
+        var admin = new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork", null);
         var publisher = new Publisher("Test Publisher", "Test Description");
-        var game = new Game("Test Game", "Test Description", publisher);
+        var game = new Game("Test Game", "Test Description", publisher, admin);
 
         var key = new Key(game, "adsf", 0, DateTime.Now, 0, []);
         Assert.That(new List<Key> { key }, Is.EquivalentTo(Key.Extent.All()));
@@ -102,8 +104,9 @@ public class ExtentPersistenceTest
     public void EntityPersistence_ShouldPersistExtents()
     {
         // Creating dependencies
+        var admin = new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork", null);
         var publisher = new Publisher("Persistence Pub", "Test Description");
-        var game = new Game("Persistence Game", "Test Description", publisher);
+        var game = new Game("Persistence Game", "Test Description", publisher, admin);
 
         // storing key
         var key = new Key(game, "asdf", 10, DateTime.Now, 0, []);

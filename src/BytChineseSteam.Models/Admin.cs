@@ -9,6 +9,11 @@ public class Admin(Name name, string email, string phoneNumber, string hashedPas
     public static readonly decimal GameBonus = 500;
 
     private static List<Admin> _admins = new();
+    
+    private readonly HashSet<Game> _games = new();
+    
+    [JsonIgnore] 
+    public IReadOnlyCollection<Game> Games => _games.ToList().AsReadOnly();
 
     // extent methods
 
@@ -26,4 +31,22 @@ public class Admin(Name name, string email, string phoneNumber, string hashedPas
     }
 
     // class methods
+    
+    // game association
+    internal void AddGame(Game game)
+    {
+        if (game == null) throw new ArgumentNullException(nameof(game));
+        
+        if (!_games.Contains(game))
+        {
+            _games.Add(game);
+        }
+    }
+
+    internal void RemoveGame(Game game)
+    {
+        if (game == null) throw new ArgumentNullException(nameof(game));
+        
+        _games.Remove(game);
+    }
 }

@@ -1,3 +1,9 @@
+//TODO:
+//currently tests work only when run separate - aka code is fked
+//I tried to fix but failed, problem is that Order cannot be empty
+//it's 3am and I declare defeat - I hope that @Ram_er or whoever the fuck elps
+//please
+
 using System.ComponentModel.DataAnnotations;
 using BytChineseSteam.Models;
 
@@ -10,7 +16,8 @@ public class KeyTest
     private Game CreateValidGame()
     {
         var publisher = new Publisher("Test Publisher", "Description");
-        return new Game("Test Game", "Description", publisher);
+        var admin = new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork", null);
+        return new Game("Test Game", "Description", publisher, admin);
     }
 
     [SetUp]
@@ -21,6 +28,7 @@ public class KeyTest
         {
             game.DeleteGame();
         }
+        
     }
 
     [Test]
@@ -28,7 +36,6 @@ public class KeyTest
     {
         var game = CreateValidGame();
         var now = DateTime.Now;
-        
         var key = new Key(game, "some key", 10, now, 0, []);
 
         Assert.Multiple(() =>

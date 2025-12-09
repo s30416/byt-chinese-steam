@@ -13,15 +13,18 @@ public class OrderKeyAssociationWithAttributeTest
     private Publisher _publisher;
     private OrderKey _orderKey1;
     private OrderKey _orderKey2;
+    private Admin _admin;
     
     [SetUp]
     public void Setup()
     {
         _publisher = new Publisher("name", "desc");
-        _game = new Game("title", "desc", null, _publisher);
+        _game = new Game("title", "desc", null, _publisher, new Admin(new Name("Big", "Tommy"), 
+            "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork", null));
         _key = new(_game, "asdf", 10, DateTime.Now, 0, []);
         _key2 = new (_game, "asdf", 10, DateTime.Now, 0, []);
-        _order = new Order(DateTime.Now, OrderStatus.Active, DateTime.Now, 0, new HashSet<Key>() {_key});
+        _order = new Order(DateTime.Now, OrderStatus.Active, DateTime.Now, 0, new HashSet<Key>() {_key}, new Customer(new Name("Lil", "Bomba"), "bigBOOM@its3am.here",
+            "+54341242532", "istilldontknowhashedpassformat"));
         _orderKey1 = new OrderKey(_order, _key);
         _orderKey2 = new OrderKey(_order, _key2);
     }
@@ -141,7 +144,8 @@ public class OrderKeyAssociationWithAttributeTest
         var k3 = new Key(_game, "asdf", 10, DateTime.Now, 0, []);
         var k4 = new Key(_game, "asdf", 10, DateTime.Now, 0, []);
         var k5 = new Key(_game, "asdf", 10, DateTime.Now, 0, []);
-        var order = new Order( DateTime.Now, OrderStatus.Active, DateTime.Now, 0, [k3, k4, k5]);
+        var order = new Order( DateTime.Now, OrderStatus.Active, DateTime.Now, 0, [k3, k4, k5],
+            new Customer(new Name("Lil", "Bomba"), "bigBOOM@its3am.here", "+54341242532", "istilldontknowhashedpassformat"));
 
         var ok3 = new OrderKey(order, k3);
         var ok4 = new OrderKey(order, k4);
