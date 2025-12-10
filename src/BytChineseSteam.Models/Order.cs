@@ -21,6 +21,8 @@ public class Order
     
     [JsonIgnore]
     public Customer Customer { get; private set; }
+    
+    public PaymentMethod? PaymentMethod { get; private set; }
 
     public Order(DateTime createdAt, OrderStatus status, DateTime? completedAt, double totalSum, ICollection<Key> keys, Customer customer)
     {
@@ -44,6 +46,32 @@ public class Order
         
         Customer = customer;
         Customer.AddOrder(this);
+    }
+
+    public Order(DateTime createdAt, OrderStatus status, DateTime? completedAt, double totalSum, ICollection<Key> keys, Customer customer, PaymentMethod paymentMethod)
+    {
+        if (customer == null)
+            throw new ArgumentNullException(nameof(customer), "Order must have a Customer.");
+        
+        CreatedAt = createdAt;
+        Status = status;
+        CompletedAt = completedAt;
+        TotalSum = totalSum;
+
+        foreach (var key in keys)
+        {
+            AddKey(key);
+        }
+        
+        if (_keys.Count == 0)
+        {
+            throw new OrderCannotBeEmpty();
+        }
+        
+        Customer = customer;
+        Customer.AddOrder(this);
+        
+        AddPaymentMethod(paymentMethod);
     }
     
     // associations
@@ -111,6 +139,33 @@ public class Order
         {
             DeleteOrder();
         }
+    }
+
+    public void AddPaymentMethod(PaymentMethod paymentMethod)
+    {
+        if (paymentMethod == null)
+            throw new ArgumentNullException(nameof(paymentMethod));
+
+        if (PaymentMethod == paymentMethod) return;
+        
+        if (PaymentMethod != null)
+            PaymentMethod.RemoveOrder(this);
+        
+        PaymentMethod = paymentMethod;
+        
+        if (!paymentMethod.ContainsOrder(this))
+            paymentMethod.AddOrder(this);
+    }
+
+    public void RemovePaymentMethod()
+    {
+        if (PaymentMethod == null) return;
+
+        var old = PaymentMethod;
+        PaymentMethod = null;
+
+        if (old.ContainsOrder(this))
+            old.RemoveOrder(this);
     }
 
     public void DeleteOrder()
