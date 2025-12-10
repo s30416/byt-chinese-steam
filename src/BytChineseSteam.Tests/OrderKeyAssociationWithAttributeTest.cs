@@ -19,13 +19,19 @@ public class OrderKeyAssociationWithAttributeTest
     public void Setup()
     {
         var admin = new Admin(new Name("first", "last"), "admin@gmail.com", "+48123456789", "password", null);
+        
         _publisher = new Publisher("name", "desc", admin);
+        
         _game = new Game("title", "desc", null, _publisher, new Admin(new Name("Big", "Tommy"), 
             "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork", null));
-        _key = new(_game, "asdf", 10, DateTime.Now, 0, []);
-        _key2 = new (_game, "asdf", 10, DateTime.Now, 0, []);
+        
+        
+        _key = new Key(_game, _admin, "asdf", 10, DateTime.Now, 0, new List<string>());
+        _key2 = new Key(_game, _admin, "asdf", 10, DateTime.Now, 0, new List<string>());        
+        
         _order = new Order(DateTime.Now, OrderStatus.Active, DateTime.Now, 0, new HashSet<Key>() {_key}, new Customer(new Name("Lil", "Bomba"), "bigBOOM@its3am.here",
             "+54341242532", "istilldontknowhashedpassformat"));
+        
         _orderKey1 = new OrderKey(_order, _key);
         _orderKey2 = new OrderKey(_order, _key2);
     }
@@ -128,9 +134,10 @@ public class OrderKeyAssociationWithAttributeTest
     [Test]
     public void ShouldAddKeysToOrders_WhenPassedToConstructor_OnOrderCreation()
     {
-        var k3 = new Key(_game, "asdf", 10, DateTime.Now, 0, []);
-        var k4 = new Key(_game, "asdf", 10, DateTime.Now, 0, []);
-        var k5 = new Key(_game, "asdf", 10, DateTime.Now, 0, []);
+        var k3 = new Key(_game, _admin, "asdf", 10, DateTime.Now, 0, new List<string>());
+        var k4 = new Key(_game, _admin, "asdf", 10, DateTime.Now, 0, new List<string>());
+        var k5 = new Key(_game, _admin, "asdf", 10, DateTime.Now, 0, new List<string>());
+        
         var order = new Order( DateTime.Now, OrderStatus.Active, DateTime.Now, 0, [k3, k4, k5],
             new Customer(new Name("Lil", "Bomba"), "bigBOOM@its3am.here", "+54341242532", "istilldontknowhashedpassformat"));
 
