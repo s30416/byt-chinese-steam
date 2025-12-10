@@ -30,8 +30,12 @@ public class Key : Limited
     
     [Required]
     public Game Game { get; private set; }
+    
+    [Required]
+    [JsonInclude]
+    public Admin Creator { get; private set; }
 
-    public Key(Game game, string accessKey, decimal originalPrice, DateTime createdAt, decimal priceIncrease,
+    public Key(Game game, Admin creator, string accessKey, decimal originalPrice, DateTime createdAt, decimal priceIncrease,
         List<string> benefits)
     {
         if (game == null)
@@ -40,6 +44,7 @@ public class Key : Limited
         }
 
         Game = game;
+        Creator = creator;
         
         AccessKey = accessKey;
         OriginalPrice = originalPrice;
@@ -48,6 +53,7 @@ public class Key : Limited
         Benefits = benefits;
 
         Game.AddKey(this);
+        Creator.AddCreatedKey(this);
 
         Extent.Add(this);
     }
@@ -60,6 +66,8 @@ public class Key : Limited
         Extent.Remove(this);
         
         Game.RemoveKey(this);
+        
+        Creator.RemoveCreatedKey(this);
 
         foreach (var ok in _orders)
         {

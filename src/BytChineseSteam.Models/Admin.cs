@@ -17,6 +17,14 @@ public class Admin : Employee
     [JsonIgnore] 
     public IReadOnlyCollection<Game> Games => _games.ToList().AsReadOnly();
     
+    
+    // for Admin-Key association
+    [JsonIgnore]
+    private readonly HashSet<Key> _createdKeys = new();
+
+    [JsonIgnore]
+    public IReadOnlyCollection<Key> CreatedKeys => _createdKeys.ToList().AsReadOnly();
+    
     [JsonConstructor]
     public Admin(Name name, string email, string phoneNumber, string hashedPassword, decimal? salary, ISet<Publisher> publishers) : base(name, email, phoneNumber, hashedPassword, salary)
     {
@@ -92,5 +100,26 @@ public class Admin : Employee
         }
         
         _publishers.Remove(publisher);
+    }
+    
+    internal void AddCreatedKey(Key key)
+    {
+        ArgumentNullException.ThrowIfNull(key);
+
+        if (key.Creator != this)
+        {
+            throw new InvalidOperationException("Key creator mismatch. Cannot add key created by another admin.");
+        }
+
+        if (!_createdKeys.Contains(key))
+        {
+            _createdKeys.Add(key);
+        }
+    }
+
+    internal void RemoveCreatedKey(Key key)
+    {
+        ArgumentNullException.ThrowIfNull(key);
+        _createdKeys.Remove(key);
     }
 }
