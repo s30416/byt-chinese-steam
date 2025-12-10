@@ -4,6 +4,7 @@
 
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 using BytChineseSteam.Repository.Extent;
 
@@ -100,6 +101,7 @@ public class Publisher
 
         Extent.Remove(publisher);
         publisher.Admin.RemovePublisher(publisher);
+        Console.WriteLine(publisher.Admin.GetHashCode());
     }
 
     public void UpdatePublisher(string newName, string newDescription, Employee actor)

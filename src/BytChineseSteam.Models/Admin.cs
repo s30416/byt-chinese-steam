@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Immutable;
+using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
 using BytChineseSteam.Repository.Extent;
 
@@ -12,8 +13,10 @@ public class Admin : Employee
 
     // publisher association
     [JsonIgnore]
-    private ISet<Publisher> _publishers = new HashSet<Publisher>();
-    
+    public ImmutableHashSet<Publisher> Publishers => _publishers.ToImmutableHashSet();
+    [JsonIgnore]
+    private readonly ISet<Publisher> _publishers = new HashSet<Publisher>();
+
     [JsonIgnore] 
     public IReadOnlyCollection<Game> Games => _games.ToList().AsReadOnly();
     
@@ -27,23 +30,10 @@ public class Admin : Employee
 
     
     [JsonConstructor]
-    public Admin(Name name, string email, string phoneNumber, string hashedPassword, decimal? salary, ISet<Publisher> publishers, SuperAdmin? creator = null) 
+    public Admin(Name name, string email, string phoneNumber, string hashedPassword, decimal? salary, SuperAdmin? creator = null) 
         : base(name, email, phoneNumber, hashedPassword, salary, creator)
     {
         AddAdmin(this);
-
-        if (publishers != null)
-        {
-            foreach (var publisher in publishers)
-            {
-                AddPublisher(publisher);
-            }
-        }
-    }
-
-    public Admin(Name name, string email, string phoneNumber, string hashedPassword, decimal? salary,
-        SuperAdmin creator) : this(name, email, phoneNumber, hashedPassword, salary, new HashSet<Publisher>(), creator)
-    {
     }
 
     // extent methods
@@ -91,13 +81,11 @@ public class Admin : Employee
     internal void AddPublisher(Publisher publisher)
     {
         ArgumentNullException.ThrowIfNull(publisher);
-
-        if (_publishers.Contains(publisher))
+        
+        if (!_publishers.Add(publisher))
         {
             throw new ArgumentException($"The given publisher already exists");
         }
-        
-        _publishers.Add(publisher);
     }
     
     internal void RemovePublisher(Publisher publisher)
