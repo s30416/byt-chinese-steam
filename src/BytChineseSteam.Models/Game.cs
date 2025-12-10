@@ -36,6 +36,8 @@ public class Game
         GameSlug = Slugifier.ToGameSlug(title);
         Publisher = publisher;
         
+        publisher.AddGame(this);
+        
         if (admin == null) throw new ArgumentNullException(nameof(admin), "Game must have an Admin.");
         Admin = admin;
         Admin.AddGame(this);
@@ -56,12 +58,36 @@ public class Game
         GameSlug = Slugifier.ToGameSlug(title);
         Publisher = publisher;
         
+        publisher.AddGame(this);
+        
         if (admin == null) throw new ArgumentNullException(nameof(admin), "Game must have an Admin.");
 
         Admin = admin;
         Admin.AddGame(this);
         
         Extent.Add(this);
+    }
+    
+    // no need for AddPublisher, use ChangePublisher instead (does same thing)
+
+    public void ChangePublisher(Publisher newPublisher)
+    {
+        if (newPublisher == null) 
+            throw new ArgumentNullException(nameof(newPublisher), "Publisher cannot be null.");
+
+        if (Publisher == newPublisher) return;
+
+        var oldPublisher = Publisher;
+        
+        // first change
+        Publisher = newPublisher;
+
+        // THESE ARE NOT CHATGPT'S COMMENTS, I WROTE THEM, DO NOT REMOVE THEM
+        // then remove from old publisher first (correct RemoveGame call)
+        oldPublisher.RemoveGame(this);
+
+        // add to new publisher after
+        newPublisher.AddGame(this);
     }
     
 

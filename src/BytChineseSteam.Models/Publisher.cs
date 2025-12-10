@@ -18,6 +18,9 @@ public class Publisher
     // admin association
     public Admin Admin {get;} 
     
+    // game association
+    private HashSet<Game> _publishedGames = new();
+    
     public Publisher(string name, string description, Admin admin)
     {
         Name = name;
@@ -27,6 +30,40 @@ public class Publisher
         Admin.AddPublisher(this);
         
         Extent.Add(this);
+    }
+
+    public void AddGame(Game game)
+    {
+        if (game == null) throw new ArgumentNullException(nameof(game));
+
+        if (_publishedGames.Contains(game)) return;
+
+        _publishedGames.Add(game);
+
+        if (game.Publisher != this)
+        {
+            game.ChangePublisher(this);
+        }
+    }
+    
+    // THESE ARE NOT CHATGPT'S COMMENTS, I WROTE THEM, DO NOT REMOVE THEM
+    // Game must always have a Publisher
+    // be careful when using this method on its own
+    // prefferably use Game.ChangePublisher instead
+    public void RemoveGame(Game game)
+    {
+        if (game == null) throw new ArgumentNullException(nameof(game));
+
+        if (!_publishedGames.Contains(game)) return;
+        
+        if (game.Publisher == this)
+        {
+            throw new InvalidOperationException(
+                "Cannot remove publisher from a game without assigning a new one. " +
+                "Change the publisher first or use Game.ChangePublisher() instead.");
+        }
+
+        _publishedGames.Remove(game);
     }
     
     public static Publisher CreatePublisher(string name, string description, Employee actor)
