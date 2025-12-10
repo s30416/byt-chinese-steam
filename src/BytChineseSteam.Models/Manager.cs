@@ -1,10 +1,10 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace BytChineseSteam.Models;
 
-public class Manager(Name name, string email, string phoneNumber, string hashedPassword, decimal? salary)
-    : Employee(name, email, phoneNumber, hashedPassword, salary)
+public class Manager : Employee
 {
     public static readonly decimal PromotionBonus = 100;
     
@@ -16,6 +16,13 @@ public class Manager(Name name, string email, string phoneNumber, string hashedP
     public IReadOnlyCollection<Promotion> Promotions => _promotions.ToList().AsReadOnly();
 
     // extent methods
+    
+    [JsonConstructor]
+    public Manager(Name name, string email, string phoneNumber, string hashedPassword, decimal? salary, SuperAdmin? creator = null)
+        : base(name, email, phoneNumber, hashedPassword, salary, creator)
+    {
+        AddManager(this);
+    }
 
     public static ReadOnlyCollection<Manager> ViewAllManagers()
     {

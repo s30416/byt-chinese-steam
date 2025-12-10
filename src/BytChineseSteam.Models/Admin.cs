@@ -24,19 +24,25 @@ public class Admin : Employee
 
     [JsonIgnore]
     public IReadOnlyCollection<Key> CreatedKeys => _createdKeys.ToList().AsReadOnly();
+
     
     [JsonConstructor]
-    public Admin(Name name, string email, string phoneNumber, string hashedPassword, decimal? salary, ISet<Publisher> publishers) : base(name, email, phoneNumber, hashedPassword, salary)
+    public Admin(Name name, string email, string phoneNumber, string hashedPassword, decimal? salary, ISet<Publisher> publishers, SuperAdmin? creator = null) 
+        : base(name, email, phoneNumber, hashedPassword, salary, creator)
     {
         AddAdmin(this);
 
-        foreach (var publisher in publishers)
+        if (publishers != null)
         {
-            AddPublisher(publisher);
+            foreach (var publisher in publishers)
+            {
+                AddPublisher(publisher);
+            }
         }
     }
 
-    public Admin(Name name, string email, string phoneNumber, string hashedPassword, decimal? salary) : this(name, email, phoneNumber, hashedPassword, salary, new HashSet<Publisher>())
+    public Admin(Name name, string email, string phoneNumber, string hashedPassword, decimal? salary,
+        SuperAdmin creator) : this(name, email, phoneNumber, hashedPassword, salary, new HashSet<Publisher>(), creator)
     {
     }
 
@@ -59,7 +65,11 @@ public class Admin : Employee
     
     // game association
     private readonly HashSet<Game> _games = new();
-    
+
+    public Admin(Name name, string email, string phoneNumber, string hashedPassword, decimal? salary) : base()
+    {
+    }
+
     internal void AddGame(Game game)
     {
         if (game == null) throw new ArgumentNullException(nameof(game));

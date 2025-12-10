@@ -3,12 +3,24 @@ using System.Text.Json.Serialization;
 
 namespace BytChineseSteam.Models;
 
-public class SuperAdmin(Name name, string email, string phoneNumber, string hashedPassword, decimal? salary)
-    : Employee(name, email, phoneNumber, hashedPassword, salary)
+public class SuperAdmin : Employee
 {
     private static List<SuperAdmin> _superAdmins = new();
+    
+    [JsonIgnore]
+    private readonly HashSet<Employee> _createdEmployees = new();
+    
+    [JsonIgnore]
+    public IReadOnlyCollection<Employee> CreatedEmployees => _createdEmployees.ToList().AsReadOnly();
 
     // extent methods
+    
+    [JsonConstructor]
+    public SuperAdmin(Name name, string email, string phoneNumber, string hashedPassword, decimal? salary, SuperAdmin? creator = null)
+        : base(name, email, phoneNumber, hashedPassword, salary, creator)
+    {
+        AddSuperAdmin(this);
+    }
 
     public static ReadOnlyCollection<SuperAdmin> ViewAllSuperAdmins()
     {
@@ -21,6 +33,32 @@ public class SuperAdmin(Name name, string email, string phoneNumber, string hash
             throw new ArgumentException($"The given employee cannot be null");
         
         _superAdmins.Add(superAdmin);
+    }
+    
+    // new methods for SuperAdmin-Employee association
+
+    public void AddCreatedEmployee(Employee employee)
+    {
+        if (employee == null) throw new ArgumentNullException(nameof(employee));
+
+        if (employee.Creator != this)
+        {
+            if (employee.Creator != null && employee.Creator != this)
+            {
+                throw new InvalidOperationException("Employee creator mismatch.");
+            }
+        }
+
+        if (!_createdEmployees.Contains(employee))
+        {
+            _createdEmployees.Add(employee);
+        }
+    }
+
+    internal void RemoveCreatedEmployee(Employee employee)
+    {
+        if (employee == null) throw new ArgumentNullException(nameof(employee));
+        _createdEmployees.Remove(employee);
     }
     
     // class methods

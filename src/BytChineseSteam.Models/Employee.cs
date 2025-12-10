@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using BytChineseSteam.Models.DataAnnotations;
 using BytChineseSteam.Repository.Extent;
 
@@ -20,13 +21,16 @@ public class Employee
     [Required] [MinLength(8)] public string HashedPassword { get; set; }
 
     [NonNegative] public decimal? Salary { get; set; }
+    
+    [JsonInclude]
+    public SuperAdmin? Creator { get; private set; }
 
     public decimal GetCollectedBonuses()
     {
         return 0;
     }
 
-    public Employee(Name name, string email, string phoneNumber, string hashedPassword, decimal? salary)
+    public Employee(Name name, string email, string phoneNumber, string hashedPassword, decimal? salary, SuperAdmin? creator = null)
     {
         Name = name;
         Email = email;
@@ -34,8 +38,19 @@ public class Employee
         HashedPassword = hashedPassword;
         Salary = salary;
 
+        // making connection 
+        Creator = creator;
+        if (Creator != null)
+        {
+            Creator.AddCreatedEmployee(this);
+        }
+        
         // add to collection
         Extent.Add(this);
+    }
+
+    protected Employee()
+    {
     }
 
     // extent methods
@@ -58,26 +73,26 @@ public class Employee
     // will be required to change the isSuperAdmin bool to an actual check on the controller/service layer
     // I will also have to figure out the use of generics here, but that's inheritance issues
     public static Employee CreateEmployee<T>(string firstName, string lastName, string email, string phoneNumber,
-        string password, decimal? salary, bool isSuperAdmin)
+        string password, decimal? salary, SuperAdmin creator)
     {
-        if (!isSuperAdmin)
+        if (creator == null)
             throw new UnauthorizedAccessException("Only super admins can create Employees");
 
         var name = new Name(firstName, lastName);
         if (typeof(T) == typeof(Admin))
         {
             if (salary == null) return new Admin(name, email, phoneNumber, password, null);
-            else return new Admin(name, email, phoneNumber, password, (decimal)salary);
+            else return new Admin(name, email, phoneNumber, password, (decimal)salary, creator);
         }
         else if (typeof(T) == typeof(Manager))
         {
             if (salary == null) return new Manager(name, email, phoneNumber, password, null);
-            else return new Manager(name, email, phoneNumber, password, (decimal)salary);
+            else return new Manager(name, email, phoneNumber, password, (decimal)salary, creator);
         }
         else if (typeof(T) == typeof(SuperAdmin))
         {
             if (salary == null) return new SuperAdmin(name, email, phoneNumber, password, null);
-            else return new SuperAdmin(name, email, phoneNumber, password, (decimal)salary);
+            else return new SuperAdmin(name, email, phoneNumber, password, (decimal)salary, creator);
         }
         else
         {
