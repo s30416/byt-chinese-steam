@@ -16,9 +16,9 @@ public class PromotionKeyAssociationTest
     [SetUp]
     public void Setup()
     {
-        var admin = new Admin(new Name("first", "last"), "admin@gmail.com",  "+48123456789", "password", null);
+        _admin = new Admin(new Name("first", "last"), "admin@gmail.com",  "+48123456789", "password", null);
         
-        _publisher = new Publisher("name", "desc", admin);
+        _publisher = new Publisher("name", "desc", _admin);
         
         _game = new Game("title", "desc", null, _publisher, new Admin(new Name("Big", "Tommy"), 
             "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork", null));
