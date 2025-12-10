@@ -8,10 +8,10 @@ namespace BytChineseSteam.Tests;
 [NonParallelizable]
 public class ExtentPersistenceTest
 {
-    private const string Path = "store.json";
-    private Game _game = new Game("Test Game", "Test Description", null!, new Admin(new Name("Big", "Tommy"), 
-        "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork", null));
-    
+        private const string Path = "store.json";
+        private Admin _admin;
+        private Publisher _publisher;
+        private Game _game;
 
     [SetUp]
     public void Setup()
@@ -27,6 +27,10 @@ public class ExtentPersistenceTest
             
             Key.Extent.Remove(key);
         }
+        
+        _admin = new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork", null);
+        _publisher = new Publisher("Test Publisher", "Test Description", _admin);
+        _game = new Game("Test Game", "Test Description", _publisher, _admin);
     }
     
     // I CHANGE THIS TEST WITH ONE BELOW CAUSE OF COMPOSITION
@@ -84,7 +88,7 @@ public class ExtentPersistenceTest
         var publisher = new Publisher("Test Publisher", "Test Description", admin);
         var game = new Game("Test Game", "Test Description", publisher, admin);
 
-        var key = new Key(game, "adsf", 0, DateTime.Now, 0, []);
+        var key = new Key(_game, _admin, "asdf", 10, DateTime.Now, 0, new List<string>());
         Assert.That(new List<Key> { key }, Is.EquivalentTo(Key.Extent.All()));
     }
 
@@ -92,7 +96,7 @@ public class ExtentPersistenceTest
     public void Extent_ShouldHaveValuesLoadedByPersistence_IfContainsExtent()
     {
         // filling store.js
-        var key = new Key(_game, "adsf", 0, DateTime.Now, 0, []);
+        var key = new Key(_game, _admin, "asdf", 10, DateTime.Now, 0, new List<string>());
         ExtentPersistence.Persist(Key.Extent);
 
         // loading values
@@ -109,7 +113,7 @@ public class ExtentPersistenceTest
         var game = new Game("Persistence Game", "Test Description", publisher, admin);
 
         // storing key
-        var key = new Key(game, "asdf", 10, DateTime.Now, 0, []);
+        var key = new Key(_game, _admin, "asdf", 10, DateTime.Now, 0, new List<string>());
         ExtentPersistence.Persist(Key.Extent);
     
         // checking json
@@ -124,7 +128,7 @@ public class ExtentPersistenceTest
     public void ShouldDiscoverExtentsAndLoadModels_WhenDiscoverExtentsAndLoadAllIsCalled()
     {
         // writing to file
-        var key = new Key(_game, "asdf", 10, DateTime.Now, 0, []);
+        var key = new Key(_game, _admin, "asdf", 10, DateTime.Now, 0, new List<string>());
         var keyNodeArray = JsonSerializer.SerializeToNode(new List<Key>() {key});
         Console.WriteLine(Key.Extent.All().Count());
         ExtentPersistence.Persist(Key.Extent);

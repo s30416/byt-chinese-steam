@@ -31,7 +31,7 @@ public class ExtentTest
         var publisher = new Publisher("Test Publisher", "Test Description", admin);
         var game = new Game("Test Game", "Test Description", publisher, admin);
 
-        var key = new Key(game, "asdf", 10, DateTime.Now, 0, []);
+        var key = new Key(game, admin, "asdf", 10, DateTime.Now, 0, new List<string>());
         Assert.That(Key.Extent.All(), Is.EquivalentTo(new [] { key }));
     }
 }
