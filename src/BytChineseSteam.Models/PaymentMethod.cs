@@ -1,11 +1,13 @@
 ﻿using System.Collections.ObjectModel;
+using BytChineseSteam.Repository.Extent;
 
 namespace BytChineseSteam.Models;
 
-// TODO: ask if we need an Extent for this class
 
 public class PaymentMethod
 {
+    private static readonly Extent<PaymentMethod> Extent = new();
+    
     public string Name { get; set; }
 
     private HashSet<Order> _orders = new();
@@ -15,6 +17,8 @@ public class PaymentMethod
     public PaymentMethod(string name)
     {
         Name = name;
+        
+        Extent.Add(this);
     }
     
     public void AddOrder(Order order)
@@ -41,5 +45,10 @@ public class PaymentMethod
 
         if (order.PaymentMethod == this)
             order.RemovePaymentMethod();
+    }
+    
+    public static ReadOnlyCollection<PaymentMethod> GetAll()
+    {
+        return Extent.All();
     }
 }
