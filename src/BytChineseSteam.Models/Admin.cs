@@ -111,8 +111,8 @@ public class Admin : Employee
         
         _publishers.Remove(publisher);
     }
-    
-    internal void AddCreatedKey(Key key)
+
+    public void AddCreatedKey(Key key)
     {
         ArgumentNullException.ThrowIfNull(key);
 

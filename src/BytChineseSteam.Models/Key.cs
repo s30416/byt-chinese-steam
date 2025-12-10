@@ -42,6 +42,11 @@ public class Key : Limited
         {
             throw new ArgumentNullException(nameof(game), "Key cannot exist without a Game.");
         }
+        
+        if (creator == null)
+        {
+            throw new ArgumentNullException(nameof(creator), "Key must be created by an Admin.");
+        }
 
         Game = game;
         Creator = creator;
