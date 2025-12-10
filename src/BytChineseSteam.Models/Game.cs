@@ -77,6 +77,7 @@ public class Game
         if (!_keys.Contains(key))
         {
             _keys.Add(key);
+            key.AddGame(this);
         }
     }
 

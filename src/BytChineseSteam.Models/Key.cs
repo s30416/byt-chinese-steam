@@ -66,6 +66,19 @@ public class Key : Limited
     // class methods from diagram
     // ...
 
+    public void AddGame(Game game)
+    {
+        if (game == null) throw new ArgumentNullException(nameof(game), "Key cannot exist without a Game.");
+
+        if (game != this.Game)
+        {
+          this.Game = game;  
+        }
+        
+        game.AddKey(this);
+        
+    }
+
     public void DeleteKey()
     {
         Extent.Remove(this);
