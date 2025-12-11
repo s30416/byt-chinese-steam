@@ -41,24 +41,32 @@ public class SuperAdmin : Employee
     {
         if (employee == null) throw new ArgumentNullException(nameof(employee));
 
-        if (employee.Creator != this)
+        if (employee.Creator != null && employee.Creator != this)
         {
-            if (employee.Creator != null && employee.Creator != this)
-            {
-                throw new InvalidOperationException("Employee creator mismatch.");
-            }
+            throw new InvalidOperationException("Employee creator mismatch.");
         }
 
-        if (!_createdEmployees.Contains(employee))
+        if (_createdEmployees.Contains(employee)) return;
+
+        _createdEmployees.Add(employee);
+
+        if (employee.Creator == null)
         {
-            _createdEmployees.Add(employee);
+            employee.Creator = this;
         }
     }
 
     internal void RemoveCreatedEmployee(Employee employee)
     {
         if (employee == null) throw new ArgumentNullException(nameof(employee));
+        if (!_createdEmployees.Contains(employee)) return;
+
         _createdEmployees.Remove(employee);
+
+        if (employee.Creator == this)
+        {
+            employee.Creator = null;
+        }
     }
     
     // class methods

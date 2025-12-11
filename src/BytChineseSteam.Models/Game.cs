@@ -109,7 +109,13 @@ public class Game
 
     internal void RemoveKey(Key key)
     {
-        _keys.Remove(key);
+        if (key == null) return;
+
+        if (_keys.Contains(key))
+        {
+            _keys.Remove(key);
+            key.RemoveGame(this);
+        }
     }
 
     public void DeleteGame()

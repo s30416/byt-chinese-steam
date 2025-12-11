@@ -23,7 +23,7 @@ public class Employee
     [NonNegative] public decimal? Salary { get; set; }
     
     [JsonInclude]
-    public SuperAdmin? Creator { get; private set; }
+    public SuperAdmin? Creator { get; internal set; }
 
     public decimal GetCollectedBonuses()
     {

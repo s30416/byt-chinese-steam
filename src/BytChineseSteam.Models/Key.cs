@@ -97,6 +97,18 @@ public class Key : Limited
             promo.RemoveKey(this);
         }
     }
+
+    internal void RemoveGame(Game game)
+    {
+        if (game == null) throw new ArgumentNullException(nameof(game), "Key cannot exist without a Game.");
+        
+        if (game != this.Game)
+        {
+            this.Game = game;
+        }
+        game.RemoveKey(this);
+    }
+    
     
     public decimal GetCurrentPrice()
     {
