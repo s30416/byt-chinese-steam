@@ -11,14 +11,8 @@ public class AdminKeyAssociationTests
     [SetUp]
     public void Setup()
     {
-        _admin = new Admin(
-            new Name("Key", "Test"), 
-            "keytest@steam.com", 
-            "+48123456789", 
-            "hashdgdfgdfg", 
-            5000, 
-            creator: null
-        );
+        
+        _admin = new Admin(new User(new Name("Key", "Test"), "keytest@steam.com", "+48123456789", "hashdgdfgdfg"), 5000);
 
         _publisher = new Publisher("Test Pub", "Desc", _admin);
 
@@ -63,7 +57,7 @@ public class AdminKeyAssociationTests
     [Test]
     public void ShouldThrowException_WhenAddingKeyCreatedByOtherAdmin()
     {
-        var otherAdmin = new Admin(new Name("Other", "Guy"), "other@b.com", "+48123456789", "hashddfgdfg", 1000, null);
+        var otherAdmin = new Admin(new User(new Name("Other", "Guy"), "other@b.com", "+48123456789", "hashddfgdfg"), 5000);
         
         var key = new Key(_game, _admin, "KEY-OWNED", 100, DateTime.Now, 0, new List<string>());
 

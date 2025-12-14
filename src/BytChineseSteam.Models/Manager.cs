@@ -18,8 +18,8 @@ public class Manager : Employee
     // extent methods
     
     [JsonConstructor]
-    public Manager(Name name, string email, string phoneNumber, string hashedPassword, decimal? salary, SuperAdmin? creator = null)
-        : base(name, email, phoneNumber, hashedPassword, salary, creator)
+    public Manager(User user, decimal? salary, SuperAdmin? creator = null)
+        : base(user, salary, creator)
     {
         AddManager(this);
     }

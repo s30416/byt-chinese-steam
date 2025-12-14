@@ -16,10 +16,10 @@ public class OrderPaymentAssociationTest
     [SetUp]
     public void Setup()
     {
-        var admin = new Admin(new Name("Admin", "User"), "admin@test.local", "+48123456789", "passssss", null);
+        var admin = new Admin(new User(new Name("Admin", "User"), "admin@test.local", "+48123456789", "passssss"), null);
         var game = new Game("TestGame", "desc", new Publisher("PubX", "desc", admin), admin);
 
-        _customer = new Customer(new Name("Lil", "Bomba"), "test@customer.local", "+48123455555", "passssss");
+        _customer = new Customer(new User(new Name("Lil", "Bomba"), "test@customer.local", "+48123455555", "passssss"));
 
         _pmA = new PaymentMethod("A");
         _pmB = new PaymentMethod("B");
@@ -58,11 +58,11 @@ public class OrderPaymentAssociationTest
     [Test]
     public void AddPaymentMethod_ShouldUpdateBothSides()
     {
-        var admin = new Admin(new Name("Mini", "Admin"), "new@a.b", "+48000000000", "pass", null);
+        var admin = new Admin(new User(new Name("Mini", "Admin"), "new@a.b", "+48000000000", "passaaaa"), null);
         var game = new Game("ExtraGame", "desc", new Publisher("PubY", "desc", admin), admin);
         var key = new Key(game, admin, "KEY", 10, DateTime.Now, 0, new List<string>());
 
-        var customer = new Customer(new Name("User", "N"), "x@y.z", "+48123123123", "passssss");
+        var customer = new Customer(new User(new Name("User", "N"), "x@y.z", "+48123123123", "passssss"));
 
         var order = new Order(
             DateTime.Now,

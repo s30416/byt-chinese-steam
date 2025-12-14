@@ -30,8 +30,8 @@ public class Admin : Employee
 
     
     [JsonConstructor]
-    public Admin(Name name, string email, string phoneNumber, string hashedPassword, decimal? salary, SuperAdmin? creator = null) 
-        : base(name, email, phoneNumber, hashedPassword, salary, creator)
+    public Admin(User user, decimal? salary, SuperAdmin? creator = null) 
+        : base(user, salary, creator)
     {
         AddAdmin(this);
     }
@@ -55,10 +55,6 @@ public class Admin : Employee
     
     // game association
     private readonly HashSet<Game> _games = new();
-
-    public Admin(Name name, string email, string phoneNumber, string hashedPassword, decimal? salary) : base()
-    {
-    }
 
     internal void AddGame(Game game)
     {

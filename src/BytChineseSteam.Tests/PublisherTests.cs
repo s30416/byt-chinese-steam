@@ -18,8 +18,8 @@ namespace BytChineseSteam.Tests
         {
             ClearPublisherStaticList();
             ClearGameStaticList();
-            _manager = new Manager(new Name("first", "last"), "manager@gmail.com", "+48123456789", "asdfasdfasdf", null);
-            _admin = new Admin(new Name("first", "last"), "manager@gmail.com", "+48123456789", "asdfasdfasdf", null);
+            _manager = new Manager(new User(new Name("first", "last"), "manager@gmail.com", "+48123456789", "asdfasdfasdf"), null);
+            _admin = new Admin(new User(new Name("first", "last"), "manager@gmail.com", "+48123456789", "asdfasdfasdf"), null);
             
             // create two publishers for tests that need them
             _pubA = Publisher.CreatePublisher("PubA", "Desc A", _admin);
@@ -125,8 +125,8 @@ namespace BytChineseSteam.Tests
         [Test]
         public void TestGetAllPublishersGames_ReturnsOnlyGamesWithThisPublisher()
         {
-            var admin = new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789",
-                "howdoesourhashedpasswork", null);
+            var admin = new Admin(new User(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789",
+                "howdoesourhashedpasswork"), null);
             var g1 = new Game("G1", "descr1", _pubA, admin);
             var g2 = new Game("G2", "descr", _pubB, admin);
             
