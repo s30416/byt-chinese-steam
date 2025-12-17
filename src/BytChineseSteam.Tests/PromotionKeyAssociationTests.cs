@@ -16,20 +16,20 @@ public class PromotionKeyAssociationTest
     [SetUp]
     public void Setup()
     {
-        _admin = new Admin(new User(new Name("first", "last"), "admin@gmail.com",  "+48123456789", "password"), null);
+        _admin = new Admin(new Name("first", "last"), "admin@gmail.com",  "+48123456789", "password", null);
         
         _publisher = new Publisher("name", "desc", _admin);
         
-        _game = new Game("title", "desc", null, _publisher, new Admin(new User(new Name("Big", "Tommy"), 
-            "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork"), null));
+        _game = new Game("title", "desc", null, _publisher, new Admin(new Name("Big", "Tommy"), 
+            "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork", null));
         
         _key1 = new Key(_game, _admin, "key1", 10, DateTime.Now, 0, new List<string> { "benefit" });
         _key2 = new Key(_game, _admin, "key2", 10, DateTime.Now, 0, new List<string> { "benefit" });
         
         // requires an initial Key
         _promotion = new Promotion("promo", 10, DateTime.Now, DateTime.Now, 
-            PromotionStatus.Planned, _key1, new Manager(new User(new Name("Small", "Jimmy"), "smallDjim@example.com",
-                "+48987654321", "whatwasthehashedpasswordformatagain"), 5));
+            PromotionStatus.Planned, _key1, new Manager(new Name("Small", "Jimmy"), "smallDjim@example.com",
+                "+48987654321", "whatwasthehashedpasswordformatagain", 5));
     }
 
     // Helper to verify state hasn't changed after an exception or invalid action

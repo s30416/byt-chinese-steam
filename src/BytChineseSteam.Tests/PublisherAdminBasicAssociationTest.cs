@@ -6,7 +6,7 @@ public class PublisherAdminBasicAssociationTest
 {
     private Admin CreateAdmin()
     {
-        var admin = new Admin(new User(new Name("first", "last"), "admin@mail.com", "+11111111111", "password"), null);
+        var admin = new Admin(new Name("first", "last"), "admin@mail.com", "+11111111111", "password", null);
         Console.WriteLine(admin.GetHashCode());
         return admin;
     }

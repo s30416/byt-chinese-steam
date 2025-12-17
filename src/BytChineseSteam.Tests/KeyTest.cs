@@ -15,7 +15,7 @@ public class KeyTest
 {
     private (Game, Admin) CreateDependencies()
     {
-        var admin = new Admin(new User(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789", "hashpasswordforfun"), null);
+        var admin = new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789", "hashpasswordforfun", null);
         
         var publisher = new Publisher("Test Publisher", "Description", admin);
         

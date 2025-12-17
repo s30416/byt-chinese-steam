@@ -20,7 +20,7 @@ public class EmployeeTests
     {
         Assert.Throws<ValidationException>(() =>
         {
-            var employee = new Employee(new User(null!, "email@gmail.com", "1234567899", "12345678"), 5000);
+            var employee = new Employee(null!, "email@gmail.com", "1234567899", "12345678", 5000);
         });
     }
 
@@ -29,8 +29,8 @@ public class EmployeeTests
     {
         Assert.Throws<ValidationException>(() =>
         {
-            var employee = new Employee(new User(new Name { FirstName = "name", LastName = "surname" }, null!,
-                "1234567899", "12345678"), 1);
+            var employee = new Employee(new Name { FirstName = "name", LastName = "surname" }, null!,
+                "1234567899", "12345678", 1);
         });
     }
 
@@ -39,8 +39,8 @@ public class EmployeeTests
     {
         Assert.Throws<ValidationException>(() =>
         {
-            var employee = new Employee(new User(new Name { FirstName = "name", LastName = "surname" }, "hello",
-                "1234567899", "12345678"), 1);
+            var employee = new Employee(new Name { FirstName = "name", LastName = "surname" }, "hello",
+                "1234567899", "12345678", 1);
         });
     }
 
@@ -49,8 +49,8 @@ public class EmployeeTests
     {
         Assert.Throws<ValidationException>(() =>
         {
-            var employee = new Employee(new User(new Name { FirstName = "name", LastName = "surname" }, "email@google.com",
-                null!, "12345678"), 1);
+            var employee = new Employee(new Name { FirstName = "name", LastName = "surname" }, "email@google.com",
+                null!, "12345678", 1);
         });
     }
 
@@ -59,8 +59,8 @@ public class EmployeeTests
     {
         Assert.Throws<ValidationException>(() =>
         {
-            var employee = new Employee(new User(new Name { FirstName = "name", LastName = "surname" }, "email@gmail.com",
-                "0", "12345678"), 1);
+            var employee = new Employee(new Name { FirstName = "name", LastName = "surname" }, "email@gmail.com",
+                "0", "12345678", 1);
         });
     }
 
@@ -69,8 +69,8 @@ public class EmployeeTests
     {
         Assert.Throws<ValidationException>(() =>
         {
-            var employee = new Employee(new User(new Name { FirstName = "name", LastName = "surname" }, "email@gmail.com",
-                "1234567899", null!), 1);
+            var employee = new Employee(new Name { FirstName = "name", LastName = "surname" }, "email@gmail.com",
+                "1234567899", null!, 1);
         });
     }
 
@@ -79,8 +79,8 @@ public class EmployeeTests
     {
         Assert.Throws<ValidationException>(() =>
         {
-            var employee = new Employee(new User(new Name { FirstName = "name", LastName = "surname" }, "email@gmail.com",
-                "1234567899", "12333"), 1);
+            var employee = new Employee(new Name { FirstName = "name", LastName = "surname" }, "email@gmail.com",
+                "1234567899", "12333", 1);
         });
     }
 
@@ -89,8 +89,8 @@ public class EmployeeTests
     {
         Assert.Throws<ValidationException>(() =>
         {
-            var employee = new Employee(new User(new Name { FirstName = "name", LastName = "surname" }, "email@gmail.com",
-                "1234567899", "12345678"), -1);
+            var employee = new Employee(new Name { FirstName = "name", LastName = "surname" }, "email@gmail.com",
+                "1234567899", "12345678", -1);
         });
     }
 
@@ -99,8 +99,8 @@ public class EmployeeTests
     {
         Assert.DoesNotThrow(() =>
         {
-            var employee = new Employee(new User(new Name { FirstName = "name", LastName = "surname" }, "email@gmail.com",
-                "1234567899", "12345678"), 1);
+            var employee = new Employee(new Name { FirstName = "name", LastName = "surname" }, "email@gmail.com",
+                "1234567899", "12345678", 1);
         });
     }
     
@@ -109,8 +109,8 @@ public class EmployeeTests
     {
         Assert.DoesNotThrow(() =>
         {
-            var employee = new Employee(new User(new Name { FirstName = "name", LastName = "surname" }, "email@gmail.com",
-                "1234567899", "12345678"), null);
+            var employee = new Employee(new Name { FirstName = "name", LastName = "surname" }, "email@gmail.com",
+                "1234567899", "12345678", null);
         });
     }
 }

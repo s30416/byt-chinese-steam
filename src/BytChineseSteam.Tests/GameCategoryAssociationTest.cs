@@ -13,7 +13,7 @@ public class GameCategoryAssociationTest
     [SetUp]
     public void Setup()
     {
-        _admin = new Admin(new User(new Name("first", "last"), "admil@mail.com",  "+48123456789", "passasdf"), null);
+        _admin = new Admin(new Name("first", "last"), "admil@mail.com",  "+48123456789", "passasdf", null);
         _categoryA = new Category("Action");
         _categoryB = new Category("Adventure");
 
@@ -22,16 +22,16 @@ public class GameCategoryAssociationTest
             "Game One", 
             "Desc1", 
             new Publisher("Pub1", "descr", _admin),
-            new Admin(new User(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789",
-                "howdoesourhashedpasswork"), null)
+            new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789",
+                "howdoesourhashedpasswork", null)
         );
 
         _game2 = new Game(
             "Game Two", 
             "Desc2", 
             new Publisher("Pub2", "descr", _admin),
-            new Admin(new User(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789",
-                "howdoesourhashedpasswork"), null)
+            new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789",
+                "howdoesourhashedpasswork", null)
         );
     }
 
@@ -42,8 +42,8 @@ public class GameCategoryAssociationTest
             "Lonely Game",
             "No Category",
             new Publisher("PubX", "descr", _admin),
-            new Admin(new User(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789",
-                "howdoesourhashedpasswork"), null)
+            new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789",
+                "howdoesourhashedpasswork", null)
         );
 
         // _game exists even if not in any category

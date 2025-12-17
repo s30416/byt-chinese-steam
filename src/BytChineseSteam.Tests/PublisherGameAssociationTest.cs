@@ -12,7 +12,7 @@ public class PublisherGameAssociationTest
     [SetUp]
     public void Setup()
     {
-        var dummyAdmin = new Admin(new User(new Name("A", "A"), "a@a.a", "+48000000000", "passaaaa"), null);
+        var dummyAdmin = new Admin(new Name("A", "A"), "a@a.a", "+48000000000", "passaaaa", null);
         
         _publisherA = new Publisher("PubA", "DescA", dummyAdmin);
         _publisherB = new Publisher("PubB", "DescB", dummyAdmin);
@@ -31,7 +31,7 @@ public class PublisherGameAssociationTest
     [Test]
     public void AddGame_ShouldUpdateBothSides()
     {
-        var dummyAdmin = new Admin(new User(new Name("B", "B"), "b@b.b", "+48000000000", "passaaaa"), null);
+        var dummyAdmin = new Admin(new Name("B", "B"), "b@b.b", "+48000000000", "passaaaa", null);
 
         var game = new Game("Extra Game", "DescX", _publisherB, dummyAdmin);
 

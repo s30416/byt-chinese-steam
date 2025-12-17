@@ -28,7 +28,7 @@ public class ExtentPersistenceTest
             Key.Extent.Remove(key);
         }
         
-        _admin = new Admin(new User(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork"), null);
+        _admin = new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork", null);
         _publisher = new Publisher("Test Publisher", "Test Description", _admin);
         _game = new Game("Test Game", "Test Description", _publisher, _admin);
     }
@@ -84,7 +84,7 @@ public class ExtentPersistenceTest
     public void Extent_ShouldHaveValues_AfterModelCreation()
     {
         // Creating dependencies
-        var admin = new Admin(new User(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork"), null);
+        var admin = new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork", null);
         var publisher = new Publisher("Test Publisher", "Test Description", admin);
         var game = new Game("Test Game", "Test Description", publisher, admin);
 
@@ -108,7 +108,7 @@ public class ExtentPersistenceTest
     public void EntityPersistence_ShouldPersistExtents()
     {
         // Creating dependencies
-        var admin = new Admin(new User(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork"), null);
+        var admin = new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork", null);
         var publisher = new Publisher("Persistence Pub", "Test Description", admin);
         var game = new Game("Persistence Game", "Test Description", publisher, admin);
 

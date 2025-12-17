@@ -30,8 +30,8 @@ public class Admin : Employee
 
     
     [JsonConstructor]
-    public Admin(User user, decimal? salary, SuperAdmin? creator = null) 
-        : base(user, salary, creator)
+    public Admin(Name name, string email, string phoneNumber, string hashedPassword, decimal? salary, SuperAdmin? creator = null) 
+        : base(name, email, phoneNumber, hashedPassword, salary, creator)
     {
         AddAdmin(this);
     }

@@ -1,11 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using BytChineseSteam.Models.DataAnnotations;
-using BytChineseSteam.Models.Exceptions.Inheritance;
 using BytChineseSteam.Repository.Extent;
 
 namespace BytChineseSteam.Models;
 
-public class User
+public abstract class User
 {
     private static readonly Extent<User> Extent = new();
  
@@ -23,10 +22,6 @@ public class User
     [Required]
     [MinLength(8)]
     public string HashedPassword { get; set; } = null!;
-    
-    // inheritance
-    public Customer? Customer { get; private set; }
-    public Employee? Employee { get; private set; }
 
     public User(Name name, string email, string phoneNumber, string hashedPassword)
     {
@@ -87,59 +82,6 @@ public class User
             return true;
         }
         return false;
-    }
-
-    public void AddCustomer(Customer newCustomer)
-    {
-        if (Employee != null)
-            throw new DisjointViolationException();
-        
-        if  (newCustomer == null)
-            throw new ArgumentNullException(nameof(newCustomer), "New customer cannot be null");
-        
-        if (Customer != null) return;
-        Customer = newCustomer;
-    }
-
-    public void RemoveCustomer(Customer customer)
-    {
-        if (Customer == null) return;
-        
-        if  (customer == null)
-            throw new ArgumentNullException(nameof(customer), "Customer cannot be null");
-        
-        if (Customer != customer)
-            throw new ArgumentException("Provided customer does not match this User");
-        
-        Customer = null;
-        
-        Customer.DeleteCustomer(customer);
-    }
-    
-    public void AddEmployee(Employee newEmployee)
-    {
-        if (Employee != null)
-            throw new DisjointViolationException();
-        
-        if  (newEmployee == null)
-            throw new ArgumentNullException(nameof(newEmployee), "New Employee cannot be null");
-        
-        if (Employee != null) return;
-        Employee = newEmployee;
-    }
-
-    public void RemoveEmployee(Employee employee)
-    {
-        if (Employee == null) return;
-        
-        if (employee == null) 
-            throw new ArgumentNullException(nameof(employee), "Employee cannot be null");
-        
-        if (Employee != employee)
-            throw new ArgumentException("Provided Employee does not match this User");
-        
-        Employee = null;
-        
     }
 }
 

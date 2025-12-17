@@ -11,10 +11,10 @@ public class SuperAdminEmployeeAssociationTests
     {
         
         _superAdmin = new SuperAdmin(
-            new User(new Name("Super", "Boss"), 
-                "boss@company.com", 
-                "+48123456789", 
-                "hasdashjdbasdad"), 
+            new Name("Super", "Boss"), 
+            "boss@company.com", 
+            "+48123456789", 
+            "hasdashjdbasdad", 
             10000
         );
     }
@@ -23,10 +23,10 @@ public class SuperAdminEmployeeAssociationTests
     public void ShouldEstablishReverseConnection_WhenCreatingAdminWithCreator()
     {
         var admin = new Admin(
-            new User(new Name("Sub", "Admin"), 
-                "admin@company.com", 
-                "+48123456789", 
-                "hasdashjdbasdad"), 
+            new Name("Sub", "Admin"), 
+            "admin@company.com", 
+            "+48123456789", 
+            "hasdashjdbasdad", 
             5000, 
             creator: _superAdmin
         );
@@ -58,10 +58,10 @@ public class SuperAdminEmployeeAssociationTests
     public void ShouldAllowNullCreator_ForRootSuperAdmin()
     {
         var anotherSuper = new SuperAdmin(
-            new User(new Name("Another", "Boss"), 
-                "founder@company.com", 
-                "+48123456789", 
-                "hasdashjdbasdad"), 
+            new Name("Another", "Boss"), 
+            "founder@company.com", 
+            "+48123456789", 
+            "hasdashjdbasdad", 
             null
         );
 
@@ -71,9 +71,9 @@ public class SuperAdminEmployeeAssociationTests
     [Test]
     public void ShouldThrowException_WhenAddingEmployeeCreatedByAnotherAdmin()
     {
-        var otherSuperAdmin = new SuperAdmin(new User(new Name("Other", "Guy"), "random@b.com", "+48123456789", "hasdashjdbasdad"), 0);
+        var otherSuperAdmin = new SuperAdmin(new Name("Other", "Guy"), "random@b.com", "+48123456789", "hasdashjdbasdad", 0);
         
-        var employee = new Admin(new User(new Name("A", "B"), "random@b.com", "+48123456789", "hasdashjdbasdad"), 0, _superAdmin);
+        var employee = new Admin(new Name("A", "B"), "random@b.com", "+48123456789", "hasdashjdbasdad", 0, _superAdmin);
 
         Assert.Throws<InvalidOperationException>(() => 
             otherSuperAdmin.AddCreatedEmployee(employee)

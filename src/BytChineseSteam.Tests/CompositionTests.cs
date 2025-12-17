@@ -17,7 +17,7 @@ namespace BytChineseSteam.Tests
         [Test]
         public void CreateKey_ShouldAutomaticallyAddToGame()
         {
-            var admin = new Admin(new User(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork"), 5000);
+            var admin = new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork", 5000);
             var publisher = new Publisher("Ubisoft", "Global Publisher", admin);
             var game = new Game("Far Cry 6", "Shooter", publisher, admin);
 
@@ -31,7 +31,7 @@ namespace BytChineseSteam.Tests
         [Test]
         public void CreateKey_WithNullGame_ShouldThrowException()
         {
-            var admin = new Admin(new User(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork"), 5000);
+            var admin = new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork", 5000);
             
             var ex = Assert.Throws<ArgumentNullException>(() => 
                 new Key(null!, admin, "123-ABC", 59.99m, DateTime.Now, 0, new List<string> { "Base Game" }));
@@ -42,7 +42,7 @@ namespace BytChineseSteam.Tests
         [Test]
         public void DeleteGame_ShouldCascadeDeleteKeys()
         {
-            var admin = new Admin(new User(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork"), 5000);
+            var admin = new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork", 5000);
             var publisher = new Publisher("EA", "Sports Publisher", admin);
             var game = new Game("FIFA 24", "Sports", publisher, admin);
             var key1 = new Key(game, admin, "KEY-1", 10, DateTime.Now, 0, new List<string>{"A"});
@@ -62,7 +62,7 @@ namespace BytChineseSteam.Tests
         [Test]
         public void DeleteKey_ShouldRemoveFromGame()
         {
-            var admin = new Admin(new User(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork"), 5000);
+            var admin = new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork", 5000);
             var publisher = new Publisher("Valve", "PC Platform", admin);
             var game = new Game("Portal 2", "Puzzle", publisher, admin);
             var key = new Key(game, admin, "P2-KEY", 10, DateTime.Now, 0, new List<string>{"A"});

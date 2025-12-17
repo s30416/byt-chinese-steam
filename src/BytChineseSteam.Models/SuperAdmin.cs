@@ -16,8 +16,8 @@ public class SuperAdmin : Employee
     // extent methods
     
     [JsonConstructor]
-    public SuperAdmin(User user, decimal? salary, SuperAdmin? creator = null)
-        : base(user, salary, creator)
+    public SuperAdmin(Name name, string email, string phoneNumber, string hashedPassword, decimal? salary, SuperAdmin? creator = null)
+        : base(name, email, phoneNumber, hashedPassword, salary, creator)
     {
         AddSuperAdmin(this);
     }

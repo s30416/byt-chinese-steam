@@ -16,7 +16,7 @@ public class CustomerOrderAssociationTest
     [SetUp]
     public void Setup()
     {
-        _admin = new Admin(new User(new Name("Admin", "User"), "a@b.com", "+48000000000", "passwasfsdd"), 5000);
+        _admin = new Admin(new Name("Admin", "User"), "a@b.com", "+48000000000", "passwasfsdd", 5000);
         
         _publisher = new Publisher("OrderPub", "Desc", _admin);
         
@@ -24,7 +24,7 @@ public class CustomerOrderAssociationTest
         
         _key = new Key(_game, _admin, "KEY-ORDER-TEST", 100, DateTime.Now, 0, new List<string> { "Benefit" });        
         
-        _customer1 = new Customer(new User(new Name("John", "Buyer"), "c1@b.com", "+48111111111", "passwssaaa"));
+        _customer1 = new Customer(new Name("John", "Buyer"), "c1@b.com", "+48111111111", "passwssaaa");
         
         _order = new Order(
             DateTime.Now, 
