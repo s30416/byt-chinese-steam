@@ -23,8 +23,8 @@ public class PromotionKeyAssociationTest
         _game = new Game("title", "desc", null, _publisher, new Admin(new Name("Big", "Tommy"), 
             "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork", null));
         
-        _key1 = new Key(_game, _admin, "key1", 10, DateTime.Now, 0, new List<string> { "benefit" });
-        _key2 = new Key(_game, _admin, "key2", 10, DateTime.Now, 0, new List<string> { "benefit" });
+        _key1 = new RegularKey(_game, _admin, "key1", 10, DateTime.Now, 0);
+        _key2 = new RegularKey(_game, _admin, "key2", 10, DateTime.Now, 0);
         
         // requires an initial Key
         _promotion = new Promotion("promo", 10, DateTime.Now, DateTime.Now, 

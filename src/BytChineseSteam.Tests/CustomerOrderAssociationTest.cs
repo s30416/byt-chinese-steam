@@ -22,7 +22,7 @@ public class CustomerOrderAssociationTest
         
         _game = new Game("Order Game", "Desc", null, _publisher, _admin);
         
-        _key = new Key(_game, _admin, "KEY-ORDER-TEST", 100, DateTime.Now, 0, new List<string> { "Benefit" });        
+        _key = new RegularKey(_game, _admin, "KEY-ORDER-TEST", 100, DateTime.Now, 0);        
         
         _customer1 = new Customer(new Name("John", "Buyer"), "c1@b.com", "+48111111111", "passwssaaa");
         
@@ -56,7 +56,7 @@ public class CustomerOrderAssociationTest
     [Test]
     public void ShouldAllowMultipleOrdersForSingleCustomer()
     {
-        var key2 = new Key(_game, _admin, "KEY-ORDER-TEST-2", 100, DateTime.Now, 0, new List<string> { "Benefit" });
+        var key2 = new RegularKey(_game, _admin, "KEY-ORDER-TEST-2", 100, DateTime.Now, 0);
         
         var order2 = new Order(
             DateTime.Now, 

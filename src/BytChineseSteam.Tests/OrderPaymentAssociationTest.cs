@@ -24,8 +24,8 @@ public class OrderPaymentAssociationTest
         _pmA = new PaymentMethod("A");
         _pmB = new PaymentMethod("B");
 
-        _key1 = new Key(game, admin, "AAA", 10, DateTime.Now, 0, new List<string>());
-        _key2 = new Key(game, admin, "BBB", 10, DateTime.Now, 0, new List<string>());
+        _key1 = new RegularKey(game, admin, "AAA", 10, DateTime.Now, 0);
+        _key2 = new RegularKey(game, admin, "BBB", 10, DateTime.Now, 0);
 
         _order1 = new Order(
             DateTime.Now,
@@ -60,7 +60,7 @@ public class OrderPaymentAssociationTest
     {
         var admin = new Admin(new Name("Mini", "Admin"), "new@a.b", "+48000000000", "passaaaa", null);
         var game = new Game("ExtraGame", "desc", new Publisher("PubY", "desc", admin), admin);
-        var key = new Key(game, admin, "KEY", 10, DateTime.Now, 0, new List<string>());
+        var key = new RegularKey(game, admin, "KEY", 10, DateTime.Now, 0);
 
         var customer = new Customer(new Name("User", "N"), "x@y.z", "+48123123123", "passssss");
 

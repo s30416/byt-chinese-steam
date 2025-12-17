@@ -1,5 +1,8 @@
 using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.InteropServices.JavaScript;
+using System.Runtime.InteropServices.Marshalling;
 using BytChineseSteam.Models.DataAnnotations;
 using BytChineseSteam.Models.Exceptions.OrderKey;
 using BytChineseSteam.Repository.Extent;
@@ -7,7 +10,7 @@ using System.Text.Json.Serialization;
 
 namespace BytChineseSteam.Models;
 
-public class Key : Limited
+public abstract class Key
 {
     public static readonly Extent<Key> Extent = new ();
     
@@ -23,10 +26,6 @@ public class Key : Limited
     [NonNegative] [Required] public decimal OriginalPrice { get; set; }
 
     [DateNotInFuture] [Required] public DateTime CreatedAt { get; set; }
-
-    [NonNegative] [Required] public decimal PriceIncrease { get; set; }
-
-    [NonEmpty(isEnumerable: true)] [Required] public List<string> Benefits { get; set; }
     
     [Required]
     public Game Game { get; private set; }
@@ -34,10 +33,32 @@ public class Key : Limited
     [Required]
     [JsonInclude]
     public Admin Creator { get; private set; }
+    
+    /*
+     * Regional-Key-UniversalPriceIncrease inheritance flattening
+     */
+    // Regional
+    private string? _country;
+    public string? Country { get => _country; set => SetCountry(value); }
+    
+    // Universal 
+    private decimal? _universalPriceIncrease;
+    [NonNegative] public decimal? UniversalPriceIncrease { get => _universalPriceIncrease; set => SetUniversalPriceIncrease(value); }
 
-    public Key(Game game, Admin creator, string accessKey, decimal originalPrice, DateTime createdAt, decimal priceIncrease,
-        List<string> benefits)
+    // Universal Key constructor
+    public Key(Game game, Admin creator, string accessKey, decimal originalPrice, DateTime createdAt, decimal universalPriceIncrease) : this(game, creator, accessKey, originalPrice, createdAt)
     {
+        SetUniversalPriceIncrease(universalPriceIncrease);
+    }
+    
+    // Regional Key constructor
+    public Key(Game game, Admin creator, string accessKey, decimal originalPrice, DateTime createdAt, string country) : this(game, creator, accessKey, originalPrice, createdAt)
+    {
+        SetCountry(country);
+    }
+
+    // base constructor
+    private Key(Game game, Admin creator, string accessKey, decimal originalPrice, DateTime createdAt) {
         if (game == null)
         {
             throw new ArgumentNullException(nameof(game), "Key cannot exist without a Game.");
@@ -54,15 +75,43 @@ public class Key : Limited
         AccessKey = accessKey;
         OriginalPrice = originalPrice;
         CreatedAt = createdAt;
-        PriceIncrease = priceIncrease;
-        Benefits = benefits;
+    }
+    
+    private void SetCountry(string country)
+    {
+        if (UniversalPriceIncrease != null)
+        {
+            throw new ArgumentException("Cannot set country for Universal key");
+        }
 
-        Game.AddKey(this);
-        Creator.AddCreatedKey(this);
+        if (country.Length == 0)
+        {
+            throw new ArgumentException("Cannot set country for empty string");
+        }
 
-        Extent.Add(this);
+        if (country == null)
+        {
+            throw new ArgumentNullException(nameof(country), "Country cannot be null");
+        }
+
+        _country = country;
     }
 
+    private void SetUniversalPriceIncrease(decimal? priceIncrease)
+    {
+        if (Country != null)
+        {
+            throw new ArgumentException("Cannot set price increase for Regional key");
+        }
+
+        if (priceIncrease == null)
+        {
+            throw new ArgumentNullException(nameof(priceIncrease), "Price increase must not be null.");
+        }
+
+        _universalPriceIncrease = priceIncrease;
+    }
+    
     // class methods from diagram
     // ...
 
@@ -110,9 +159,15 @@ public class Key : Limited
     }
     
     
-    public decimal GetCurrentPrice()
+    public virtual decimal GetCurrentPrice()
     {
-        return OriginalPrice + PriceIncrease;
+        var p = OriginalPrice;
+
+        if (UniversalPriceIncrease != null)
+        {
+            p += UniversalPriceIncrease.Value;
+        }
+        return p;
     }
     
     // associations

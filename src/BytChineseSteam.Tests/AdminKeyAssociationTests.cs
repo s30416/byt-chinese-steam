@@ -22,7 +22,7 @@ public class AdminKeyAssociationTests
     [Test]
     public void ShouldEstablishReverseConnection_OnKeyCreation()
     {
-        var key = new Key(_game, _admin, "KEY-123", 100, DateTime.Now, 0, new List<string> { "Benefit" });
+        var key = new RegularKey(_game, _admin, "KEY-123", 100, DateTime.Now, 0);
 
         Assert.That(key.Creator, Is.EqualTo(_admin));
 
@@ -33,7 +33,7 @@ public class AdminKeyAssociationTests
     [Test]
     public void ShouldRemoveFromAdminList_OnKeyDeletion()
     {
-        var key = new Key(_game, _admin, "KEY-DEL", 100, DateTime.Now, 0, new List<string> { "Benefit" });
+        var key = new RegularKey(_game, _admin, "KEY-DEL", 100, DateTime.Now, 0);
         
         Assert.That(_admin.CreatedKeys, Does.Contain(key));
 
@@ -48,7 +48,7 @@ public class AdminKeyAssociationTests
     public void ShouldThrowException_WhenCreatingKeyWithNullAdmin()
     {
         var ex = Assert.Throws<ArgumentNullException>(() => 
-            new Key(_game, null!, "KEY-NULL", 100, DateTime.Now, 0, new List<string>())
+            new RegularKey(_game, null!, "KEY-NULL", 100, DateTime.Now, 0)
         );
 
         Assert.That(ex!.ParamName, Is.EqualTo("creator"));
@@ -59,7 +59,7 @@ public class AdminKeyAssociationTests
     {
         var otherAdmin = new Admin(new Name("Other", "Guy"), "other@b.com", "+48123456789", "hashddfgdfg", 5000);
         
-        var key = new Key(_game, _admin, "KEY-OWNED", 100, DateTime.Now, 0, new List<string>());
+        var key = new RegularKey(_game, _admin, "KEY-OWNED", 100, DateTime.Now, 0);
 
         var ex = Assert.Throws<InvalidOperationException>(() => 
             otherAdmin.AddCreatedKey(key)
@@ -71,8 +71,8 @@ public class AdminKeyAssociationTests
     [Test]
     public void ShouldAllowAdminToCreateMultipleKeys()
     {
-        var key1 = new Key(_game, _admin, "KEY-1", 10, DateTime.Now, 0, new List<string>());
-        var key2 = new Key(_game, _admin, "KEY-2", 20, DateTime.Now, 0, new List<string>());
+        var key1 = new RegularKey(_game, _admin, "KEY-1", 10, DateTime.Now, 0);
+        var key2 = new RegularKey(_game, _admin, "KEY-2", 20, DateTime.Now, 0);
 
         Assert.That(_admin.CreatedKeys.Count, Is.EqualTo(2));
         Assert.That(_admin.CreatedKeys, Does.Contain(key1));

@@ -26,8 +26,8 @@ public class OrderKeyAssociationWithAttributeTest
             "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork", null));
         
         
-        _key = new Key(_game, _admin, "asdf", 10, DateTime.Now, 0, new List<string>());
-        _key2 = new Key(_game, _admin, "asdf", 10, DateTime.Now, 0, new List<string>());        
+        _key = new RegularKey(_game, _admin, "asdf", 10, DateTime.Now, 0);
+        _key2 = new RegularKey(_game, _admin, "asdf", 10, DateTime.Now, 0);        
         
         _order = new Order(DateTime.Now, OrderStatus.Active, DateTime.Now, 0, new HashSet<Key>() {_key}, new Customer(new Name("Lil", "Bomba"), "bigBOOM@its3am.here",
             "+54341242532", "istilldontknowhashedpassformat"));
@@ -134,9 +134,9 @@ public class OrderKeyAssociationWithAttributeTest
     [Test]
     public void ShouldAddKeysToOrders_WhenPassedToConstructor_OnOrderCreation()
     {
-        var k3 = new Key(_game, _admin, "asdf", 10, DateTime.Now, 0, new List<string>());
-        var k4 = new Key(_game, _admin, "asdf", 10, DateTime.Now, 0, new List<string>());
-        var k5 = new Key(_game, _admin, "asdf", 10, DateTime.Now, 0, new List<string>());
+        var k3 = new RegularKey(_game, _admin, "asdf", 10, DateTime.Now, 0);
+        var k4 = new RegularKey(_game, _admin, "asdf", 10, DateTime.Now, 0);
+        var k5 = new RegularKey(_game, _admin, "asdf", 10, DateTime.Now, 0);
         
         var order = new Order( DateTime.Now, OrderStatus.Active, DateTime.Now, 0, [k3, k4, k5],
             new Customer(new Name("Lil", "Bomba"), "bigBOOM@its3am.here", "+54341242532", "istilldontknowhashedpassformat"));

@@ -40,7 +40,7 @@ public class KeyTest
     {
         var (game, admin) = CreateDependencies();
         var now = DateTime.Now;
-        var key = new Key(game, admin, "some key", 10, now, 0, new List<string>());
+        var key = new RegularKey(game, admin, "some key", 10, now, 0);
 
         Assert.Multiple(() =>
         {
@@ -49,8 +49,7 @@ public class KeyTest
             Assert.That(key.AccessKey, Is.EqualTo("some key"));
             Assert.That(key.OriginalPrice, Is.EqualTo(10));
             Assert.That(key.CreatedAt, Is.EqualTo(now));
-            Assert.That(key.PriceIncrease, Is.EqualTo(0));
-            Assert.That(key.Benefits, Is.Empty);
+            Assert.That(key.UniversalPriceIncrease, Is.EqualTo(0));
         });
     }
 
@@ -58,35 +57,35 @@ public class KeyTest
     public void Validation_ShouldThrowValidationError_WhenAccessKeyIsEmptyString()
     {
         var (game, admin) = CreateDependencies();
-        Assert.Throws<ValidationException>(() => new Key(game, admin, "", 10, DateTime.Now, 0, new List<string>()));
+        Assert.Throws<ValidationException>(() => new RegularKey(game, admin, "", 10, DateTime.Now, 0));
     }
 
     [Test]
     public void Validation_ShouldThrowValidationError_WhenOriginalPriceIsNegative()
     {
         var (game, admin) = CreateDependencies();
-        Assert.Throws<ValidationException>(() => new Key(game, admin, "some key", -1, DateTime.Now, 0, new List<string>()));
+        Assert.Throws<ValidationException>(() => new RegularKey(game, admin, "some key", -1, DateTime.Now, 0));
     }
 
     [Test]
     public void Validation_ShouldThrowValidationError_WhenCreatedAtIsInFuture()
     {
         var (game, admin) = CreateDependencies();
-        Assert.Throws<ValidationException>(() => new Key(game, admin, "123", 10, DateTime.Now.AddDays(1), 0, new List<string>()));
+        Assert.Throws<ValidationException>(() => new RegularKey(game, admin, "123", 10, DateTime.Now.AddDays(1), 0));
     }
 
     [Test]
     public void Validation_ShouldThrowValidationError_WhenPriceIncreaseNegative()
     {
         var (game, admin) = CreateDependencies();
-        Assert.Throws<ValidationException>(() => new Key(game, admin, "some key", 10, DateTime.Now, -1, new List<string>()));
+        Assert.Throws<ValidationException>(() => new RegularKey(game, admin, "some key", 10, DateTime.Now, -1));
     }
 
     [Test]
     public void Validation_ShouldThrowValidationError_WhenBenefitsContainEmptyString()
     {
         var (game, admin) = CreateDependencies();
-        Assert.Throws<ValidationException>(() => new Key(game, admin, "some key", 10, DateTime.Now, 0, new List<string> { "" }));
+        Assert.Throws<ValidationException>(() => new LimitedKey(game, admin, "some key", 10, DateTime.Now, 0, new List<string> { "" }, 0));
     }
     
     [Test]
@@ -94,7 +93,7 @@ public class KeyTest
     {
         var (_, admin) = CreateDependencies();
         
-        var ex = Assert.Throws<ArgumentNullException>(() => new Key(null!, admin, "some key", 10, DateTime.Now, 0, new List<string>()));
+        var ex = Assert.Throws<ArgumentNullException>(() => new RegularKey(null!, admin, "some key", 10, DateTime.Now, 0));
         Assert.That(ex!.ParamName, Is.EqualTo("game"));
     }
     
@@ -103,7 +102,7 @@ public class KeyTest
     {
         var (game, _) = CreateDependencies();
         
-        var ex = Assert.Throws<ArgumentNullException>(() => new Key(game, null!, "some key", 10, DateTime.Now, 0, new List<string>()));
+        var ex = Assert.Throws<ArgumentNullException>(() => new RegularKey(game, null!, "some key", 10, DateTime.Now, 0));
         Assert.That(ex!.ParamName, Is.EqualTo("creator"));
     }
 }
