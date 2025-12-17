@@ -7,6 +7,7 @@ using BytChineseSteam.Models.DataAnnotations;
 using BytChineseSteam.Models.Exceptions.OrderKey;
 using BytChineseSteam.Repository.Extent;
 using System.Text.Json.Serialization;
+using BytChineseSteam.Models.Enums;
 
 namespace BytChineseSteam.Models;
 
@@ -38,6 +39,8 @@ public abstract class Key
      * Regional-Key-UniversalPriceIncrease inheritance flattening
      */
     // Regional
+    public KeyLocalization  Localization { get; }
+
     private string? _country;
     public string? Country { get => _country; set => SetCountry(value); }
     
@@ -48,12 +51,14 @@ public abstract class Key
     // Universal Key constructor
     public Key(Game game, Admin creator, string accessKey, decimal originalPrice, DateTime createdAt, decimal universalPriceIncrease) : this(game, creator, accessKey, originalPrice, createdAt)
     {
+        Localization = KeyLocalization.Universal;
         SetUniversalPriceIncrease(universalPriceIncrease);
     }
     
     // Regional Key constructor
     public Key(Game game, Admin creator, string accessKey, decimal originalPrice, DateTime createdAt, string country) : this(game, creator, accessKey, originalPrice, createdAt)
     {
+        Localization = KeyLocalization.Regional;
         SetCountry(country);
     }
 
@@ -79,9 +84,9 @@ public abstract class Key
     
     private void SetCountry(string country)
     {
-        if (UniversalPriceIncrease != null)
+        if (Localization != KeyLocalization.Regional)
         {
-            throw new ArgumentException("Cannot set country for Universal key");
+            throw new ArgumentException("Cannot set country for non Regional key");
         }
 
         if (country.Length == 0)
@@ -99,9 +104,9 @@ public abstract class Key
 
     private void SetUniversalPriceIncrease(decimal? priceIncrease)
     {
-        if (Country != null)
+        if (Localization != KeyLocalization.Universal)
         {
-            throw new ArgumentException("Cannot set price increase for Regional key");
+            throw new ArgumentException("Cannot set price increase for non Universal key");
         }
 
         if (priceIncrease == null)

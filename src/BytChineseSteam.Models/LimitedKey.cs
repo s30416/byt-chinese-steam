@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection.Metadata.Ecma335;
 using BytChineseSteam.Models.DataAnnotations;
+using BytChineseSteam.Models.Enums;
 
 namespace BytChineseSteam.Models;
 
