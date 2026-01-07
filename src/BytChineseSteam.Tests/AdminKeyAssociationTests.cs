@@ -4,7 +4,8 @@ namespace BytChineseSteam.Tests;
 
 public class AdminKeyAssociationTests
 {
-    private Admin _admin;
+    private Employee _adminEmployee;
+    private Admin _adminRole;
     private Game _game;
     private Publisher _publisher;
 
@@ -12,34 +13,42 @@ public class AdminKeyAssociationTests
     public void Setup()
     {
         
-        _admin = new Admin(new Name("Key", "Test"), "keytest@steam.com", "+48123456789", "hashdgdfgdfg", 5000);
+        _adminEmployee = new Employee(
+            new Name("Key", "Test"), 
+            "keytest@steam.com", 
+            "+48123456789", 
+            "hashdgdfgdfg", 
+            5000,
+            null
+        );
 
-        _publisher = new Publisher("Test Pub", "Desc", _admin);
+        _adminRole = new Admin(_adminEmployee);
 
-        _game = new Game("Test Game", "Desc", _publisher, _admin);
+        _publisher = new Publisher("Test Pub Key", "Desc", _adminRole);
+        _game = new Game("Test Game Key", "Desc", _publisher, _adminRole);
     }
 
     [Test]
     public void ShouldEstablishReverseConnection_OnKeyCreation()
     {
-        var key = new RegularKey(_game, _admin, "KEY-123", 100, DateTime.Now, 0);
+        var key = new RegularKey(_game, _adminRole, "KEY-123", 100, DateTime.Now, 0);
 
-        Assert.That(key.Creator, Is.EqualTo(_admin));
+        Assert.That(key.Creator, Is.EqualTo(_adminRole));
 
-        Assert.That(_admin.CreatedKeys, Does.Contain(key));
-        Assert.That(_admin.CreatedKeys.Count, Is.EqualTo(1));
+        Assert.That(_adminRole.CreatedKeys, Does.Contain(key));
+        Assert.That(_adminRole.CreatedKeys.Count, Is.EqualTo(1));
     }
 
     [Test]
     public void ShouldRemoveFromAdminList_OnKeyDeletion()
     {
-        var key = new RegularKey(_game, _admin, "KEY-DEL", 100, DateTime.Now, 0);
+        var key = new RegularKey(_game, _adminRole, "KEY-DEL", 100, DateTime.Now, 0);
         
-        Assert.That(_admin.CreatedKeys, Does.Contain(key));
+        Assert.That(_adminRole.CreatedKeys, Does.Contain(key));
 
         key.DeleteKey();
 
-        Assert.That(_admin.CreatedKeys, Does.Not.Contain(key));
+        Assert.That(_adminRole.CreatedKeys, Does.Not.Contain(key));
         
         Assert.That(Key.Extent.All(), Does.Not.Contain(key));
     }
@@ -57,12 +66,13 @@ public class AdminKeyAssociationTests
     [Test]
     public void ShouldThrowException_WhenAddingKeyCreatedByOtherAdmin()
     {
-        var otherAdmin = new Admin(new Name("Other", "Guy"), "other@b.com", "+48123456789", "hashddfgdfg", 5000);
+        var otherEmp = new Employee(new Name("Other", "Guy"), "other@b.com", "+48123456789", "hashddfgdfg", 5000, null);
+        var otherAdminRole = new Admin(otherEmp);
         
-        var key = new RegularKey(_game, _admin, "KEY-OWNED", 100, DateTime.Now, 0);
+        var key = new RegularKey(_game, _adminRole, "KEY-OWNED", 100, DateTime.Now, 0);
 
         var ex = Assert.Throws<InvalidOperationException>(() => 
-            otherAdmin.AddCreatedKey(key)
+            otherAdminRole.AddCreatedKey(key)
         );
 
         Assert.That(ex!.Message, Does.Contain("Key creator mismatch"));
@@ -71,11 +81,11 @@ public class AdminKeyAssociationTests
     [Test]
     public void ShouldAllowAdminToCreateMultipleKeys()
     {
-        var key1 = new RegularKey(_game, _admin, "KEY-1", 10, DateTime.Now, 0);
-        var key2 = new RegularKey(_game, _admin, "KEY-2", 20, DateTime.Now, 0);
+        var key1 = new RegularKey(_game, _adminRole, "KEY-1", 10, DateTime.Now, 0);
+        var key2 = new RegularKey(_game, _adminRole, "KEY-2", 20, DateTime.Now, 0);
 
-        Assert.That(_admin.CreatedKeys.Count, Is.EqualTo(2));
-        Assert.That(_admin.CreatedKeys, Does.Contain(key1));
-        Assert.That(_admin.CreatedKeys, Does.Contain(key2));
+        Assert.That(_adminRole.CreatedKeys.Count, Is.EqualTo(2));
+        Assert.That(_adminRole.CreatedKeys, Does.Contain(key1));
+        Assert.That(_adminRole.CreatedKeys, Does.Contain(key2));
     }
 }
