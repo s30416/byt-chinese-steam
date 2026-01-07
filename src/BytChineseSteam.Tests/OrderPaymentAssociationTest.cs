@@ -21,8 +21,8 @@ public class OrderPaymentAssociationTest
 
         _customer = new Customer(new Name("Lil", "Bomba"), "test@customer.local", "+48123455555", "passssss");
 
-        _pmA = new PaymentMethod("A");
-        _pmB = new PaymentMethod("B");
+        _pmA = new PaymentMethod(PaymentMethodType.ApplePay, "ApplePay", "12345677");
+        _pmB = new PaymentMethod("name", "12341515124", "123", DateTime.Now);
 
         _key1 = new RegularKey(game, admin, "AAA", 10, DateTime.Now, 0);
         _key2 = new RegularKey(game, admin, "BBB", 10, DateTime.Now, 0);
