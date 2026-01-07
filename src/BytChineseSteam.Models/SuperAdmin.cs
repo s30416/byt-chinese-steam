@@ -1,14 +1,18 @@
 ﻿using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
+using BytChineseSteam.Repository.Extent;
 
 namespace BytChineseSteam.Models;
 
-public class SuperAdmin : Employee
+public class SuperAdmin
 {
-    private static List<SuperAdmin> _superAdmins = new();
+    public static readonly Extent<SuperAdmin> Extent = new();
     
     [JsonIgnore]
     private readonly HashSet<Employee> _createdEmployees = new();
+    
+    [JsonIgnore]
+    public Employee Employee { get; private set; }
     
     [JsonIgnore]
     public IReadOnlyCollection<Employee> CreatedEmployees => _createdEmployees.ToList().AsReadOnly();
@@ -16,15 +20,20 @@ public class SuperAdmin : Employee
     // extent methods
     
     [JsonConstructor]
-    public SuperAdmin(Name name, string email, string phoneNumber, string hashedPassword, decimal? salary, SuperAdmin? creator = null)
-        : base(name, email, phoneNumber, hashedPassword, salary, creator)
+    public SuperAdmin(Employee employee)
     {
+        if (employee == null) throw new ArgumentNullException(nameof(employee));
+        
+        Employee = employee;
+        
+        Employee.AssignSuperAdminRole(this);
+
         AddSuperAdmin(this);
     }
 
     public static ReadOnlyCollection<SuperAdmin> ViewAllSuperAdmins()
     {
-        return _superAdmins.AsReadOnly();
+        return Extent.All();
     }
     
     private static void AddSuperAdmin(SuperAdmin superAdmin)
@@ -32,7 +41,7 @@ public class SuperAdmin : Employee
         if (superAdmin == null)
             throw new ArgumentException($"The given employee cannot be null");
         
-        _superAdmins.Add(superAdmin);
+        Extent.Add(superAdmin);
     }
     
     // new methods for SuperAdmin-Employee association

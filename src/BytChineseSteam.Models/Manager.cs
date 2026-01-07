@@ -1,16 +1,21 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using BytChineseSteam.Repository.Extent;
 
 namespace BytChineseSteam.Models;
 
-public class Manager : Employee
+public class Manager
 {
+    
+    public static Extent<Manager> Extent = new();
+    
     public static readonly decimal PromotionBonus = 100;
     
-    private static List<Manager> _managers = new();
-    
     private readonly HashSet<Promotion> _promotions = new();
+    
+    [JsonIgnore]
+    public Employee Employee { get; private set; }
     
     [JsonIgnore]
     public IReadOnlyCollection<Promotion> Promotions => _promotions.ToList().AsReadOnly();
@@ -18,15 +23,20 @@ public class Manager : Employee
     // extent methods
     
     [JsonConstructor]
-    public Manager(Name name, string email, string phoneNumber, string hashedPassword, decimal? salary, SuperAdmin? creator = null)
-        : base(name, email, phoneNumber, hashedPassword, salary, creator)
+    public Manager(Employee employee)
     {
+        if (employee == null) throw new ArgumentNullException(nameof(employee));
+        
+        Employee = employee;
+        
+        Employee.AssignManagerRole(this);
+
         AddManager(this);
     }
 
     public static ReadOnlyCollection<Manager> ViewAllManagers()
     {
-        return _managers.AsReadOnly();
+        return Extent.All();
     }
     
     private static void AddManager(Manager manager)
@@ -34,7 +44,7 @@ public class Manager : Employee
         if (manager == null)
             throw new ArgumentException($"The given manager cannot be null");
         
-        _managers.Add(manager);
+        Extent.Add(manager);
     }
     
     // Promotion association

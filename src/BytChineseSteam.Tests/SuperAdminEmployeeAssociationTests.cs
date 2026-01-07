@@ -1,40 +1,46 @@
 ﻿using BytChineseSteam.Models;
+using NUnit.Framework;
 
 namespace BytChineseSteam.Tests;
 
 public class SuperAdminEmployeeAssociationTests
 {
-    private SuperAdmin _superAdmin;
+    private SuperAdmin _superAdminRole;
+    private Employee _superAdminEmployee;
 
     [SetUp]
     public void Setup()
     {
-        
-        _superAdmin = new SuperAdmin(
+        _superAdminEmployee = new Employee(
             new Name("Super", "Boss"), 
             "boss@company.com", 
             "+48123456789", 
             "hasdashjdbasdad", 
-            10000
+            10000,
+            creator: null
         );
+
+        _superAdminRole = new SuperAdmin(_superAdminEmployee);
     }
 
     [Test]
     public void ShouldEstablishReverseConnection_WhenCreatingAdminWithCreator()
     {
-        var admin = new Admin(
-            new Name("Sub", "Admin"), 
+        var adminEmployee = Employee.CreateEmployee<Admin>(
+            "Sub", "Admin", 
             "admin@company.com", 
             "+48123456789", 
             "hasdashjdbasdad", 
             5000, 
-            creator: _superAdmin
+            creator: _superAdminRole
         );
 
-        Assert.That(admin.Creator, Is.EqualTo(_superAdmin));
+        Assert.That(adminEmployee.AdminRole, Is.Not.Null);
         
-        Assert.That(_superAdmin.CreatedEmployees, Does.Contain(admin));
-        Assert.That(_superAdmin.CreatedEmployees.Count, Is.EqualTo(1));
+        Assert.That(adminEmployee.Creator, Is.EqualTo(_superAdminRole));
+        
+        Assert.That(_superAdminRole.CreatedEmployees, Does.Contain(adminEmployee));
+        Assert.That(_superAdminRole.CreatedEmployees.Count, Is.EqualTo(1));
     }
 
     [Test]
@@ -46,37 +52,44 @@ public class SuperAdminEmployeeAssociationTests
             "+48123456789", 
             "hasdashjdbasdad", 
             4000, 
-            _superAdmin
+            _superAdminRole
         );
 
-        Assert.That(employee, Is.InstanceOf<Manager>());
-        Assert.That(employee.Creator, Is.EqualTo(_superAdmin));
-        Assert.That(_superAdmin.CreatedEmployees, Does.Contain(employee));
+        Assert.That(employee.ManagerRole, Is.Not.Null); 
+        Assert.That(employee.AdminRole, Is.Null);
+
+        Assert.That(employee.Creator, Is.EqualTo(_superAdminRole));
+        Assert.That(_superAdminRole.CreatedEmployees, Does.Contain(employee));
     }
 
     [Test]
     public void ShouldAllowNullCreator_ForRootSuperAdmin()
     {
-        var anotherSuper = new SuperAdmin(
+        var anotherSuperEmployee = new Employee(
             new Name("Another", "Boss"), 
             "founder@company.com", 
             "+48123456789", 
             "hasdashjdbasdad", 
-            null
+            null,
+            creator: null
         );
+        var anotherSuperRole = new SuperAdmin(anotherSuperEmployee);
 
-        Assert.That(anotherSuper.Creator, Is.Null);
+        Assert.That(anotherSuperEmployee.Creator, Is.Null);
+        
+        Assert.That(anotherSuperEmployee.SuperAdminRole, Is.EqualTo(anotherSuperRole));
     }
 
     [Test]
     public void ShouldThrowException_WhenAddingEmployeeCreatedByAnotherAdmin()
     {
-        var otherSuperAdmin = new SuperAdmin(new Name("Other", "Guy"), "random@b.com", "+48123456789", "hasdashjdbasdad", 0);
+        var otherEmp = new Employee(new Name("Other", "Guy"), "random@b.com", "+48123456789", "pass", 0, null);
+        var otherSuperAdminRole = new SuperAdmin(otherEmp);
         
-        var employee = new Admin(new Name("A", "B"), "random@b.com", "+48123456789", "hasdashjdbasdad", 0, _superAdmin);
+        var employee = Employee.CreateEmployee<Admin>("A", "B", "test@b.com", "+48123456789", "pass", 0, _superAdminRole);
 
         Assert.Throws<InvalidOperationException>(() => 
-            otherSuperAdmin.AddCreatedEmployee(employee)
+            otherSuperAdminRole.AddCreatedEmployee(employee)
         );
     }
 }

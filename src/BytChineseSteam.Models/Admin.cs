@@ -5,11 +5,14 @@ using BytChineseSteam.Repository.Extent;
 
 namespace BytChineseSteam.Models;
 
-public class Admin : Employee
+public class Admin
 {
     public static Extent<Admin> Extent = new();
     
     public static readonly decimal GameBonus = 500;
+    
+    [JsonIgnore]
+    public Employee Employee { get; private set; }
 
     // publisher association
     [JsonIgnore]
@@ -30,9 +33,14 @@ public class Admin : Employee
 
     
     [JsonConstructor]
-    public Admin(Name name, string email, string phoneNumber, string hashedPassword, decimal? salary, SuperAdmin? creator = null) 
-        : base(name, email, phoneNumber, hashedPassword, salary, creator)
+    public Admin(Employee employee)
     {
+        if (employee == null) throw new ArgumentNullException(nameof(employee));
+        
+        Employee = employee;
+        
+        Employee.AssignAdminRole(this);
+
         AddAdmin(this);
     }
 

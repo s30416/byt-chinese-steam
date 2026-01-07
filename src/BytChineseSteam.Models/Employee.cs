@@ -13,10 +13,19 @@ public class Employee : User
     
     [JsonInclude]
     public SuperAdmin? Creator { get; internal set; }
+    
+    // Composition
+    
+    [JsonInclude] public Admin? AdminRole { get; private set; }
+    [JsonInclude] public Manager? ManagerRole { get; private set; }
+    [JsonInclude] public SuperAdmin? SuperAdminRole { get; private set; }
 
     public decimal GetCollectedBonuses()
     {
-        return 0;
+        decimal total = 0;
+        if (AdminRole != null) total += Admin.GameBonus;
+        if (ManagerRole != null) total += Manager.PromotionBonus;
+        return total;
     }
 
     public Employee(Name name, string email, string phoneNumber, string hashedPassword, decimal? salary, SuperAdmin? creator = null) : base(name, email, phoneNumber, hashedPassword)
@@ -33,6 +42,33 @@ public class Employee : User
         // add to collection
         Extent.Add(this);
     }
+    
+    
+    // Composition methods for assigning and unassigning role
+    
+    public void AssignAdminRole(Admin admin)
+    {
+        if (AdminRole != null) throw new InvalidOperationException("Employee is already an Admin.");
+        AdminRole = admin;
+    }
+
+    public void UnassignAdminRole() => AdminRole = null;
+
+    public void AssignManagerRole(Manager manager)
+    {
+        if (ManagerRole != null) throw new InvalidOperationException("Employee is already a Manager.");
+        ManagerRole = manager;
+    }
+    
+    public void UnassignManagerRole() => ManagerRole = null;
+
+    public void AssignSuperAdminRole(SuperAdmin superAdmin)
+    {
+        if (SuperAdminRole != null) throw new InvalidOperationException("Employee is already a SuperAdmin.");
+        SuperAdminRole = superAdmin;
+    }
+    
+    public void UnassignSuperAdminRole() => SuperAdminRole = null;
 
     // extent methods
     public static ReadOnlyCollection<Employee> ViewAllEmployees()
@@ -60,24 +96,27 @@ public class Employee : User
             throw new UnauthorizedAccessException("Only super admins can create Employees");
 
         var name = new Name(firstName, lastName);
+        
+        // base employee (container)
+        var employee = new Employee(name, email, phoneNumber, password, salary, creator);
+        
         if (typeof(T) == typeof(Admin))
         {
-            if (salary == null) return new Admin(name, email, phoneNumber, password, null);
-            else return new Admin(name, email, phoneNumber, password, (decimal)salary, creator);
+            new Admin(employee); 
         }
         else if (typeof(T) == typeof(Manager))
         {
-            if (salary == null) return new Manager(name, email, phoneNumber, password, null);
-            else return new Manager(name, email, phoneNumber, password, (decimal)salary, creator);
+            new Manager(employee);
         }
         else if (typeof(T) == typeof(SuperAdmin))
         {
-            if (salary == null) return new SuperAdmin(name, email, phoneNumber, password, null);
-            else return new SuperAdmin(name, email, phoneNumber, password, (decimal)salary, creator);
+            new SuperAdmin(employee);
         }
         else
         {
-            throw new ArgumentException($"The given employee type  {typeof(T)} is not supported.");
+            throw new ArgumentException($"The given employee type {typeof(T)} is not supported.");
         }
+
+        return employee;
     }
 }
