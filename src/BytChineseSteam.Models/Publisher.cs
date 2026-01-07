@@ -17,7 +17,8 @@ public class Publisher
     public string Description { get; set; }
     
     // admin association
-    public Admin Admin {get;} 
+    [JsonIgnore]
+    public Admin Admin { get; private set; }
     
     // game association
     private HashSet<Game> _publishedGames = new();
@@ -69,7 +70,8 @@ public class Publisher
     
     public static Publisher CreatePublisher(string name, string description, Employee actor)
     {
-        if (actor is not Admin admin)
+        // because of the fact that now we have roles and no inheritance from employee, we are checking for role, before was "actor is Admin" 
+        if (actor.AdminRole == null)
         {
             throw new UnauthorizedAccessException("Only admin can create publisher");
         }
@@ -85,13 +87,13 @@ public class Publisher
             throw new InvalidOperationException("Publisher with this name already exists.");
         }
 
-        var publisher = new Publisher(name.Trim(), description ?? "", admin);
+        var publisher = new Publisher(name.Trim(), description ?? "", actor.AdminRole);
         return publisher;
     }
 
     public static void DeletePublisher(string name, Employee actor)
     {
-        if (actor is not Models.Admin)
+        if (actor.AdminRole == null)
             throw new UnauthorizedAccessException("Only admin can delete publishers.");
 
         var publisher = Extent.All().FirstOrDefault(p => p.Name == name);
@@ -106,7 +108,7 @@ public class Publisher
 
     public void UpdatePublisher(string newName, string newDescription, Employee actor)
     {
-        if (actor is not Models.Admin)
+        if (actor.AdminRole == null)
             throw new UnauthorizedAccessException("Only admin can update publishers.");
 
         if (string.IsNullOrWhiteSpace(newName))

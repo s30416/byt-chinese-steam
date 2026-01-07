@@ -15,13 +15,21 @@ public class KeyTest
 {
     private (Game, Admin) CreateDependencies()
     {
-        var admin = new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789", "hashpasswordforfun", null);
+        var adminEmployee = new Employee(
+            new Name("Big", "Tommy"), 
+            "big.tommy@example.com", 
+            "+48123456789", 
+            "hashpasswordforfun", 
+            null
+        );
         
-        var publisher = new Publisher("Test Publisher", "Description", admin);
+        var adminRole = new Admin(adminEmployee);
         
-        var game = new Game("Test Game", "Description", publisher, admin);
+        var publisher = new Publisher("Test Publisher", "Description", adminRole);
         
-        return (game, admin);
+        var game = new Game("Test Game", "Description", publisher, adminRole);
+        
+        return (game, adminRole);
     }
 
     [SetUp]
