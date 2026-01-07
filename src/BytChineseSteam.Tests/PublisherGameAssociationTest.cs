@@ -8,17 +8,26 @@ public class PublisherGameAssociationTest
     private Publisher _publisherB;
     private Game _game1;
     private Game _game2;
+    private Admin _adminRole;
 
     [SetUp]
     public void Setup()
     {
-        var dummyAdmin = new Admin(new Name("A", "A"), "a@a.a", "+48000000000", "passaaaa", null);
+        var emp = new Employee(
+            new Name("A", "A"), 
+            "a@a.a", 
+            "+48000000000", 
+            "passaaaa", 
+            null
+        );
         
-        _publisherA = new Publisher("PubA", "DescA", dummyAdmin);
-        _publisherB = new Publisher("PubB", "DescB", dummyAdmin);
+        _adminRole = new Admin(emp);
+        
+        _publisherA = new Publisher("PubA", "DescA", _adminRole);
+        _publisherB = new Publisher("PubB", "DescB", _adminRole);
 
-        _game1 = new Game("Game One", "Desc1", _publisherA, dummyAdmin);
-        _game2 = new Game("Game Two", "Desc2", _publisherA, dummyAdmin);
+        _game1 = new Game("Game One", "Desc1", _publisherA, _adminRole);
+        _game2 = new Game("Game Two", "Desc2", _publisherA, _adminRole);
     }
 
     [Test]
@@ -31,9 +40,16 @@ public class PublisherGameAssociationTest
     [Test]
     public void AddGame_ShouldUpdateBothSides()
     {
-        var dummyAdmin = new Admin(new Name("B", "B"), "b@b.b", "+48000000000", "passaaaa", null);
+        var dummyEmp = new Employee(
+            new Name("B", "B"), 
+            "b@b.b", 
+            "+48000000000", 
+            "passaaaa", 
+            null
+        );
+        var dummyAdminRole = new Admin(dummyEmp);
 
-        var game = new Game("Extra Game", "DescX", _publisherB, dummyAdmin);
+        var game = new Game("Extra Game", "DescX", _publisherB, dummyAdminRole);
 
         Assert.That(_publisherB.GetAllPublishersGames, Does.Contain(game));
         Assert.That(game.Publisher, Is.EqualTo(_publisherB));

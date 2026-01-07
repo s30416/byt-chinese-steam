@@ -14,15 +14,25 @@ public class KeyRegionalUniversalLimitedRegular_MultiAspectInheritanceTest
     private Category _category;
     private Game _game;
     private Publisher _publisher;
-    private Admin _admin;
+    private Admin _adminRole;
     
     [SetUp]
     public void Setup()
     {
-        _admin = new Admin(new Name("first", "last"), "admin@mail.com", "1234567899", "passwor123", 0, null);
-        _publisher = new Publisher("publisher", "description", _admin);
+        var adminEmp = new Employee(
+            new Name("first", "last"), 
+            "admin@mail.com", 
+            "1234567899", 
+            "passwor123", 
+            0, 
+            null
+        );
+
+        _adminRole = new Admin(adminEmp);
+        
+        _publisher = new Publisher("publisher", "description", _adminRole);
         _category = new Category("category");
-        _game = new Game("game", "", _category, _publisher, _admin);
+        _game = new Game("game", "", _category, _publisher, _adminRole);
         
     }
 
@@ -35,70 +45,70 @@ public class KeyRegionalUniversalLimitedRegular_MultiAspectInheritanceTest
     [Test]
     public void ShouldThrowArgumentException_WhenSettingCountry_ForNonRegionalLimitedKey()
     {
-        var key = new LimitedKey(_game, _admin, "123", 10, DateTime.Now, 10, [], 1);
+        var key = new LimitedKey(_game, _adminRole, "123", 10, DateTime.Now, 10, [], 1);
         Assert.Throws<ArgumentException>(() => key.Country = "asdf");
     }
     
     [Test]
     public void ShouldThrowArgumentException_WhenSettingCountry_ForNonRegionalRegularKey()
     {
-        var key = new RegularKey(_game, _admin, "123", 10, DateTime.Now, 10);
+        var key = new RegularKey(_game, _adminRole, "123", 10, DateTime.Now, 10);
         Assert.Throws<ArgumentException>(() => key.Country = "asdf");
     }
     
     [Test]
     public void ShouldThrowArgumentException_WhenSettingUniversalPriceIncrease_ForNonUniversalLimitedKey()
     {
-        var key = new LimitedKey(_game, _admin, "123", 10, DateTime.Now, "country", [], 1);
+        var key = new LimitedKey(_game, _adminRole, "123", 10, DateTime.Now, "country", [], 1);
         Assert.Throws<ArgumentException>(() => key.UniversalPriceIncrease = 11);
     }
     
     [Test]
     public void ShouldThrowArgumentException_WhenSettingUniversalPriceIncrease_ForNonUniversalRegularKey()
     {
-        var key = new RegularKey(_game, _admin, "123", 10, DateTime.Now, "country");
+        var key = new RegularKey(_game, _adminRole, "123", 10, DateTime.Now, "country");
         Assert.Throws<ArgumentException>(() => key.UniversalPriceIncrease = 11);
     }
 
     [Test]
     public void ShouldThrowNullArgumentException_WhenSettingUniversalPriceIncreaseToNull_ForUniversalKey()
     {
-        var key = new LimitedKey(_game, _admin, "123", 10, DateTime.Now, 1, [], 1);
+        var key = new LimitedKey(_game, _adminRole, "123", 10, DateTime.Now, 1, [], 1);
         Assert.Throws<ArgumentNullException>(() => key.UniversalPriceIncrease = null);
     }
     
     [Test]
     public void ShouldReturnCorrectPrice_ForUniversalLimitedKey()
     {
-        var key = new LimitedKey(_game, _admin, "123", 10, DateTime.Now, 1, [], 1);
+        var key = new LimitedKey(_game, _adminRole, "123", 10, DateTime.Now, 1, [], 1);
         Assert.That(key.GetCurrentPrice(), Is.EqualTo(12m));
     }
     
     [Test]
     public void ShouldReturnCorrectPrice_ForUniversalRegularKey()
     {
-        var key = new RegularKey(_game, _admin, "123", 10, DateTime.Now, 1);
+        var key = new RegularKey(_game, _adminRole, "123", 10, DateTime.Now, 1);
         Assert.That(key.GetCurrentPrice(), Is.EqualTo(11m));
     }
 
     [Test]
     public void ShouldReturnCorrectPrice_ForRegionalRegularKey()
     {
-        var key = new RegularKey(_game, _admin, "123", 10, DateTime.Now, "country");
+        var key = new RegularKey(_game, _adminRole, "123", 10, DateTime.Now, "country");
         Assert.That(key.GetCurrentPrice(), Is.EqualTo(10m));
     }
     
     [Test]
     public void ShouldReturnCorrectPrice_ForRegionalLimitedKey()
     {
-        var key = new LimitedKey(_game, _admin, "123", 10, DateTime.Now, "country", [], 1);
+        var key = new LimitedKey(_game, _adminRole, "123", 10, DateTime.Now, "country", [], 1);
         Assert.That(key.GetCurrentPrice(), Is.EqualTo(11m));
     }
 
     [Test]
     public void ShouldThrowValidationException_WhenSettingUniversalPriceIncrease_ToNegative()
     {
-        var key = new LimitedKey(_game, _admin, "123", 10, DateTime.Now, 1, [], 1);
+        var key = new LimitedKey(_game, _adminRole, "123", 10, DateTime.Now, 1, [], 1);
         
         key.UniversalPriceIncrease = -1;
         Assert.Throws<ValidationException>( () => Validate(key));
@@ -107,7 +117,7 @@ public class KeyRegionalUniversalLimitedRegular_MultiAspectInheritanceTest
     [Test]
     public void ShouldThrowValidationException_WhenSettingLimitedPriceIncrease_ToNegative()
     {
-        var key = new LimitedKey(_game, _admin, "123", 10, DateTime.Now, 1, [], 1);
+        var key = new LimitedKey(_game, _adminRole, "123", 10, DateTime.Now, 1, [], 1);
         key.LimitedPriceIncrease = -1;
             
         Assert.Throws<ValidationException>( () => Validate(key));

@@ -8,42 +8,80 @@ public class GameCategoryAssociationTest
     private Category _categoryB;
     private Game _game1;
     private Game _game2;
-    private Admin _admin;
+    private Admin _adminRole;
 
     [SetUp]
     public void Setup()
     {
-        _admin = new Admin(new Name("first", "last"), "admil@mail.com",  "+48123456789", "passasdf", null);
+        var adminEmp = new Employee(
+            new Name("first", "last"), 
+            "admil@mail.com",  
+            "+48123456789", 
+            "passasdf", 
+            null
+        );
+        _adminRole = new Admin(adminEmp);
+        
+        
         _categoryA = new Category("Action");
         _categoryB = new Category("Adventure");
 
         // note: no validation for Game.cs or Category.cs is checked here, so these constructors are fine
+        var pub1 = new Publisher("Pub1", "descr", _adminRole);
+        
+        var game1AdminEmp = new Employee(
+            new Name("Big", "Tommy"), 
+            "big.tommy@example.com", 
+            "+48123456789",
+            "howdoesourhashedpasswork", 
+            null
+        );
+        var game1AdminRole = new Admin(game1AdminEmp);
+
         _game1 = new Game(
             "Game One", 
             "Desc1", 
-            new Publisher("Pub1", "descr", _admin),
-            new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789",
-                "howdoesourhashedpasswork", null)
+            pub1,
+            game1AdminRole
         );
+
+        var pub2 = new Publisher("Pub2", "descr", _adminRole);
+        
+        var game2AdminEmp = new Employee(
+            new Name("Big", "Tommy2"),
+            "big.tommy2@example.com", 
+            "+48123456789",
+            "howdoesourhashedpasswork", 
+            null
+        );
+        var game2AdminRole = new Admin(game2AdminEmp);
 
         _game2 = new Game(
             "Game Two", 
             "Desc2", 
-            new Publisher("Pub2", "descr", _admin),
-            new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789",
-                "howdoesourhashedpasswork", null)
+            pub2,
+            game2AdminRole
         );
     }
 
     [Test]
     public void GameCanExistWithoutCategory()
     {
+        var localAdminEmp = new Employee(
+            new Name("Lonely", "Admin"), 
+            "lonely@test.com", 
+            "+123456789", 
+            "pass", 
+            null
+        );
+        var localAdminRole = new Admin(localAdminEmp);
+        var pubX = new Publisher("PubX", "descr", _adminRole);
+
         var game = new Game(
             "Lonely Game",
             "No Category",
-            new Publisher("PubX", "descr", _admin),
-            new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789",
-                "howdoesourhashedpasswork", null)
+            pubX,
+            localAdminRole
         );
 
         // _game exists even if not in any category
