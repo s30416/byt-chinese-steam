@@ -11,25 +11,56 @@ public class PromotionKeyAssociationTest
     private Key _key1;
     private Key _key2;
     private Promotion _promotion;
-    private Admin _admin;
+    private Admin _adminRole;
+    private Manager _managerRole;
 
     [SetUp]
     public void Setup()
     {
-        _admin = new Admin(new Name("first", "last"), "admin@gmail.com",  "+48123456789", "password", null);
+        var adminEmp = new Employee(
+            new Name("first", "last"), 
+            "admin@gmail.com",  
+            "+48123456789", 
+            "password", 
+            null
+        );
+        _adminRole = new Admin(adminEmp);
         
-        _publisher = new Publisher("name", "desc", _admin);
+        _publisher = new Publisher("name", "desc", _adminRole);
         
-        _game = new Game("title", "desc", null, _publisher, new Admin(new Name("Big", "Tommy"), 
-            "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork", null));
+        var gameAdminEmp = new Employee(
+            new Name("Big", "Tommy"), 
+            "big.tommy@example.com", 
+            "+48123456789", 
+            "howdoesourhashedpasswork", 
+            null
+        );
+        var gameAdminRole = new Admin(gameAdminEmp);
         
-        _key1 = new RegularKey(_game, _admin, "key1", 10, DateTime.Now, 0);
-        _key2 = new RegularKey(_game, _admin, "key2", 10, DateTime.Now, 0);
+        _game = new Game("title", "desc", _publisher, gameAdminRole);
         
+        _key1 = new RegularKey(_game, _adminRole, "key1", 10, DateTime.Now, 0);
+        _key2 = new RegularKey(_game, _adminRole, "key2", 10, DateTime.Now, 0);
+        
+        var managerEmp = new Employee(
+            new Name("Small", "Jimmy"), 
+            "smallDjim@example.com",
+            "+48987654321", 
+            "whatwasthehashedpasswordformatagain", 
+            5
+        );
+        _managerRole = new Manager(managerEmp);
+
         // requires an initial Key
-        _promotion = new Promotion("promo", 10, DateTime.Now, DateTime.Now, 
-            PromotionStatus.Planned, _key1, new Manager(new Name("Small", "Jimmy"), "smallDjim@example.com",
-                "+48987654321", "whatwasthehashedpasswordformatagain", 5));
+        _promotion = new Promotion(
+            "promo", 
+            10, 
+            DateTime.Now, 
+            DateTime.Now, 
+            PromotionStatus.Planned, 
+            _key1, 
+            _managerRole
+        );
     }
 
     // Helper to verify state hasn't changed after an exception or invalid action

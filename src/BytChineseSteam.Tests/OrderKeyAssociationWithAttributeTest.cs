@@ -13,21 +13,36 @@ public class OrderKeyAssociationWithAttributeTest
     private Publisher _publisher;
     private OrderKey _orderKey1;
     private OrderKey _orderKey2;
-    private Admin _admin;
+    private Admin _adminRole;
     
     [SetUp]
     public void Setup()
     {
-        _admin = new Admin(new Name("first", "last"), "admin@gmail.com", "+48123456789", "password", null);
+        var adminEmp = new Employee(
+            new Name("first", "last"), 
+            "admin@gmail.com", 
+            "+48123456789", 
+            "password", 
+            null
+        );
+        _adminRole = new Admin(adminEmp);
         
-        _publisher = new Publisher("name", "desc", _admin);
+        _publisher = new Publisher("name", "desc", _adminRole);
         
-        _game = new Game("title", "desc", null, _publisher, new Admin(new Name("Big", "Tommy"), 
-            "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork", null));
+        var gameAdminEmp = new Employee(
+            new Name("Big", "Tommy"), 
+            "big.tommy@example.com", 
+            "+48123456789", 
+            "howdoesourhashedpasswork", 
+            null
+        );
+        var gameAdminRole = new Admin(gameAdminEmp);
+
+        _game = new Game("title", "desc", _publisher, gameAdminRole);
         
         
-        _key = new RegularKey(_game, _admin, "asdf", 10, DateTime.Now, 0);
-        _key2 = new RegularKey(_game, _admin, "asdf", 10, DateTime.Now, 0);        
+        _key = new RegularKey(_game, _adminRole, "asdf", 10, DateTime.Now, 0);
+        _key2 = new RegularKey(_game, _adminRole, "asdf", 10, DateTime.Now, 0);        
         
         _order = new Order(DateTime.Now, OrderStatus.Active, DateTime.Now, 0, new HashSet<Key>() {_key}, new Customer(new Name("Lil", "Bomba"), "bigBOOM@its3am.here",
             "+54341242532", "istilldontknowhashedpassformat"));
@@ -134,9 +149,9 @@ public class OrderKeyAssociationWithAttributeTest
     [Test]
     public void ShouldAddKeysToOrders_WhenPassedToConstructor_OnOrderCreation()
     {
-        var k3 = new RegularKey(_game, _admin, "asdf", 10, DateTime.Now, 0);
-        var k4 = new RegularKey(_game, _admin, "asdf", 10, DateTime.Now, 0);
-        var k5 = new RegularKey(_game, _admin, "asdf", 10, DateTime.Now, 0);
+        var k3 = new RegularKey(_game, _adminRole, "asdf", 10, DateTime.Now, 0);
+        var k4 = new RegularKey(_game, _adminRole, "asdf", 10, DateTime.Now, 0);
+        var k5 = new RegularKey(_game, _adminRole, "asdf", 10, DateTime.Now, 0);
         
         var order = new Order( DateTime.Now, OrderStatus.Active, DateTime.Now, 0, [k3, k4, k5],
             new Customer(new Name("Lil", "Bomba"), "bigBOOM@its3am.here", "+54341242532", "istilldontknowhashedpassformat"));

@@ -9,7 +9,8 @@ namespace BytChineseSteam.Tests;
 public class ExtentPersistenceTest
 {
         private const string Path = "store.json";
-        private Admin _admin;
+        private Employee _adminEmployee;
+        private Admin _adminRole;
         private Publisher _publisher;
         private Game _game;
 
@@ -28,9 +29,17 @@ public class ExtentPersistenceTest
             Key.Extent.Remove(key);
         }
         
-        _admin = new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork", null);
-        _publisher = new Publisher("Test Publisher", "Test Description", _admin);
-        _game = new Game("Test Game", "Test Description", _publisher, _admin);
+        _adminEmployee = new Employee(
+            new Name("Big", "Tommy"), 
+            "big.tommy@example.com", 
+            "+48123456789", 
+            "howdoesourhashedpasswork", 
+            null
+        );
+
+        _adminRole = new Admin(_adminEmployee);
+        _publisher = new Publisher("Test Publisher", "Test Description", _adminRole);
+        _game = new Game("Test Game", "Test Description", _publisher, _adminRole);
     }
     
     // I CHANGE THIS TEST WITH ONE BELOW CAUSE OF COMPOSITION
@@ -83,12 +92,9 @@ public class ExtentPersistenceTest
     [Test, Order(4)]
     public void Extent_ShouldHaveValues_AfterModelCreation()
     {
-        // Creating dependencies
-        var admin = new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork", null);
-        var publisher = new Publisher("Test Publisher", "Test Description", admin);
-        var game = new Game("Test Game", "Test Description", publisher, admin);
-
-        var key = new RegularKey(_game, _admin, "asdf", 10, DateTime.Now, 0);
+        // no need for dependencies, cause using from setup
+        
+        var key = new RegularKey(_game, _adminRole, "asdf", 10, DateTime.Now, 0);
         Assert.That(new List<Key> { key }, Is.EquivalentTo(Key.Extent.All()));
     }
     
@@ -107,13 +113,10 @@ public class ExtentPersistenceTest
     [Test, Order(5)]
     public void EntityPersistence_ShouldPersistExtents()
     {
-        // Creating dependencies
-        var admin = new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789", "howdoesourhashedpasswork", null);
-        var publisher = new Publisher("Persistence Pub", "Test Description", admin);
-        var game = new Game("Persistence Game", "Test Description", publisher, admin);
-
+        // no need for dependencies, cause using from setup
+        
         // storing key
-        var key = new RegularKey(_game, _admin, "asdf", 10, DateTime.Now, 0);
+        var key = new RegularKey(_game, _adminRole, "asdf", 10, DateTime.Now, 0);
         ExtentPersistence.Persist(Key.Extent);
     
         // checking json

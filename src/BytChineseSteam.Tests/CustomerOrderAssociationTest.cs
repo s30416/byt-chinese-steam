@@ -6,7 +6,7 @@ namespace BytChineseSteam.Tests;
 public class CustomerOrderAssociationTest
 {
     private Publisher _publisher;
-    private Admin _admin;
+    private Admin _adminRole;
     private Game _game;
     private Key _key;
 
@@ -16,13 +16,21 @@ public class CustomerOrderAssociationTest
     [SetUp]
     public void Setup()
     {
-        _admin = new Admin(new Name("Admin", "User"), "a@b.com", "+48000000000", "passwasfsdd", 5000);
+        var adminEmp = new Employee(
+            new Name("Admin", "User"), 
+            "a@b.com", 
+            "+48000000000", 
+            "passwasfsdd", 
+            5000, 
+            null
+        );
+        _adminRole = new Admin(adminEmp);
         
-        _publisher = new Publisher("OrderPub", "Desc", _admin);
+        _publisher = new Publisher("OrderPub", "Desc", _adminRole);
         
-        _game = new Game("Order Game", "Desc", null, _publisher, _admin);
+        _game = new Game("Order Game", "Desc", null, _publisher, _adminRole);
         
-        _key = new RegularKey(_game, _admin, "KEY-ORDER-TEST", 100, DateTime.Now, 0);        
+        _key = new RegularKey(_game, _adminRole, "KEY-ORDER-TEST", 100, DateTime.Now, 0);        
         
         _customer1 = new Customer(new Name("John", "Buyer"), "c1@b.com", "+48111111111", "passwssaaa");
         
@@ -56,7 +64,7 @@ public class CustomerOrderAssociationTest
     [Test]
     public void ShouldAllowMultipleOrdersForSingleCustomer()
     {
-        var key2 = new RegularKey(_game, _admin, "KEY-ORDER-TEST-2", 100, DateTime.Now, 0);
+        var key2 = new RegularKey(_game, _adminRole, "KEY-ORDER-TEST-2", 100, DateTime.Now, 0);
         
         var order2 = new Order(
             DateTime.Now, 
