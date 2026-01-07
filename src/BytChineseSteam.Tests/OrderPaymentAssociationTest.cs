@@ -12,20 +12,31 @@ public class OrderPaymentAssociationTest
     private Key _key2;
     private Order _order1;
     private Order _order2;
+    private Admin _adminRole;
 
     [SetUp]
     public void Setup()
     {
-        var admin = new Admin(new Name("Admin", "User"), "admin@test.local", "+48123456789", "passssss", null);
-        var game = new Game("TestGame", "desc", new Publisher("PubX", "desc", admin), admin);
+        var adminEmp = new Employee(
+            new Name("Admin", "User"), 
+            "admin@test.local", 
+            "+48123456789", 
+            "passssss", 
+            null
+        );
+
+        _adminRole = new Admin(adminEmp);
+        
+        var pub = new Publisher("PubX", "desc", _adminRole);
+        var game = new Game("TestGame", "desc", pub, _adminRole);
 
         _customer = new Customer(new Name("Lil", "Bomba"), "test@customer.local", "+48123455555", "passssss");
 
         _pmA = new PaymentMethod(PaymentMethodType.ApplePay, "ApplePay", "12345677");
         _pmB = new PaymentMethod("name", "12341515124", "123", DateTime.Now);
 
-        _key1 = new RegularKey(game, admin, "AAA", 10, DateTime.Now, 0);
-        _key2 = new RegularKey(game, admin, "BBB", 10, DateTime.Now, 0);
+        _key1 = new RegularKey(game, _adminRole, "AAA", 10, DateTime.Now, 0);
+        _key2 = new RegularKey(game, _adminRole, "BBB", 10, DateTime.Now, 0);
 
         _order1 = new Order(
             DateTime.Now,
@@ -58,9 +69,17 @@ public class OrderPaymentAssociationTest
     [Test]
     public void AddPaymentMethod_ShouldUpdateBothSides()
     {
-        var admin = new Admin(new Name("Mini", "Admin"), "new@a.b", "+48000000000", "passaaaa", null);
-        var game = new Game("ExtraGame", "desc", new Publisher("PubY", "desc", admin), admin);
-        var key = new RegularKey(game, admin, "KEY", 10, DateTime.Now, 0);
+        var localEmp = new Employee(
+            new Name("Mini", "Admin"), 
+            "new@a.b", 
+            "+48000000000", 
+            "passaaaa", 
+            null
+        );
+        var localAdminRole = new Admin(localEmp);
+        
+        var game = new Game("ExtraGame", "desc", new Publisher("PubY", "desc", localAdminRole), localAdminRole);
+        var key = new RegularKey(game, localAdminRole, "KEY", 10, DateTime.Now, 0);
 
         var customer = new Customer(new Name("User", "N"), "x@y.z", "+48123123123", "passssss");
 

@@ -6,9 +6,16 @@ public class PublisherAdminBasicAssociationTest
 {
     private Admin CreateAdmin()
     {
-        var admin = new Admin(new Name("first", "last"), "admin@mail.com", "+11111111111", "password", null);
-        Console.WriteLine(admin.GetHashCode());
-        return admin;
+        var emp = new Employee(
+            new Name("first", "last"), 
+            "admin@mail.com", 
+            "+11111111111", 
+            "password", 
+            null,
+            null
+        );
+        Console.WriteLine(emp.GetHashCode());
+        return new Admin(emp);
     }
 
     private Publisher CreatePublisher(Admin admin, string name="name")
@@ -39,7 +46,7 @@ public class PublisherAdminBasicAssociationTest
         var publisher = CreatePublisher(admin, "test3");
         Assert.That(admin.Publishers, Contains.Item(publisher));
         
-        Publisher.DeletePublisher(publisher.Name, admin);
+        Publisher.DeletePublisher(publisher.Name, admin.Employee);
         Assert.That(admin.Publishers, Does.Not.Contain(publisher));
     }
 }
