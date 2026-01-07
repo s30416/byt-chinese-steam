@@ -10,20 +10,40 @@ namespace BytChineseSteam.Tests
         // these are set up fresh in SetUp()
         private Publisher _pubA;
         private Publisher _pubB;
-        private Admin _admin;
-        private Manager _manager;
+        private Admin _adminRole;
+        private Manager _managerRole;
 
         [SetUp]
         public void SetUp()
         {
             ClearPublisherStaticList();
             ClearGameStaticList();
-            _manager = new Manager(new Name("first", "last"), "manager@gmail.com", "+48123456789", "asdfasdfasdf", null);
-            _admin = new Admin(new Name("first", "last"), "manager@gmail.com", "+48123456789", "asdfasdfasdf", null);
+            
+            
+            var managerEmp = new Employee(
+                new Name("first", "last"), 
+                "manager@gmail.com", 
+                "+48123456789", 
+                "asdfasdfasdf", 
+                5000, 
+                null
+            );
+            _managerRole = new Manager(managerEmp);
+            
+            
+            var adminEmp = new Employee(
+                new Name("first", "last"), 
+                "admin@gmail.com", 
+                "+48123456789", 
+                "asdfasdfasdf", 
+                5000, 
+                null
+            );
+            _adminRole = new Admin(adminEmp);
             
             // create two publishers for tests that need them
-            _pubA = Publisher.CreatePublisher("PubA", "Desc A", _admin);
-            _pubB = Publisher.CreatePublisher("PubB", "Desc B", _admin);
+            _pubA = Publisher.CreatePublisher("PubA", "Desc A", _adminRole.Employee);
+            _pubB = Publisher.CreatePublisher("PubB", "Desc B", _adminRole.Employee);
         }
 
         [TearDown]
@@ -70,7 +90,7 @@ namespace BytChineseSteam.Tests
         public void TestCreatePublisher_AddsToExtent()
         {
             var countBefore = Publisher.GetAll().Count;
-            var newPub = Publisher.CreatePublisher("NewPub", "NewDesc", _admin);
+            var newPub = Publisher.CreatePublisher("NewPub", "NewDesc", _adminRole.Employee);
 
             Assert.That(Publisher.GetAll().Count, Is.EqualTo(countBefore + 1));
             Assert.That(Publisher.GetAll().Contains(newPub), Is.True);
@@ -80,7 +100,7 @@ namespace BytChineseSteam.Tests
         public void TestCreatePublisher_NotAdmin_ThrowsException()
         {
             Assert.Throws<UnauthorizedAccessException>(() =>
-                Publisher.CreatePublisher("Barack Obama", "Let me be clear", _manager));
+                Publisher.CreatePublisher("Barack Obama", "Let me be clear", _managerRole.Employee));
         }
 
         [Test]
@@ -95,7 +115,7 @@ namespace BytChineseSteam.Tests
         [Test]
         public void TestUpdatePublisher_UpdatesProperties()
         {
-            _pubA.UpdatePublisher("PubA_Updated", "Desc A_Updated", _admin);
+            _pubA.UpdatePublisher("PubA_Updated", "Desc A_Updated", _adminRole.Employee);
 
             Assert.That(_pubA.Name, Is.EqualTo("PubA_Updated"));
             Assert.That(_pubA.Description, Is.EqualTo("Desc A_Updated"));
@@ -109,7 +129,7 @@ namespace BytChineseSteam.Tests
         [Test]
         public void TestDeletePublisher_RemovesFromExtent()
         {
-            Publisher.DeletePublisher("PubA", _admin);
+            Publisher.DeletePublisher("PubA", _adminRole.Employee);
 
             var storedPub = Publisher.GetAll().FirstOrDefault(p => p.Name == "PubA");
             Assert.That(storedPub, Is.Null);
@@ -119,16 +139,24 @@ namespace BytChineseSteam.Tests
         public void TestDeletePublisher_NotFound_ThrowsException()
         {
             Assert.Throws<InvalidOperationException>(() =>
-                Publisher.DeletePublisher("NonExistentPub", _admin));
+                Publisher.DeletePublisher("NonExistentPub", _adminRole.Employee));
         }
 
         [Test]
         public void TestGetAllPublishersGames_ReturnsOnlyGamesWithThisPublisher()
         {
-            var admin = new Admin(new Name("Big", "Tommy"), "big.tommy@example.com", "+48123456789",
-                "howdoesourhashedpasswork", null);
-            var g1 = new Game("G1", "descr1", _pubA, admin);
-            var g2 = new Game("G2", "descr", _pubB, admin);
+            var adminEmp = new Employee(
+                new Name("Big", "Tommy"), 
+                "big.tommy@example.com", 
+                "+48123456789", 
+                "howdoesourhashedpasswork", 
+                5000, 
+                null
+            );
+            var adminRole = new Admin(adminEmp);
+            
+            var g1 = new Game("G1", "descr1", _pubA, adminRole);
+            var g2 = new Game("G2", "descr", _pubB, adminRole);
             
             var aGames = _pubA.GetAllPublishersGames();
             var bGames = _pubB.GetAllPublishersGames();
