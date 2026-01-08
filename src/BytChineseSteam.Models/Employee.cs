@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
 using BytChineseSteam.Models.DataAnnotations;
+using BytChineseSteam.Models.Interfaces;
 using BytChineseSteam.Repository.Extent;
 
 namespace BytChineseSteam.Models;
@@ -16,9 +17,9 @@ public class Employee : User
     
     // Composition
     
-    [JsonInclude] public Admin? AdminRole { get; private set; }
-    [JsonInclude] public Manager? ManagerRole { get; private set; }
-    [JsonInclude] public SuperAdmin? SuperAdminRole { get; private set; }
+    [JsonInclude] public IAdmin? AdminRole { get; private set; }
+    [JsonInclude] public IManager? ManagerRole { get; private set; }
+    [JsonInclude] public ISuperAdmin? SuperAdminRole { get; private set; }
 
     public decimal GetCollectedBonuses()
     {
@@ -46,26 +47,35 @@ public class Employee : User
     
     // Composition methods for assigning and unassigning role
     
-    public void AssignAdminRole(Admin admin)
+    public IAdmin AssignAdminRole()
     {
         if (AdminRole != null) throw new InvalidOperationException("Employee is already an Admin.");
+        var admin = new Admin(this);
         AdminRole = admin;
+
+        return admin;
     }
 
     public void UnassignAdminRole() => AdminRole = null;
 
-    public void AssignManagerRole(Manager manager)
+    public IManager AssignManagerRole()
     {
         if (ManagerRole != null) throw new InvalidOperationException("Employee is already a Manager.");
+        var manager = new Manager(this);
         ManagerRole = manager;
+
+        return manager;
     }
     
     public void UnassignManagerRole() => ManagerRole = null;
 
-    public void AssignSuperAdminRole(SuperAdmin superAdmin)
+    public ISuperAdmin AssignSuperAdminRole()
     {
         if (SuperAdminRole != null) throw new InvalidOperationException("Employee is already a SuperAdmin.");
+        var superAdmin = new SuperAdmin(this);
         SuperAdminRole = superAdmin;
+
+        return superAdmin;
     }
     
     public void UnassignSuperAdminRole() => SuperAdminRole = null;
@@ -100,17 +110,17 @@ public class Employee : User
         // base employee (container)
         var employee = new Employee(name, email, phoneNumber, password, salary, creator);
         
-        if (typeof(T) == typeof(Admin))
+        if (typeof(T) == typeof(IAdmin))
         {
-            new Admin(employee); 
+            employee.AssignAdminRole(); 
         }
-        else if (typeof(T) == typeof(Manager))
+        else if (typeof(T) == typeof(IManager))
         {
-            new Manager(employee);
+            employee.AssignManagerRole();
         }
-        else if (typeof(T) == typeof(SuperAdmin))
+        else if (typeof(T) == typeof(ISuperAdmin))
         {
-            new SuperAdmin(employee);
+            employee.AssignSuperAdminRole();
         }
         else
         {

@@ -1,11 +1,12 @@
 ﻿using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
+using BytChineseSteam.Models.Interfaces;
 using BytChineseSteam.Repository.Extent;
 
 namespace BytChineseSteam.Models;
 
-public class Admin
+public class Admin : IAdmin
 {
     public static Extent<Admin> Extent = new();
     
@@ -31,16 +32,14 @@ public class Admin
     [JsonIgnore]
     public IReadOnlyCollection<Key> CreatedKeys => _createdKeys.ToList().AsReadOnly();
 
-    
+
     [JsonConstructor]
-    public Admin(Employee employee)
+    internal Admin(Employee employee)
     {
         if (employee == null) throw new ArgumentNullException(nameof(employee));
         
         Employee = employee;
         
-        Employee.AssignAdminRole(this);
-
         AddAdmin(this);
     }
 
@@ -64,7 +63,7 @@ public class Admin
     // game association
     private readonly HashSet<Game> _games = new();
 
-    internal void AddGame(Game game)
+    public void AddGame(Game game)
     {
         if (game == null) throw new ArgumentNullException(nameof(game));
         
@@ -74,7 +73,7 @@ public class Admin
         }
     }
 
-    internal void RemoveGame(Game game)
+    public void RemoveGame(Game game)
     {
         if (game == null) throw new ArgumentNullException(nameof(game));
         
@@ -82,7 +81,7 @@ public class Admin
     }
     
     // publisher association
-    internal void AddPublisher(Publisher publisher)
+    public void AddPublisher(Publisher publisher)
     {
         ArgumentNullException.ThrowIfNull(publisher);
         
@@ -92,7 +91,7 @@ public class Admin
         }
     }
     
-    internal void RemovePublisher(Publisher publisher)
+    public void RemovePublisher(Publisher publisher)
     {
         ArgumentNullException.ThrowIfNull(publisher);
 
@@ -119,7 +118,7 @@ public class Admin
         }
     }
 
-    internal void RemoveCreatedKey(Key key)
+    public void RemoveCreatedKey(Key key)
     {
         ArgumentNullException.ThrowIfNull(key);
         _createdKeys.Remove(key);

@@ -1,10 +1,11 @@
 ﻿using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
+using BytChineseSteam.Models.Interfaces;
 using BytChineseSteam.Repository.Extent;
 
 namespace BytChineseSteam.Models;
 
-public class SuperAdmin
+public class SuperAdmin : ISuperAdmin
 {
     public static readonly Extent<SuperAdmin> Extent = new();
     
@@ -20,13 +21,11 @@ public class SuperAdmin
     // extent methods
     
     [JsonConstructor]
-    public SuperAdmin(Employee employee)
+    internal SuperAdmin(Employee employee)
     {
         if (employee == null) throw new ArgumentNullException(nameof(employee));
         
         Employee = employee;
-        
-        Employee.AssignSuperAdminRole(this);
 
         AddSuperAdmin(this);
     }
@@ -65,7 +64,7 @@ public class SuperAdmin
         }
     }
 
-    internal void RemoveCreatedEmployee(Employee employee)
+    public void RemoveCreatedEmployee(Employee employee)
     {
         if (employee == null) throw new ArgumentNullException(nameof(employee));
         if (!_createdEmployees.Contains(employee)) return;

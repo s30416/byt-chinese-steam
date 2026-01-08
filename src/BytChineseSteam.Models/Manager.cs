@@ -1,11 +1,12 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using BytChineseSteam.Models.Interfaces;
 using BytChineseSteam.Repository.Extent;
 
 namespace BytChineseSteam.Models;
 
-public class Manager
+public class Manager : IManager
 {
     
     public static Extent<Manager> Extent = new();
@@ -23,14 +24,12 @@ public class Manager
     // extent methods
     
     [JsonConstructor]
-    public Manager(Employee employee)
+    internal Manager(Employee employee)
     {
         if (employee == null) throw new ArgumentNullException(nameof(employee));
         
         Employee = employee;
         
-        Employee.AssignManagerRole(this);
-
         AddManager(this);
     }
 
@@ -48,7 +47,7 @@ public class Manager
     }
     
     // Promotion association
-    internal void AddPromotion(Promotion promotion)
+    public void AddPromotion(Promotion promotion)
     {
         if (promotion == null) throw new ArgumentNullException(nameof(promotion));
         
@@ -58,7 +57,7 @@ public class Manager
         }
     }
 
-    internal void RemovePromotion(Promotion promotion)
+    public void RemovePromotion(Promotion promotion)
     {
         if (promotion == null) throw new ArgumentNullException(nameof(promotion));
         
