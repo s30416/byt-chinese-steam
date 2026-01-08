@@ -1,3 +1,5 @@
+using BytChineseSteam.Models.Interfaces;
+
 namespace BytChineseSteam.Models;
 
 public class RegularKey : Key
@@ -7,7 +9,7 @@ public class RegularKey : Key
     /*
      * Universal Regular Key constructor
      */
-    public RegularKey(Game game, Admin creator, string accessKey, decimal originalPrice, DateTime createdAt, decimal universalPriceIncrease) 
+    public RegularKey(Game game, IAdmin creator, string accessKey, decimal originalPrice, DateTime createdAt, decimal universalPriceIncrease) 
         : base(game, creator, accessKey, originalPrice, createdAt, universalPriceIncrease)
     {
         Game.AddKey(this);
@@ -19,7 +21,7 @@ public class RegularKey : Key
     /*
      * Regional Regular Key constructor
      */
-    public RegularKey(Game game, Admin creator, string accessKey, decimal originalPrice, DateTime createdAt, string country)
+    public RegularKey(Game game, IAdmin creator, string accessKey, decimal originalPrice, DateTime createdAt, string country)
         : base(game, creator, accessKey, originalPrice, createdAt, country)
     {
         Game.AddKey(this);

@@ -2,6 +2,7 @@
 using BytChineseSteam.Models.Util;
 using BytChineseSteam.Repository.Extent;
 using System.Text.Json.Serialization;
+using BytChineseSteam.Models.Interfaces;
 
 namespace BytChineseSteam.Models;
 
@@ -14,7 +15,7 @@ public class Game
     public string? Description { get; private set; }
     
     [MinLength(1)] [Required] public string GameSlug { get; private set; } 
-    [JsonIgnore] public Admin Admin { get; private set; }
+    [JsonIgnore] public IAdmin Admin { get; private set; }
     
     // reverse connections (if you're reading this comment: close this code right now and never come back)
     private readonly HashSet<Category> _categories = new();
@@ -29,7 +30,7 @@ public class Game
     private Game() { }
     
     [JsonConstructor]
-    public Game(string title, string? description, Category? category, Publisher publisher, Admin admin)
+    public Game(string title, string? description, Category? category, Publisher publisher, IAdmin admin)
     {
         Title = title;
         Description = description;

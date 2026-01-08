@@ -8,6 +8,7 @@ using BytChineseSteam.Models.Exceptions.OrderKey;
 using BytChineseSteam.Repository.Extent;
 using System.Text.Json.Serialization;
 using BytChineseSteam.Models.Enums;
+using BytChineseSteam.Models.Interfaces;
 
 namespace BytChineseSteam.Models;
 
@@ -33,7 +34,7 @@ public abstract class Key
     
     [Required]
     [JsonInclude]
-    public Admin Creator { get; private set; }
+    public IAdmin Creator { get; private set; }
     
     /*
      * Regional-Key-UniversalPriceIncrease inheritance flattening
@@ -49,21 +50,21 @@ public abstract class Key
     [NonNegative] public decimal? UniversalPriceIncrease { get => _universalPriceIncrease; set => SetUniversalPriceIncrease(value); }
 
     // Universal Key constructor
-    public Key(Game game, Admin creator, string accessKey, decimal originalPrice, DateTime createdAt, decimal universalPriceIncrease) : this(game, creator, accessKey, originalPrice, createdAt)
+    public Key(Game game, IAdmin creator, string accessKey, decimal originalPrice, DateTime createdAt, decimal universalPriceIncrease) : this(game, creator, accessKey, originalPrice, createdAt)
     {
         Localization = KeyLocalization.Universal;
         SetUniversalPriceIncrease(universalPriceIncrease);
     }
     
     // Regional Key constructor
-    public Key(Game game, Admin creator, string accessKey, decimal originalPrice, DateTime createdAt, string country) : this(game, creator, accessKey, originalPrice, createdAt)
+    public Key(Game game, IAdmin creator, string accessKey, decimal originalPrice, DateTime createdAt, string country) : this(game, creator, accessKey, originalPrice, createdAt)
     {
         Localization = KeyLocalization.Regional;
         SetCountry(country);
     }
 
     // base constructor
-    private Key(Game game, Admin creator, string accessKey, decimal originalPrice, DateTime createdAt) {
+    private Key(Game game, IAdmin creator, string accessKey, decimal originalPrice, DateTime createdAt) {
         if (game == null)
         {
             throw new ArgumentNullException(nameof(game), "Key cannot exist without a Game.");

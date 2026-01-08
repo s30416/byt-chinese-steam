@@ -1,11 +1,12 @@
 ﻿using BytChineseSteam.Models;
+using BytChineseSteam.Models.Interfaces;
 using NUnit.Framework;
 
 namespace BytChineseSteam.Tests;
 
 public class SuperAdminEmployeeAssociationTests
 {
-    private SuperAdmin _superAdminRole;
+    private ISuperAdmin _superAdminRole;
     private Employee _superAdminEmployee;
 
     [SetUp]
@@ -20,13 +21,13 @@ public class SuperAdminEmployeeAssociationTests
             creator: null
         );
 
-        _superAdminRole = new SuperAdmin(_superAdminEmployee);
+        _superAdminRole = _superAdminEmployee.AssignSuperAdminRole();
     }
 
     [Test]
     public void ShouldEstablishReverseConnection_WhenCreatingAdminWithCreator()
     {
-        var adminEmployee = Employee.CreateEmployee<Admin>(
+        var adminEmployee = Employee.CreateEmployee<IAdmin>(
             "Sub", "Admin", 
             "admin@company.com", 
             "+48123456789", 
@@ -46,7 +47,7 @@ public class SuperAdminEmployeeAssociationTests
     [Test]
     public void ShouldEstablishReverseConnection_WhenUsingFactoryMethod()
     {
-        var employee = Employee.CreateEmployee<Manager>(
+        var employee = Employee.CreateEmployee<IManager>(
             "Manager", "One", 
             "manager@company.com", 
             "+48123456789", 
@@ -73,7 +74,7 @@ public class SuperAdminEmployeeAssociationTests
             null,
             creator: null
         );
-        var anotherSuperRole = new SuperAdmin(anotherSuperEmployee);
+        var anotherSuperRole = anotherSuperEmployee.AssignSuperAdminRole();
 
         Assert.That(anotherSuperEmployee.Creator, Is.Null);
         
@@ -84,7 +85,7 @@ public class SuperAdminEmployeeAssociationTests
     public void ShouldThrowException_WhenAddingEmployeeCreatedByAnotherAdmin()
     {
         var otherEmp = new Employee(new Name("Other", "Guy"), "random@b.com", "+48123456789", "pass", 0, null);
-        var otherSuperAdminRole = new SuperAdmin(otherEmp);
+        var otherSuperAdminRole = otherEmp.AssignSuperAdminRole();
         
         var employee = Employee.CreateEmployee<Admin>("A", "B", "test@b.com", "+48123456789", "pass", 0, _superAdminRole);
 

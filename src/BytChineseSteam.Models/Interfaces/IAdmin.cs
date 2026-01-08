@@ -1,7 +1,13 @@
-﻿namespace BytChineseSteam.Models.Interfaces;
+﻿using System.Collections.Immutable;
+
+namespace BytChineseSteam.Models.Interfaces;
 
 public interface IAdmin
 {
+    
+    IReadOnlyCollection<Game> Games { get; }
+    ImmutableHashSet<Publisher> Publishers { get; }
+    IReadOnlyCollection<Key> CreatedKeys { get; }
     void AddGame(Game game);
     void RemoveGame(Game game);
     void AddPublisher(Publisher publisher);

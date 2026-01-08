@@ -13,7 +13,7 @@ public class Employee : User
     [NonNegative] public decimal? Salary { get; set; }
     
     [JsonInclude]
-    public SuperAdmin? Creator { get; internal set; }
+    public ISuperAdmin? Creator { get; internal set; }
     
     // Composition
     
@@ -29,7 +29,7 @@ public class Employee : User
         return total;
     }
 
-    public Employee(Name name, string email, string phoneNumber, string hashedPassword, decimal? salary, SuperAdmin? creator = null) : base(name, email, phoneNumber, hashedPassword)
+    public Employee(Name name, string email, string phoneNumber, string hashedPassword, decimal? salary, ISuperAdmin? creator = null) : base(name, email, phoneNumber, hashedPassword)
     {
         Salary = salary;
         
@@ -100,7 +100,7 @@ public class Employee : User
     // will be required to change the isSuperAdmin bool to an actual check on the controller/service layer
     // I will also have to figure out the use of generics here, but that's inheritance issues
     public static Employee CreateEmployee<T>(string firstName, string lastName, string email, string phoneNumber,
-        string password, decimal? salary, SuperAdmin creator)
+        string password, decimal? salary, ISuperAdmin creator)
     {
         if (creator == null)
             throw new UnauthorizedAccessException("Only super admins can create Employees");

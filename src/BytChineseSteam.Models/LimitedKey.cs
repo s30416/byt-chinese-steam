@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection.Metadata.Ecma335;
 using BytChineseSteam.Models.DataAnnotations;
 using BytChineseSteam.Models.Enums;
+using BytChineseSteam.Models.Interfaces;
 
 namespace BytChineseSteam.Models;
 
@@ -21,7 +22,7 @@ public class LimitedKey : Key
     /*
      * Universal Limited Key Key constructor
      */
-    public LimitedKey(Game game, Admin creator, string accessKey, decimal originalPrice, DateTime createdAt, decimal universalPriceIncrease, List<string> benefits, decimal limitedPriceIncrease)
+    public LimitedKey(Game game, IAdmin creator, string accessKey, decimal originalPrice, DateTime createdAt, decimal universalPriceIncrease, List<string> benefits, decimal limitedPriceIncrease)
         : base(game, creator, accessKey, originalPrice, createdAt, universalPriceIncrease)
     {
         LimitedPriceIncrease = limitedPriceIncrease;
@@ -36,7 +37,7 @@ public class LimitedKey : Key
     /*
      * Regional Limited Key constructor
      */
-    public LimitedKey(Game game, Admin creator, string accessKey, decimal originalPrice, DateTime createdAt, string country, List<string> benefits, decimal limitedPriceIncrease)
+    public LimitedKey(Game game, IAdmin creator, string accessKey, decimal originalPrice, DateTime createdAt, string country, List<string> benefits, decimal limitedPriceIncrease)
         : base(game, creator, accessKey, originalPrice, createdAt, country)
     {
         LimitedPriceIncrease = limitedPriceIncrease;

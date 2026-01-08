@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using BytChineseSteam.Models;
+using BytChineseSteam.Models.Interfaces;
 using BytChineseSteam.Repository.Extent;
 
 namespace BytChineseSteam.Tests;
@@ -14,12 +15,17 @@ public class KeyRegionalUniversalLimitedRegular_MultiAspectInheritanceTest
     private Category _category;
     private Game _game;
     private Publisher _publisher;
-    private Admin _adminRole;
+    private IAdmin _adminRole;
+    
+    
+    private Employee _adminEmoloyee;
+    
+    
     
     [SetUp]
     public void Setup()
     {
-        var adminEmp = new Employee(
+        _adminEmoloyee = new Employee(
             new Name("first", "last"), 
             "admin@mail.com", 
             "1234567899", 
@@ -28,7 +34,7 @@ public class KeyRegionalUniversalLimitedRegular_MultiAspectInheritanceTest
             null
         );
 
-        _adminRole = new Admin(adminEmp);
+        _adminRole = _adminEmoloyee.AssignAdminRole();
         
         _publisher = new Publisher("publisher", "description", _adminRole);
         _category = new Category("category");
