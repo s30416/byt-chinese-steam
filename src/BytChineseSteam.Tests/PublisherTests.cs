@@ -104,7 +104,7 @@ namespace BytChineseSteam.Tests
         public void TestCreatePublisher_NotAdmin_ThrowsException()
         {
             Assert.Throws<UnauthorizedAccessException>(() =>
-                Publisher.CreatePublisher("Barack Obama", "Let me be clear", _adminEmployee));
+                Publisher.CreatePublisher("Barack Obama", "Let me be clear", _managerEmployee));
         }
 
         [Test]

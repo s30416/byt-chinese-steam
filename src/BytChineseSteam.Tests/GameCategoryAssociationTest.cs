@@ -73,8 +73,8 @@ public class GameCategoryAssociationTest
         var localAdminEmp = new Employee(
             new Name("Lonely", "Admin"), 
             "lonely@test.com", 
-            "+123456789", 
-            "pass", 
+            "+1234567890", 
+            "passsdahjsd", 
             null
         );
         var localAdminRole = localAdminEmp.AssignAdminRole();

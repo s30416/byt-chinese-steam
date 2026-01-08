@@ -45,7 +45,7 @@ namespace BytChineseSteam.Tests
                 new Name("Big", "Tommy"), 
                 "big.tommy2@example.com", 
                 "+48123456789", 
-                "pass", 
+                "passsdfjhsdf", 
                 5000,
                 null
             );
@@ -64,7 +64,7 @@ namespace BytChineseSteam.Tests
                 new Name("Big", "Tommy"), 
                 "big.tommy3@example.com", 
                 "+48123456789", 
-                "pass", 
+                "passasdajsdvas", 
                 5000,
                 null
             );
@@ -93,7 +93,7 @@ namespace BytChineseSteam.Tests
                 new Name("Big", "Tommy"), 
                 "big.tommy4@example.com", 
                 "+48123456789", 
-                "pass", 
+                "passasdashdga", 
                 5000,
                 null
             );

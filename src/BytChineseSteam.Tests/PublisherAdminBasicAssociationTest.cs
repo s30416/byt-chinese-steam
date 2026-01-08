@@ -1,10 +1,11 @@
 using BytChineseSteam.Models;
+using BytChineseSteam.Models.Interfaces;
 
 namespace BytChineseSteam.Tests;
 
 public class PublisherAdminBasicAssociationTest
 {
-    private Admin CreateAdmin()
+    private IAdmin CreateAdmin()
     {
         var emp = new Employee(
             new Name("first", "last"), 
@@ -15,10 +16,10 @@ public class PublisherAdminBasicAssociationTest
             null
         );
         Console.WriteLine(emp.GetHashCode());
-        return new Admin(emp);
+        return emp.AssignAdminRole();
     }
 
-    private Publisher CreatePublisher(Admin admin, string name="name")
+    private Publisher CreatePublisher(IAdmin admin, string name="name")
     {
         return new Publisher(name, "description", admin);
     }
@@ -46,7 +47,9 @@ public class PublisherAdminBasicAssociationTest
         var publisher = CreatePublisher(admin, "test3");
         Assert.That(admin.Publishers, Contains.Item(publisher));
         
-        Publisher.DeletePublisher(publisher.Name, admin.Employee);
+        var employeeActor = ((Admin)admin).Employee;
+        
+        Publisher.DeletePublisher(publisher.Name, employeeActor);
         Assert.That(admin.Publishers, Does.Not.Contain(publisher));
     }
 }

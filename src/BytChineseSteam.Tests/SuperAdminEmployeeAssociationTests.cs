@@ -84,10 +84,10 @@ public class SuperAdminEmployeeAssociationTests
     [Test]
     public void ShouldThrowException_WhenAddingEmployeeCreatedByAnotherAdmin()
     {
-        var otherEmp = new Employee(new Name("Other", "Guy"), "random@b.com", "+48123456789", "pass", 0, null);
+        var otherEmp = new Employee(new Name("Other", "Guy"), "random@b.com", "+48123456789", "passhjsdfsdhjf", 0, null);
         var otherSuperAdminRole = otherEmp.AssignSuperAdminRole();
         
-        var employee = Employee.CreateEmployee<Admin>("A", "B", "test@b.com", "+48123456789", "pass", 0, _superAdminRole);
+        var employee = Employee.CreateEmployee<Admin>("A", "B", "test@b.com", "+48123456789", "passdhsfvsdjhf", 0, _superAdminRole);
 
         Assert.Throws<InvalidOperationException>(() => 
             otherSuperAdminRole.AddCreatedEmployee(employee)
