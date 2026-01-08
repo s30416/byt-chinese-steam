@@ -1,5 +1,6 @@
 ﻿using BytChineseSteam.Models;
 using BytChineseSteam.Models.Enums;
+using BytChineseSteam.Models.Interfaces;
 
 namespace BytChineseSteam.Tests;
 
@@ -12,7 +13,7 @@ public class OrderPaymentAssociationTest
     private Key _key2;
     private Order _order1;
     private Order _order2;
-    private Admin _adminRole;
+    private IAdmin _adminRole;
 
     [SetUp]
     public void Setup()
@@ -25,7 +26,7 @@ public class OrderPaymentAssociationTest
             null
         );
 
-        _adminRole = new Admin(adminEmp);
+        _adminRole = adminEmp.AssignAdminRole();
         
         var pub = new Publisher("PubX", "desc", _adminRole);
         var game = new Game("TestGame", "desc", pub, _adminRole);
@@ -76,7 +77,7 @@ public class OrderPaymentAssociationTest
             "passaaaa", 
             null
         );
-        var localAdminRole = new Admin(localEmp);
+        var localAdminRole = localEmp.AssignAdminRole();
         
         var game = new Game("ExtraGame", "desc", new Publisher("PubY", "desc", localAdminRole), localAdminRole);
         var key = new RegularKey(game, localAdminRole, "KEY", 10, DateTime.Now, 0);

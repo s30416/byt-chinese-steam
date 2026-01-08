@@ -1,6 +1,7 @@
 ﻿using System.Collections.Immutable;
 using System.Text.Json.Serialization;
 using BytChineseSteam.Models.Enums;
+using BytChineseSteam.Models.Interfaces;
 using BytChineseSteam.Repository.Extent;
 
 namespace BytChineseSteam.Models;
@@ -20,10 +21,10 @@ public class Promotion
     public ImmutableHashSet<Key> Keys => _keys.ToImmutableHashSet();
     
     [JsonIgnore]
-    public Manager Manager { get; private set; }
+    public IManager Manager { get; private set; }
     
     public Promotion(string name, double discountPercent, DateTime startDate, 
-        DateTime endDate, PromotionStatus status, Key initialKey, Manager manager)
+        DateTime endDate, PromotionStatus status, Key initialKey, IManager manager)
     {
         Name = name;
         DiscountPercent = discountPercent;
@@ -44,7 +45,7 @@ public class Promotion
         Extent.Add(this);
     }
     
-    public void ChangeManager(Manager newManager)
+    public void ChangeManager(IManager newManager)
     {
         if (newManager == null) throw new ArgumentNullException(nameof(newManager));
         

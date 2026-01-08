@@ -26,7 +26,7 @@ namespace BytChineseSteam.Tests
                 null
             );
             
-            var adminRole = new Admin(adminEmp);
+            var adminRole = adminEmp.AssignAdminRole();
 
             var publisher = new Publisher("Ubisoft", "Global Publisher", adminRole);
             var game = new Game("Far Cry 6", "Shooter", publisher, adminRole);
@@ -49,7 +49,7 @@ namespace BytChineseSteam.Tests
                 5000,
                 null
             );
-            var adminRole = new Admin(adminEmp);
+            var adminRole = adminEmp.AssignAdminRole();
             
             var ex = Assert.Throws<ArgumentNullException>(() => 
                 new RegularKey(null!, adminRole, "123-ABC", 59.99m, DateTime.Now, 0));
@@ -68,7 +68,7 @@ namespace BytChineseSteam.Tests
                 5000,
                 null
             );
-            var adminRole = new Admin(adminEmp);
+            var adminRole = adminEmp.AssignAdminRole();
 
             var publisher = new Publisher("EA", "Sports Publisher", adminRole);
             var game = new Game("FIFA 24", "Sports", publisher, adminRole);
@@ -97,7 +97,7 @@ namespace BytChineseSteam.Tests
                 5000,
                 null
             );
-            var adminRole = new Admin(adminEmp);
+            var adminRole = adminEmp.AssignAdminRole();
 
             var publisher = new Publisher("Valve", "PC Platform", adminRole);
             var game = new Game("Portal 2", "Puzzle", publisher, adminRole);

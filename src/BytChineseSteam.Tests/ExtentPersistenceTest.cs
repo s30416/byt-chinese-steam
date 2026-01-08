@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using BytChineseSteam.Models;
+using BytChineseSteam.Models.Interfaces;
 using BytChineseSteam.Repository.Extent;
 
 namespace BytChineseSteam.Tests;
@@ -10,7 +11,7 @@ public class ExtentPersistenceTest
 {
         private const string Path = "store.json";
         private Employee _adminEmployee;
-        private Admin _adminRole;
+        private IAdmin _adminRole;
         private Publisher _publisher;
         private Game _game;
 
@@ -37,7 +38,7 @@ public class ExtentPersistenceTest
             null
         );
 
-        _adminRole = new Admin(_adminEmployee);
+        _adminRole = _adminEmployee.AssignAdminRole();
         _publisher = new Publisher("Test Publisher", "Test Description", _adminRole);
         _game = new Game("Test Game", "Test Description", _publisher, _adminRole);
     }

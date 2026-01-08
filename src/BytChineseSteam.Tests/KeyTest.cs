@@ -6,6 +6,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using BytChineseSteam.Models;
+using BytChineseSteam.Models.Interfaces;
 
 namespace BytChineseSteam.Tests;
 
@@ -13,7 +14,7 @@ namespace BytChineseSteam.Tests;
 [TestOf(typeof(Key))]
 public class KeyTest
 {
-    private (Game, Admin) CreateDependencies()
+    private (Game, IAdmin) CreateDependencies()
     {
         var adminEmployee = new Employee(
             new Name("Big", "Tommy"), 
@@ -23,7 +24,7 @@ public class KeyTest
             null
         );
         
-        var adminRole = new Admin(adminEmployee);
+        var adminRole = adminEmployee.AssignAdminRole();
         
         var publisher = new Publisher("Test Publisher", "Description", adminRole);
         

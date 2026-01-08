@@ -21,8 +21,8 @@ public class CompositionEmployeeTests
     {
         var emp = CreateBaseEmployee("Overlapping");
 
-        var adminRole = new Admin(emp);
-        var managerRole = new Manager(emp);
+        var adminRole = emp.AssignAdminRole();
+        var managerRole = emp.AssignManagerRole();
 
         Assert.That(emp.AdminRole, Is.Not.Null);
         Assert.That(emp.ManagerRole, Is.Not.Null);
@@ -30,8 +30,8 @@ public class CompositionEmployeeTests
         Assert.That(emp.AdminRole, Is.EqualTo(adminRole));
         Assert.That(emp.ManagerRole, Is.EqualTo(managerRole));
         
-        Assert.That(adminRole.Employee, Is.EqualTo(emp));
-        Assert.That(managerRole.Employee, Is.EqualTo(emp));
+        Assert.That(((Admin)adminRole).Employee, Is.EqualTo(emp));
+        Assert.That(((Manager)managerRole).Employee, Is.EqualTo(emp));
     }
 
     [Test]
@@ -41,11 +41,10 @@ public class CompositionEmployeeTests
         
         Assert.That(emp.GetCollectedBonuses(), Is.EqualTo(0));
 
-        var adminRole = new Admin(emp);
+        emp.AssignAdminRole();
         Assert.That(emp.GetCollectedBonuses(), Is.EqualTo(500));
 
-        var managerRole = new Manager(emp);
-        
+        emp.AssignManagerRole();
         Assert.That(emp.GetCollectedBonuses(), Is.EqualTo(600));
     }
 
@@ -53,8 +52,8 @@ public class CompositionEmployeeTests
     public void ShouldAllowDynamicRoleRemoval_UnassignRole()
     {
         var emp = CreateBaseEmployee("Dynamic");
-        var adminRole = new Admin(emp);
-        var managerRole = new Manager(emp);
+        emp.AssignAdminRole();
+        emp.AssignManagerRole();
 
         Assert.That(emp.AdminRole, Is.Not.Null);
         Assert.That(emp.ManagerRole, Is.Not.Null);
@@ -71,9 +70,10 @@ public class CompositionEmployeeTests
     public void ShouldPreventDoubleRoleAssignment_ThrowException()
     {
         var emp = CreateBaseEmployee("Double");
-        var adminRole1 = new Admin(emp);
+        
+        var adminRole1 = emp.AssignAdminRole();
 
-        var ex = Assert.Throws<InvalidOperationException>(() => new Admin(emp));
+        var ex = Assert.Throws<InvalidOperationException>(() => emp.AssignAdminRole());
         
         Assert.That(ex!.Message, Does.Contain("already an Admin"));
     }

@@ -1,5 +1,6 @@
 ﻿using BytChineseSteam.Models;
 using BytChineseSteam.Models.Enums;
+using BytChineseSteam.Models.Interfaces;
 using NUnit.Framework;
 
 namespace BytChineseSteam.Tests;
@@ -11,8 +12,8 @@ public class PromotionKeyAssociationTest
     private Key _key1;
     private Key _key2;
     private Promotion _promotion;
-    private Admin _adminRole;
-    private Manager _managerRole;
+    private IAdmin _adminRole;
+    private IManager _managerRole;
 
     [SetUp]
     public void Setup()
@@ -24,7 +25,7 @@ public class PromotionKeyAssociationTest
             "password", 
             null
         );
-        _adminRole = new Admin(adminEmp);
+        _adminRole = adminEmp.AssignAdminRole();
         
         _publisher = new Publisher("name", "desc", _adminRole);
         
@@ -35,7 +36,7 @@ public class PromotionKeyAssociationTest
             "howdoesourhashedpasswork", 
             null
         );
-        var gameAdminRole = new Admin(gameAdminEmp);
+        var gameAdminRole = gameAdminEmp.AssignAdminRole();
         
         _game = new Game("title", "desc", _publisher, gameAdminRole);
         
@@ -49,7 +50,7 @@ public class PromotionKeyAssociationTest
             "whatwasthehashedpasswordformatagain", 
             5
         );
-        _managerRole = new Manager(managerEmp);
+        _managerRole = managerEmp.AssignManagerRole();
 
         // requires an initial Key
         _promotion = new Promotion(

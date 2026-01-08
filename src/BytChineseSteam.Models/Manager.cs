@@ -24,7 +24,7 @@ public class Manager : IManager
     // extent methods
     
     [JsonConstructor]
-    internal Manager(Employee employee)
+    public Manager(Employee employee)
     {
         if (employee == null) throw new ArgumentNullException(nameof(employee));
         

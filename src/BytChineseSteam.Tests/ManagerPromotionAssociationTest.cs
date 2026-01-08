@@ -1,17 +1,18 @@
 ﻿using BytChineseSteam.Models;
 using BytChineseSteam.Models.Enums;
+using BytChineseSteam.Models.Interfaces;
 
 namespace BytChineseSteam.Tests;
 
 public class ManagerPromotionAssociationTest
 {
     private Publisher _publisher;
-    private Admin _adminRole;
+    private IAdmin _adminRole;
     private Game _game;
     private Key _key;
     
-    private Manager _manager1;
-    private Manager _manager2;
+    private IManager _manager1;
+    private IManager _manager2;
     private Promotion _promotion;
 
     [SetUp]
@@ -25,7 +26,7 @@ public class ManagerPromotionAssociationTest
             1000, 
             null
         );
-        _adminRole = new Admin(adminEmp);
+        _adminRole = adminEmp.AssignAdminRole();
         
         
         _publisher = new Publisher("PromoPublisher", "Desc", _adminRole);
@@ -40,7 +41,7 @@ public class ManagerPromotionAssociationTest
             8000, 
             null
         );
-        _manager1 = new Manager(manEmp1);
+        _manager1 = manEmp1.AssignManagerRole();
         
         
         var manEmp2 = new Employee(
@@ -51,7 +52,7 @@ public class ManagerPromotionAssociationTest
             9000, 
             null
         );
-        _manager2 = new Manager(manEmp2);
+        _manager2 = manEmp2.AssignManagerRole();
 
 
         _promotion = new Promotion(

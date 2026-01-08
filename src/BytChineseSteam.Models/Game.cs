@@ -52,7 +52,7 @@ public class Game
         Extent.Add(this);
     }
 
-    public Game(string title, string? description, Publisher publisher, Admin admin)
+    public Game(string title, string? description, Publisher publisher, IAdmin admin)
     {
         Title = title;
         Description = description;
@@ -172,7 +172,7 @@ public class Game
     // admin association
     
     // since game MUST have an admin, we only give option to change it - not remove
-    public void ChangeAdmin(Admin newAdmin)
+    public void ChangeAdmin(IAdmin newAdmin)
     {
         if (newAdmin == null) throw new ArgumentNullException(nameof(newAdmin), "New Admin cannot be null.");
         

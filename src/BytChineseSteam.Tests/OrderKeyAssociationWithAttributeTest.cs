@@ -1,6 +1,7 @@
 using BytChineseSteam.Models;
 using BytChineseSteam.Models.Enums;
 using BytChineseSteam.Models.Exceptions.OrderKey;
+using BytChineseSteam.Models.Interfaces;
 
 namespace BytChineseSteam.Tests;
 
@@ -13,7 +14,7 @@ public class OrderKeyAssociationWithAttributeTest
     private Publisher _publisher;
     private OrderKey _orderKey1;
     private OrderKey _orderKey2;
-    private Admin _adminRole;
+    private IAdmin _adminRole;
     
     [SetUp]
     public void Setup()
@@ -25,7 +26,7 @@ public class OrderKeyAssociationWithAttributeTest
             "password", 
             null
         );
-        _adminRole = new Admin(adminEmp);
+        _adminRole = adminEmp.AssignAdminRole();
         
         _publisher = new Publisher("name", "desc", _adminRole);
         
@@ -36,7 +37,7 @@ public class OrderKeyAssociationWithAttributeTest
             "howdoesourhashedpasswork", 
             null
         );
-        var gameAdminRole = new Admin(gameAdminEmp);
+        var gameAdminRole = gameAdminEmp.AssignAdminRole();
 
         _game = new Game("title", "desc", _publisher, gameAdminRole);
         

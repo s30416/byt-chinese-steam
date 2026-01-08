@@ -34,7 +34,7 @@ public class Admin : IAdmin
 
 
     [JsonConstructor]
-    internal Admin(Employee employee)
+    public Admin(Employee employee)
     {
         if (employee == null) throw new ArgumentNullException(nameof(employee));
         

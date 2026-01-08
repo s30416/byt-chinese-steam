@@ -35,7 +35,7 @@ public class ExtentTest
             null
         );
 
-        var adminRole = new Admin(adminEmp);
+        var adminRole = adminEmp.AssignAdminRole();
         
         var publisher = new Publisher("Test Publisher", "Test Description", adminRole);
         var game = new Game("Test Game", "Test Description", publisher, adminRole);

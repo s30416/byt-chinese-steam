@@ -1,4 +1,5 @@
 ﻿using BytChineseSteam.Models;
+using BytChineseSteam.Models.Interfaces;
 
 namespace BytChineseSteam.Tests;
 
@@ -8,19 +9,21 @@ public class GameCategoryAssociationTest
     private Category _categoryB;
     private Game _game1;
     private Game _game2;
-    private Admin _adminRole;
+    private IAdmin _adminRole;
+    
+    private Employee _adminEmployee;
 
     [SetUp]
     public void Setup()
     {
-        var adminEmp = new Employee(
+        _adminEmployee = new Employee(
             new Name("first", "last"), 
             "admil@mail.com",  
             "+48123456789", 
             "passasdf", 
             null
         );
-        _adminRole = new Admin(adminEmp);
+        _adminRole = _adminEmployee.AssignAdminRole();
         
         
         _categoryA = new Category("Action");
@@ -36,7 +39,7 @@ public class GameCategoryAssociationTest
             "howdoesourhashedpasswork", 
             null
         );
-        var game1AdminRole = new Admin(game1AdminEmp);
+        var game1AdminRole = game1AdminEmp.AssignAdminRole();
 
         _game1 = new Game(
             "Game One", 
@@ -54,7 +57,7 @@ public class GameCategoryAssociationTest
             "howdoesourhashedpasswork", 
             null
         );
-        var game2AdminRole = new Admin(game2AdminEmp);
+        var game2AdminRole = game2AdminEmp.AssignAdminRole();
 
         _game2 = new Game(
             "Game Two", 
@@ -74,7 +77,7 @@ public class GameCategoryAssociationTest
             "pass", 
             null
         );
-        var localAdminRole = new Admin(localAdminEmp);
+        var localAdminRole = localAdminEmp.AssignAdminRole();
         var pubX = new Publisher("PubX", "descr", _adminRole);
 
         var game = new Game(

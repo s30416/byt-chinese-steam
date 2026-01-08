@@ -1,13 +1,15 @@
 ﻿using BytChineseSteam.Models;
+using BytChineseSteam.Models.Interfaces;
 
 namespace BytChineseSteam.Tests;
 
 public class AdminKeyAssociationTests
 {
     private Employee _adminEmployee;
-    private Admin _adminRole;
+    private IAdmin _adminRole;
     private Game _game;
     private Publisher _publisher;
+    
 
     [SetUp]
     public void Setup()
@@ -22,7 +24,7 @@ public class AdminKeyAssociationTests
             null
         );
 
-        _adminRole = new Admin(_adminEmployee);
+        _adminRole = _adminEmployee.AssignAdminRole();
 
         _publisher = new Publisher("Test Pub Key", "Desc", _adminRole);
         _game = new Game("Test Game Key", "Desc", _publisher, _adminRole);
@@ -67,7 +69,7 @@ public class AdminKeyAssociationTests
     public void ShouldThrowException_WhenAddingKeyCreatedByOtherAdmin()
     {
         var otherEmp = new Employee(new Name("Other", "Guy"), "other@b.com", "+48123456789", "hashddfgdfg", 5000, null);
-        var otherAdminRole = new Admin(otherEmp);
+        var otherAdminRole = otherEmp.AssignAdminRole();
         
         var key = new RegularKey(_game, _adminRole, "KEY-OWNED", 100, DateTime.Now, 0);
 

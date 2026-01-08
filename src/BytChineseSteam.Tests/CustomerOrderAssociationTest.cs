@@ -1,22 +1,25 @@
 ﻿using BytChineseSteam.Models;
 using BytChineseSteam.Models.Enums;
+using BytChineseSteam.Models.Interfaces;
 
 namespace BytChineseSteam.Tests;
 
 public class CustomerOrderAssociationTest
 {
     private Publisher _publisher;
-    private Admin _adminRole;
+    private IAdmin _adminRole;
     private Game _game;
     private Key _key;
 
     private Customer _customer1;
     private Order _order;
+    
+    private Employee _adminEmployee;
 
     [SetUp]
     public void Setup()
     {
-        var adminEmp = new Employee(
+        _adminEmployee = new Employee(
             new Name("Admin", "User"), 
             "a@b.com", 
             "+48000000000", 
@@ -24,7 +27,7 @@ public class CustomerOrderAssociationTest
             5000, 
             null
         );
-        _adminRole = new Admin(adminEmp);
+        _adminRole = _adminEmployee.AssignAdminRole();
         
         _publisher = new Publisher("OrderPub", "Desc", _adminRole);
         
