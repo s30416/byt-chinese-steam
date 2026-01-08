@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Reflection;
 using BytChineseSteam.Models;
+using BytChineseSteam.Models.Interfaces;
 
 namespace BytChineseSteam.Tests
 {
@@ -10,8 +11,11 @@ namespace BytChineseSteam.Tests
         // these are set up fresh in SetUp()
         private Publisher _pubA;
         private Publisher _pubB;
-        private Admin _adminRole;
-        private Manager _managerRole;
+        private IAdmin _adminRole;
+        private IManager _managerRole;
+        
+        private Employee _adminEmployee;
+        private Employee _managerEmployee;
 
         [SetUp]
         public void SetUp()
@@ -20,7 +24,7 @@ namespace BytChineseSteam.Tests
             ClearGameStaticList();
             
             
-            var managerEmp = new Employee(
+            _managerEmployee = new Employee(
                 new Name("first", "last"), 
                 "manager@gmail.com", 
                 "+48123456789", 
@@ -28,10 +32,10 @@ namespace BytChineseSteam.Tests
                 5000, 
                 null
             );
-            _managerRole = new Manager(managerEmp);
+            _managerRole = _managerEmployee.AssignManagerRole();
             
             
-            var adminEmp = new Employee(
+            _adminEmployee = new Employee(
                 new Name("first", "last"), 
                 "admin@gmail.com", 
                 "+48123456789", 
@@ -39,11 +43,11 @@ namespace BytChineseSteam.Tests
                 5000, 
                 null
             );
-            _adminRole = new Admin(adminEmp);
+            _adminRole = _adminEmployee.AssignAdminRole();
             
             // create two publishers for tests that need them
-            _pubA = Publisher.CreatePublisher("PubA", "Desc A", _adminRole.Employee);
-            _pubB = Publisher.CreatePublisher("PubB", "Desc B", _adminRole.Employee);
+            _pubA = Publisher.CreatePublisher("PubA", "Desc A", _adminEmployee);
+            _pubB = Publisher.CreatePublisher("PubB", "Desc B", _adminEmployee);
         }
 
         [TearDown]
@@ -90,7 +94,7 @@ namespace BytChineseSteam.Tests
         public void TestCreatePublisher_AddsToExtent()
         {
             var countBefore = Publisher.GetAll().Count;
-            var newPub = Publisher.CreatePublisher("NewPub", "NewDesc", _adminRole.Employee);
+            var newPub = Publisher.CreatePublisher("NewPub", "NewDesc", _adminEmployee);
 
             Assert.That(Publisher.GetAll().Count, Is.EqualTo(countBefore + 1));
             Assert.That(Publisher.GetAll().Contains(newPub), Is.True);
@@ -100,7 +104,7 @@ namespace BytChineseSteam.Tests
         public void TestCreatePublisher_NotAdmin_ThrowsException()
         {
             Assert.Throws<UnauthorizedAccessException>(() =>
-                Publisher.CreatePublisher("Barack Obama", "Let me be clear", _managerRole.Employee));
+                Publisher.CreatePublisher("Barack Obama", "Let me be clear", _adminEmployee));
         }
 
         [Test]
@@ -115,7 +119,7 @@ namespace BytChineseSteam.Tests
         [Test]
         public void TestUpdatePublisher_UpdatesProperties()
         {
-            _pubA.UpdatePublisher("PubA_Updated", "Desc A_Updated", _adminRole.Employee);
+            _pubA.UpdatePublisher("PubA_Updated", "Desc A_Updated", _adminEmployee);
 
             Assert.That(_pubA.Name, Is.EqualTo("PubA_Updated"));
             Assert.That(_pubA.Description, Is.EqualTo("Desc A_Updated"));
@@ -129,7 +133,7 @@ namespace BytChineseSteam.Tests
         [Test]
         public void TestDeletePublisher_RemovesFromExtent()
         {
-            Publisher.DeletePublisher("PubA", _adminRole.Employee);
+            Publisher.DeletePublisher("PubA", _adminEmployee);
 
             var storedPub = Publisher.GetAll().FirstOrDefault(p => p.Name == "PubA");
             Assert.That(storedPub, Is.Null);
@@ -139,7 +143,7 @@ namespace BytChineseSteam.Tests
         public void TestDeletePublisher_NotFound_ThrowsException()
         {
             Assert.Throws<InvalidOperationException>(() =>
-                Publisher.DeletePublisher("NonExistentPub", _adminRole.Employee));
+                Publisher.DeletePublisher("NonExistentPub", _adminEmployee));
         }
 
         [Test]
@@ -153,10 +157,10 @@ namespace BytChineseSteam.Tests
                 5000, 
                 null
             );
-            var adminRole = new Admin(adminEmp);
+            var adminRole = adminEmp.AssignAdminRole();
             
-            var g1 = new Game("G1", "descr1", _pubA, adminRole);
-            var g2 = new Game("G2", "descr", _pubB, adminRole);
+            var g1 = new Game("G1", "descr1", _pubA, (Admin)adminRole);
+            var g2 = new Game("G2", "descr", _pubB, (Admin)adminRole);
             
             var aGames = _pubA.GetAllPublishersGames();
             var bGames = _pubB.GetAllPublishersGames();

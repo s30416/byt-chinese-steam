@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
+using BytChineseSteam.Models.Interfaces;
 using BytChineseSteam.Repository.Extent;
 
 namespace BytChineseSteam.Models;
@@ -18,12 +19,12 @@ public class Publisher
     
     // admin association
     [JsonIgnore]
-    public Admin Admin { get; private set; }
+    public IAdmin Admin { get; private set; }
     
     // game association
     private HashSet<Game> _publishedGames = new();
     
-    public Publisher(string name, string description, Admin admin)
+    public Publisher(string name, string description, IAdmin admin)
     {
         Name = name;
         Description = description;
